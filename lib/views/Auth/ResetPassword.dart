@@ -30,7 +30,7 @@ class ResetPasswordForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<ResetPasswordBloc, ResetPasswordState>(
         listener: (context, state) {
-          if (state.status.isSubmissionSuccess) {
+          if (state.status.isInProgressOrSuccess) {
             showDialog(
                 context: context,
                 builder: (BuildContext context) {
@@ -39,7 +39,7 @@ class ResetPasswordForm extends StatelessWidget {
                     content:
                         const Text('Ihr Passwort wurde erfolgreich geändert!'),
                     actions: <Widget>[
-                      FlatButton(
+                      ElevatedButton(
                         child: Text('Ok'),
                         onPressed: () {
                           Navigator.of(context).pushNamed('/login');
@@ -49,22 +49,24 @@ class ResetPasswordForm extends StatelessWidget {
                   );
                 });
           }
-          if (state.status.isSubmissionFailure) {
-            Scaffold.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                    backgroundColor: Colors.red,
-                    content: Text('Der von Ihnen angegebene Code ist falsch.')),
-              );
+          if (state.status.isFailure) {
+            //! voir lib/utils/snackbar
+            // Scaffold.of(context)
+            //   ..hideCurrentSnackBar()
+            //   ..showSnackBar(
+            //     SnackBar(
+            //         backgroundColor: Colors.red,
+            //         content: Text('Der von Ihnen angegebene Code ist falsch.')),
+            //   );
           }
 
-          if (state.status.isSubmissionInProgress) {
-            Scaffold.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(content: Text('Submitting...')),
-              );
+          if (state.status.isInProgressOrSuccess) {
+             //! voir lib/utils/snackbar
+            // Scaffold.of(context)
+            //   ..hideCurrentSnackBar()
+            //   ..showSnackBar(
+            //     SnackBar(content: Text('Submitting...')),
+            //   );
           }
         },
         child: Form(
@@ -212,14 +214,14 @@ class CodeForm extends StatelessWidget {
                       contentPadding:
                           EdgeInsets.fromLTRB(15.0, 10.0, 20.0, 10.0),
                       hintText: 'Code eingeben',
-                      errorText: state.code.invalid
+                      errorText: state.code.isNotValid
                           ? 'Bitte trage einen korrekten Code ein'
                           : null,
                     )),
                     onChanged: (value) {
-                      context
-                          .bloc<ResetPasswordBloc>()
-                          .add(CodeChanged(code: value));
+                      // context
+                      //     .bloc<ResetPasswordBloc>()
+                      //     .add(CodeChanged(code: value));
                     },
                   ),
                 ),
@@ -266,15 +268,15 @@ class PasswordForm extends StatelessWidget {
                       contentPadding:
                           EdgeInsets.fromLTRB(15.0, 10.0, 20.0, 10.0),
                       hintText: 'Passwort',
-                      errorText: state.password.invalid
+                      errorText: state.password.isNotValid
                           ? 'Das Passwort muss mindestens 6 Zeichen lang sein'
                           : null,
                     )),
                     obscureText: true,
                     onChanged: (value) {
-                      context
-                          .bloc<ResetPasswordBloc>()
-                          .add(PasswordChanged(password: value));
+                      // context
+                      //     .bloc<ResetPasswordBloc>()
+                      //     .add(PasswordChanged(password: value));
                     },
                   ),
                 ),
@@ -324,15 +326,15 @@ class ConfirmPasswordForm extends StatelessWidget {
                       hintText: 'Bestätigung Ihres Passworts',
                       errorText: (state.confirmPassword.value !=
                                   state.password.value) ||
-                              state.confirmPassword.invalid
+                              state.confirmPassword.isNotValid
                           ? 'Bestätigung stimmt nicht mit dem Passwort überein'
                           : null,
                     )),
                     obscureText: true,
                     onChanged: (value) {
-                      context
-                          .bloc<ResetPasswordBloc>()
-                          .add(ConfirmPasswordChanged(confirmPassword: value));
+                      // context
+                      //     .bloc<ResetPasswordBloc>()
+                      //     .add(ConfirmPasswordChanged(confirmPassword: value));
                     },
                   ),
                 ),
@@ -357,7 +359,7 @@ class SubmitForm extends StatelessWidget {
                       // color: Colors.blue,
 
                       child: InkWell(
-                          child: FlatButton(
+                          child: ElevatedButton(
                               onPressed: () {
                                 Navigator.push(
                                     context,
@@ -401,13 +403,16 @@ class SubmitForm extends StatelessWidget {
                     child: SizedBox(),
                   ),
                   Container(
-                    child: FlatButton(
-                      onPressed: state.status.isValidated
-                          ? () => context
-                              .bloc<ResetPasswordBloc>()
-                              .add(FormSubmitted())
-                          : null,
-                      padding: EdgeInsets.all(10.0),
+                    child: ElevatedButton(
+                      onPressed:(){
+
+                      },
+                      //  state.status.isValidated
+                      //     ? () => context
+                      //         .bloc<ResetPasswordBloc>()
+                      //         .add(FormSubmitted())
+                      //     : null,
+                      // padding: EdgeInsets.all(10.0),
                       child: Text(
                         "Bestätigen",
                         style:

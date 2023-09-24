@@ -55,7 +55,7 @@ class YearDao {
     }).toList();
   }
 
-  Future<PaidYears> getYear(String sId) async {
+  Future<PaidYears?> getYear(String sId) async {
     final finder = Finder(filter: Filter.equals('_id', sId));
 
     final record = await _yearStore.findFirst(
@@ -82,7 +82,7 @@ class YearDao {
     );
   }
 
-  Future<PaidYears> findFirst() async {
+  Future<PaidYears?> findFirst() async {
     // Finder object can also sort data.
     final finder = Finder(sortOrders: [
       SortOrder('updatedAt', false),

@@ -10,7 +10,7 @@ class DBProvider {
   static const int kVersion1 = 1;
   final lock = Lock(reentrant: true);
   final DatabaseFactory dbFactory;
-  Database db;
+  late Database db;
 
   DBProvider()
       : this.dbFactory = kIsWeb ? databaseFactoryWeb : databaseFactoryIo;

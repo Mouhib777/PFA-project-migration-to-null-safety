@@ -1,6 +1,11 @@
+//!!!! page kemla lezem tetaawd 
+
+
+
 import 'dart:async';
+import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
 import 'package:docu_diary/blocs/addPupils/bloc.dart';
-import 'package:docu_diary/utils/snackbar.dart';
+// import 'package:docu_diary/utils/snackbar.dart';
 import 'package:docu_diary/widgets/loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,12 +13,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:docu_diary/connectionStatusSingleton.dart';
 
 import 'dart:io';
-import 'package:dropdown_formfield/dropdown_formfield.dart';
+// import 'package:dropdown_formfield/dropdown_formfield.dart';
 import 'package:flutter/foundation.dart';
-
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+// import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
-
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:image/image.dart' as Im;
@@ -21,8 +24,10 @@ import 'package:image/image.dart' as Im;
 import 'dart:math' as Math;
 
 class AddPupilsView extends StatelessWidget {
+  
+  
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  final Map argument;
+  final Map? argument;
   AddPupilsView({
     this.argument,
   });
@@ -34,7 +39,7 @@ class AddPupilsView extends StatelessWidget {
       child: Scaffold(
           key: _scaffoldKey,
           backgroundColor: Colors.white,
-          body: SafeArea(child: AddPupilsViewContent(argument, _scaffoldKey))),
+          body: SafeArea(child: AddPupilsViewContent(argument!, _scaffoldKey))),
     );
   }
 }
@@ -45,15 +50,14 @@ class AddPupilsViewContent extends StatefulWidget {
   AddPupilsViewContent(this.argument, this._scaffoldKey);
   @override
   _AddPupilsViewContentState createState() =>
-      _AddPupilsViewContentState(argument, _scaffoldKey);
+      _AddPupilsViewContentState();
 }
 
 class _AddPupilsViewContentState extends State<AddPupilsViewContent> {
-  final Map argument;
-  final GlobalKey<ScaffoldState> _scaffoldKey;
-  _AddPupilsViewContentState(this.argument, this._scaffoldKey);
+
+
   bool _hasConnection = true;
-  StreamSubscription _connectionChangeStream;
+  // StreamSubscription _connectionChangeStream;
   @override
   void initState() {
     super.initState();
@@ -61,47 +65,51 @@ class _AddPupilsViewContentState extends State<AddPupilsViewContent> {
     ConnectionStatusSingleton connectionStatus =
         ConnectionStatusSingleton.getInstance();
     new Future.delayed(Duration.zero, () {
-      context.bloc<StudentsBloc>()..add(LoadStudents(argument));
+      // context.bloc<StudentsBloc>()..add(LoadStudents(argument));
 
       _hasConnection = connectionStatus.hasConnection;
       if (!connectionStatus.hasConnection) {
-        _showSnackbarConnectionStatus(false);
-      } else {}
-      _connectionChangeStream =
-          connectionStatus.connectionChange.listen(connectionChanged);
-    });
+        // _showSnackbarConnectionStatus(false);
+      } else {
+      // _connectionChangeStream =
+      //     connectionStatus.connectionChange.listen(
+      //       connectionChanged //? use another package istead of network_state: ^0.0.1
+      //       );
+  }});
 
     new Future.delayed(Duration.zero, () {});
   }
+  //! voir lib/utils/snackbar
 
-  void connectionChanged(dynamic hasConnection) {
-    _showSnackbarConnectionStatus(hasConnection);
-    setState(() {
-      _hasConnection = hasConnection;
-    });
-  }
+  // void connectionChanged(dynamic hasConnection) {
+  //   _showSnackbarConnectionStatus(hasConnection);
+  //   setState(() {
+  //     _hasConnection = hasConnection;
+  //   });
+  // }
 
-  void _showSnackbarConnectionStatus(bool connected) {
-    _hideSnackbar();
-    SnackBarUtils.showSnackbarAddPupilsConnectionStatus(
-        _scaffoldKey, connected, _hideSnackbar);
-  }
+  // void _showSnackbarConnectionStatus(bool connected) {
+  //   _hideSnackbar();
+  //   SnackBarUtils.showSnackbarAddPupilsConnectionStatus(
+  //       _scaffoldKey, connected, _hideSnackbar);
+  // }
 
-  void _hideSnackbar() {
-    SnackBarUtils.hideSnackbar(_scaffoldKey);
-  }
+  // void _hideSnackbar() {
+  //   SnackBarUtils.hideSnackbar(_scaffoldKey);
+  // }
 
-  void _showSnackbarStudentFailure() {
-    _hideSnackbar();
-    new Future.delayed(Duration.zero, () {
-      Navigator.of(context).pushReplacementNamed('/dashboard');
-    });
-  }
-
+  // void _showSnackbarStudentFailure() {
+  //   _hideSnackbar();
+  //   new Future.delayed(Duration.zero, () {
+  //     Navigator.of(context).pushReplacementNamed('/dashboard');
+  //   });
+  // }
+//!
   void _showSnackbarStudentClassFailure(BuildContext context) {
+    DateTime? date  ;
     setState(() {
       _firstName = '';
-      _birthdayDate = null;
+      _birthdayDate = date!;
     });
 
     showDialog(
@@ -117,7 +125,7 @@ class _AddPupilsViewContentState extends State<AddPupilsViewContent> {
             title: Text('Du hast keine Klasse'),
             content: const Text('Du musst zuerst Klasse hinzufügen'),
             actions: <Widget>[
-              FlatButton(
+              ElevatedButton(
                 child: Text('Ok'),
                 onPressed: () {
                   new Future.delayed(Duration.zero, () {
@@ -131,17 +139,17 @@ class _AddPupilsViewContentState extends State<AddPupilsViewContent> {
         });
   }
 
-  @override
-  void dispose() {
-    _connectionChangeStream.cancel();
+  // @override
+  // void dispose() {
+  //   _connectionChangeStream.cancel();
 
-    super.dispose();
-    _hideSnackbar();
-  }
+  //   super.dispose();
+  //   _hideSnackbar();
+  // }
 
   final format = DateFormat("dd.MM.yyyy");
 
-  SharedPreferences prefs;
+  SharedPreferences? prefs;
 
   String userToken = '';
   bool checked = false;
@@ -149,70 +157,72 @@ class _AddPupilsViewContentState extends State<AddPupilsViewContent> {
   final _formKey = GlobalKey<FormState>();
   var isLoading = false;
 
-  String _firstName;
-  String _lastName;
+  String? _firstName;
+  String? _lastName;
   String _emergencyContact = '';
-  DateTime _birthdayDate;
+  DateTime? _birthdayDate;
 
-  List userData;
-  bool edit;
-  String userEmail;
-  String picture;
-  File _galleryFile;
+  List? userData;
+  bool? edit;
+  String? userEmail;
+  String? picture;
+  File? _galleryFile;
 
   chooseImage() async {
-    File imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
+    PickedFile? imageFile = await ImagePicker.platform.pickImage(source: ImageSource.gallery);
     final tempDir = await getTemporaryDirectory();
     final path = tempDir.path;
     int rand = new Math.Random().nextInt(10000);
-    Im.Image image = Im.decodeImage(imageFile.readAsBytesSync());
+    Im.Image? image = Im.decodeImage(imageFile!.readAsBytes() as Uint8List);
     var compressedImage = new File('$path/img_$rand.png')
-      ..writeAsBytesSync(Im.encodeJpg(image, quality: 85));
+      ..writeAsBytesSync(Im.encodeJpg(image!, quality: 85));
     setState(() {
       _galleryFile = compressedImage;
     });
   }
 
-  upload(BuildContext context) async {
-    try {
-      await chooseImage();
-      String studentId = widget.argument['id'];
+  // upload(BuildContext context) async {
+  //   try {
+  //     await chooseImage();
+  //     String studentId = widget.argument['id'];
 
-      String fileName = _galleryFile.path;
+  //     String fileName = _galleryFile.path;
 
-      context.bloc<StudentsBloc>()
-        ..add(UploadPicture(studentId: studentId, galleryFile: fileName));
-    } catch (_) {}
-  }
+  //     context.bloc<StudentsBloc>()
+  //       ..add(UploadPicture(studentId: studentId, galleryFile: fileName));
+  //   } catch (_) {}
+  // }
 
   void _submit(BuildContext context) async {
-    if (_formKey.currentState.validate()) {
-      _formKey.currentState.save();
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
 
-      context.bloc<StudentsBloc>()
-        ..add(AddStudent(
-          firstName: _firstName.trim(),
-          lastName: _lastName.trim(),
-          birthdayDate: _birthdayDate != null
-              ? DateFormat("yyyy-MM-dd HH:mm:ss")?.format(_birthdayDate)
-              : ' ',
-          emergencyNumber:
-              _emergencyContact.length > 0 ? _emergencyContact.trim() : ' ',
-        ));
+      // context.bloc<StudentsBloc>()
+      //   ..add(AddStudent(
+      //     firstName: _firstName.trim(),
+      //     lastName: _lastName.trim(),
+      //     birthdayDate: _birthdayDate != null
+      //         ? DateFormat("yyyy-MM-dd HH:mm:ss")?.format(_birthdayDate)
+      //         : ' ',
+      //     emergencyNumber:
+      //         _emergencyContact.length > 0 ? _emergencyContact.trim() : ' ',
+      //   )
+        // );
     }
   }
 
   void _submitSucces(BuildContext context) async {
+    DateTime? date ;
     setState(() {
       _firstName = '';
-      _birthdayDate = null;
+      _birthdayDate = date!;
     });
 
     showDialog(
         context: context,
         builder: (BuildContext context) {
           Future.delayed(Duration(seconds: 1), () {
-            _formKey.currentState.reset();
+            _formKey.currentState!.reset();
             Navigator.of(context).pop();
           });
           return AlertDialog(
@@ -220,19 +230,19 @@ class _AddPupilsViewContentState extends State<AddPupilsViewContent> {
             content: const Text(
                 'Der Schüler/Die Schülerin wurde erfolgreich hinzugefügt.'),
             actions: <Widget>[
-              FlatButton(
+              ElevatedButton(
                 child: Text('Ok'),
                 onPressed: () {
-                  _formKey.currentState.reset();
+                  _formKey.currentState!.reset();
                 },
               ),
             ],
           );
         });
 
-    new Future.delayed(Duration.zero, () {
-      context.bloc<StudentsBloc>()..add(LoadStudents(argument));
-    });
+    // new Future.delayed(Duration.zero, () {
+    //   context.bloc<StudentsBloc>()..add(LoadStudents(argument));
+    // });
   }
 
   _navigateToPage() async {
@@ -245,9 +255,9 @@ class _AddPupilsViewContentState extends State<AddPupilsViewContent> {
     }
   }
 
-  _updateState() async {
-    context.bloc<StudentsBloc>()..add(LoadStudents(argument));
-  }
+  // _updateState() async {
+  //   context.bloc<StudentsBloc>()..add(LoadStudents(argument));
+  // }
 
   _getState(state) async {
     if (state == true) {
@@ -257,20 +267,20 @@ class _AddPupilsViewContentState extends State<AddPupilsViewContent> {
     }
   }
 
-  Future _editStudent(BuildContext context, String id, String firstName,
-      String lastName, String birthdayDate) async {
-    context.bloc<StudentsBloc>()
-      ..add(EditStudent(
-        id: id,
-        firstName: firstName,
-        lastName: lastName,
-        birthdayDate: birthdayDate,
-      ));
-  }
+  // Future _editStudent(BuildContext context, String id, String firstName,
+  //     String lastName, String birthdayDate) async {
+  //   context.bloc<StudentsBloc>()
+  //     ..add(EditStudent(
+  //       id: id,
+  //       firstName: firstName,
+  //       lastName: lastName,
+  //       birthdayDate: birthdayDate,
+  //     ));
+  // }
 
-  Future _deletepictureStudent(BuildContext context, String id) async {
-    context.bloc<StudentsBloc>()..add(DeletePicture(id));
-  }
+  // Future _deletepictureStudent(BuildContext context, String id) async {
+  //   context.bloc<StudentsBloc>()..add(DeletePicture(id));
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -288,7 +298,7 @@ class _AddPupilsViewContentState extends State<AddPupilsViewContent> {
           current is StudentsUpdatePictureSucces;
     }, listener: (context, state) {
       if (state is StudentsFailure) {
-        _showSnackbarStudentFailure();
+        // _showSnackbarStudentFailure(); //! voir lib/utils/snackbar
       } else if (state is StudentsClassFailure) {
         _showSnackbarStudentClassFailure(context);
       } else if (state is StudentsAddSucces) {
@@ -296,9 +306,9 @@ class _AddPupilsViewContentState extends State<AddPupilsViewContent> {
       } else if (state is StudentsEditSucces) {
         _navigateToPage();
       } else if (state is StudentsUpdatePictureSucces) {
-        _updateState();
+        // _updateState();
       } else if (state is StudentsDeletePictureSucces) {
-        _updateState();
+        // _updateState();
       }
     }, buildWhen: (previous, current) {
       return current is StudentsLoadInProgress ||
@@ -407,10 +417,10 @@ class _AddPupilsViewContentState extends State<AddPupilsViewContent> {
                                                     Spacer(),
                                                     MaterialButton(
                                                       onPressed: () {
-                                                        _deletepictureStudent(
-                                                            context,
-                                                            widget.argument[
-                                                                'id']);
+                                                        // _deletepictureStudent(
+                                                        //     context,
+                                                        //     widget.argument[
+                                                        //         'id']);
                                                       },
                                                       color: Color(0xFFff8300),
                                                       textColor: Colors.white,
@@ -472,9 +482,9 @@ class _AddPupilsViewContentState extends State<AddPupilsViewContent> {
                                                         Checkbox(
                                                           value: true,
                                                           onChanged:
-                                                              (bool value) {
+                                                              (bool? value) {
                                                             setState(() {
-                                                              checked = value;
+                                                              checked = value!;
                                                             });
                                                           },
                                                         ),
@@ -497,9 +507,9 @@ class _AddPupilsViewContentState extends State<AddPupilsViewContent> {
                                                         Checkbox(
                                                           value: checked,
                                                           onChanged:
-                                                              (bool value) {
+                                                              (bool? value) {
                                                             setState(() {
-                                                              checked = value;
+                                                              checked = value!;
                                                             });
                                                           },
                                                         ),
@@ -520,9 +530,9 @@ class _AddPupilsViewContentState extends State<AddPupilsViewContent> {
                                         !kIsWeb &&
                                                 widget.argument
                                                     .containsKey('id')
-                                            ? OutlineButton(
+                                            ? ElevatedButton(
                                                 onPressed: () async {
-                                                  checked && upload(context);
+                                                  // checked && upload(context);
                                                 },
                                                 child: Text('Foto hochladen'),
                                               )
@@ -574,22 +584,24 @@ class _AddPupilsViewContentState extends State<AddPupilsViewContent> {
                                                 decoration: BoxDecoration(
                                                   color: Colors.white,
                                                 ),
-                                                child: DropDownFormField(
-                                                  validator: (input) => state
-                                                              .classeId ==
-                                                          null
-                                                      ? 'Bitte geben Sie eine Klasse'
-                                                      : null,
-                                                  titleText: 'Klasse',
-                                                  hintText:
-                                                      'Bitte wählen Sie eine Klasse',
-                                                  value: state.classeId,
-                                                  onSaved: (value) {},
-                                                  onChanged: (value) async {},
-                                                  dataSource: state.selectData,
-                                                  textField: 'className',
-                                                  valueField: '_id',
-                                                ),
+                                              
+                                                //! use DropdownButton(items: items, onChanged: onChanged),
+                                                // child: DropDownFormField(
+                                                //   validator: (input) => state
+                                                //               .classeId ==
+                                                //           null
+                                                //       ? 'Bitte geben Sie eine Klasse'
+                                                //       : null,
+                                                //   titleText: 'Klasse',
+                                                //   hintText:
+                                                //       'Bitte wählen Sie eine Klasse',
+                                                //   value: state.classeId,
+                                                //   onSaved: (value) {},
+                                                //   onChanged: (value) async {},
+                                                //   dataSource: state.selectData,
+                                                //   textField: 'className',
+                                                //   valueField: '_id',
+                                                // ),
                                               ),
                                             ),
                                           ),
@@ -645,11 +657,11 @@ class _AddPupilsViewContentState extends State<AddPupilsViewContent> {
                                                             Color(0xFFaeaeae),
                                                         fontSize: 14.7))),
                                                 validator: (input) => input
-                                                        .isEmpty
+                                                        !.isEmpty
                                                     ? 'Bitte geben Sie einen Vornamen an'
                                                     : null,
                                                 onSaved: (input) =>
-                                                    _firstName = input,
+                                                    _firstName = input!,
                                                 onChanged: (value) {
                                                   setState(() {
                                                     _firstName = value;
@@ -710,11 +722,11 @@ class _AddPupilsViewContentState extends State<AddPupilsViewContent> {
                                                             Color(0xFFaeaeae),
                                                         fontSize: 14.7))),
                                                 validator: (input) => input
-                                                        .isEmpty
+                                                        !.isEmpty
                                                     ? 'Bitte geben Sie einen Nachnamen an'
                                                     : null,
                                                 onSaved: (input) =>
-                                                    _lastName = input,
+                                                    _lastName = input!,
                                                 onChanged: (value) {
                                                   setState(() {
                                                     _lastName = value;
@@ -799,7 +811,7 @@ class _AddPupilsViewContentState extends State<AddPupilsViewContent> {
                                                           : DateTime.now(),
                                                       lastDate: DateTime(2100));
                                                   setState(() =>
-                                                      _birthdayDate = date);
+                                                      _birthdayDate = date!);
                                                   return date;
                                                 },
                                               ),
@@ -829,7 +841,7 @@ class _AddPupilsViewContentState extends State<AddPupilsViewContent> {
                           width: MediaQuery.of(context).size.width * 0.2,
                           height: MediaQuery.of(context).size.height * 0.03,
                           child: InkWell(
-                            child: FlatButton(
+                            child: ElevatedButton(
                                 onPressed: () {
                                   imageCache.clear();
                                   _navigateToPage();
@@ -860,7 +872,7 @@ class _AddPupilsViewContentState extends State<AddPupilsViewContent> {
                       widget.argument.containsKey('id')
                           ? Container(
                               child: InkWell(
-                                child: FlatButton(
+                                child: ElevatedButton(
                                   onPressed: () async {
                                     showDialog(
                                         context: context,
@@ -980,7 +992,7 @@ class _AddPupilsViewContentState extends State<AddPupilsViewContent> {
                                                                         0.3,
                                                                     child: Row(
                                                                       children: [
-                                                                        FlatButton(
+                                                                        ElevatedButton(
                                                                           child:
                                                                               Text(
                                                                             'Stornieren',
@@ -993,7 +1005,7 @@ class _AddPupilsViewContentState extends State<AddPupilsViewContent> {
                                                                           },
                                                                         ),
                                                                         Spacer(),
-                                                                        FlatButton(
+                                                                        ElevatedButton(
                                                                           child:
                                                                               Text(
                                                                             'Löschen',
@@ -1037,25 +1049,26 @@ class _AddPupilsViewContentState extends State<AddPupilsViewContent> {
                         width: MediaQuery.of(context).size.width * 0.25,
                         height: MediaQuery.of(context).size.height * 0.07,
                         child: InkWell(
-                          child: FlatButton(
+                          child: ElevatedButton(
                               onPressed: () async {
                                 (widget.argument == null ||
-                                        !widget.argument.containsKey('id'))
-                                    ? _submit(context)
-                                    : _editStudent(
-                                        context,
-                                        widget.argument['id'],
-                                        _firstName != null
-                                            ? _firstName
-                                            : widget.argument['firstName'],
-                                        _lastName != null
-                                            ? _lastName
-                                            : widget.argument['lastName'],
-                                        _birthdayDate != null
-                                            ? DateFormat("yyyy-MM-dd HH:mm:ss")
-                                                .format(_birthdayDate)
-                                            : widget.argument['birthdayDate'],
-                                      );
+                                        !widget.argument.containsKey('id'));
+                                    // ? 
+                                    _submit(context);
+                                    // : _editStudent(
+                                    //     context,
+                                    //     widget.argument['id'],
+                                    //     _firstName != null
+                                    //         ? _firstName
+                                    //         : widget.argument['firstName'],
+                                    //     _lastName != null
+                                    //         ? _lastName
+                                    //         : widget.argument['lastName'],
+                                    //     _birthdayDate != null
+                                    //         ? DateFormat("yyyy-MM-dd HH:mm:ss")
+                                    //             .format(_birthdayDate!)
+                                    //         : widget.argument['birthdayDate'],
+                                    //   );
                               },
                               child: Row(
                                 children: <Widget>[

@@ -29,32 +29,32 @@ class SettingsView extends StatefulWidget {
 }
 
 class _SettingsViewState extends State<SettingsView> {
-  String userEmail;
-  String picture;
+  String? userEmail;
+  String? picture;
   static final _baseUrl = BaseUrl.urlAPi;
-  File _galleryFile;
+  File? _galleryFile;
   String status = '';
-  Uint8List _bytesImage;
+  Uint8List? _bytesImage;
   bool enterVerification = false;
   TokenDao _tokenDao = TokenDao();
   String userToken = '';
-  PackageInfo _packageInfo = PackageInfo(
-    buildNumber: 'Unknown',
+  PackageInfo? _packageInfo = PackageInfo(
+    buildNumber: 'Unknown', appName: '', packageName: '', version: '',
   );
   pickImage() async {
-    File imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
+    PickedFile? imageFile = await ImagePicker.platform.pickImage(source: ImageSource.gallery)!;
     final tempDir = await getTemporaryDirectory();
     final path = tempDir.path;
     int rand = new Math.Random().nextInt(10000);
-    Im.Image image = Im.decodeImage(imageFile.readAsBytesSync());
+    Im.Image? image = Im.decodeImage(imageFile!.readAsBytes() as Uint8List);
     var compressedImage = new File('$path/img_$rand.png')
-      ..writeAsBytesSync(Im.encodeJpg(image, quality: 85));
+      ..writeAsBytesSync(Im.encodeJpg(image!, quality: 85));
     setState(() {
       _galleryFile = compressedImage;
     });
   }
 
-  PlatformFile objFile = null;
+  PlatformFile? objFile;
 
   void chooseFileUsingFilePicker() async {
     //-----pick file by file picker,
@@ -87,8 +87,8 @@ class _SettingsViewState extends State<SettingsView> {
     request.headers["Authorization"] = "Bearer " + userToken;
     //-----add selected file with request
     request.files.add(new http.MultipartFile(
-        "file", objFile.readStream, objFile.size,
-        filename: objFile.name));
+        "file", objFile!.readStream!, objFile!.size,
+        filename: objFile!.name));
 
     //-------Send request
     var resp = await request.send();
@@ -104,13 +104,13 @@ class _SettingsViewState extends State<SettingsView> {
 
   uploadProfilePicture() async {
     await pickImage();
-    String fileName = _galleryFile.path;
-    Token token = await _tokenDao.getToken();
+    String fileName = _galleryFile!.path;
+    Token? token = await _tokenDao.getToken();
     setState(() {
-      userToken = token.accessToken;
+      userToken = token!.accessToken!;
     });
-    String mimeType = mime(fileName);
-    String mimee = mimeType.split('/')[0];
+    String? mimeType = mime(fileName);
+    String mimee = mimeType!.split('/')[0];
     String type = mimeType.split('/')[1];
     Dio dio = new Dio();
     dio.options.headers["Content-Type"] = "multipart/form-data";
@@ -136,15 +136,16 @@ class _SettingsViewState extends State<SettingsView> {
   }
 
   getProfilePicture() async {
-    Token token = await _tokenDao.getToken();
+    Token? token = await _tokenDao.getToken();
     setState(() {
       isLoading = true;
-      userToken = token.accessToken;
+      userToken = token!.accessToken!;
     });
 
     try {
       final response = await http.get(
-        '$_baseUrl/teacher/getpicture',
+        Uri.parse(
+        '$_baseUrl/teacher/getpicture'),
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Authorization': "Bearer " + userToken,
@@ -160,10 +161,10 @@ class _SettingsViewState extends State<SettingsView> {
   }
 
   _fetchData() async {
-    Token token = await _tokenDao.getToken();
+    Token? token = await _tokenDao.getToken();
 
     setState(() {
-      userToken = token.accessToken;
+      userToken = token!.accessToken!;
     });
     setState(() {
       isLoading = true;
@@ -172,7 +173,8 @@ class _SettingsViewState extends State<SettingsView> {
 
     try {
       final response = await http.get(
-        '$_baseUrl/teacher/profile',
+        Uri.parse(
+        '$_baseUrl/teacher/profile'),
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Authorization': "bearer " + userToken,
@@ -182,12 +184,12 @@ class _SettingsViewState extends State<SettingsView> {
         final responseJson = json.decode(response.body);
         User user = User.fromJson(responseJson);
 
-        String email = user.email;
+        String email = user.email!;
 
         setState(() {
           userEmail = email;
         });
-        String name = user.name;
+        String name = user.name!;
         picture = user.picture;
         if (picture != null) {
           setState(() {
@@ -205,12 +207,13 @@ class _SettingsViewState extends State<SettingsView> {
   }
 
   Future<bool> _deleteUserPicture() async {
-    Token token = await _tokenDao.getToken();
+    Token? token = await _tokenDao.getToken();
     setState(() {
-      userToken = token.accessToken;
+      userToken = token!.accessToken!;
     });
     final response = await http.delete(
-      '$_baseUrl' + 'teacher/deletepicture',
+      Uri.parse(
+      '$_baseUrl' + 'teacher/deletepicture'),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'Authorization': "Bearer " + userToken,
@@ -232,17 +235,18 @@ class _SettingsViewState extends State<SettingsView> {
   }
 
   _deleteUser() async {
-    if (_deleteAccountFormKey.currentState.validate()) {
-      _deleteAccountFormKey.currentState.save();
-      Token token = await _tokenDao.getToken();
+    if (_deleteAccountFormKey.currentState!.validate()) {
+      _deleteAccountFormKey.currentState!.save();
+      Token? token = await _tokenDao.getToken();
       setState(() {
-        userToken = token.accessToken;
+        userToken = token!.accessToken!;
       });
       Map<String, dynamic> data = {
-        'password': _confirmDeletePassword.trim(),
+        'password': _confirmDeletePassword!.trim(),
       };
       final response = await http.patch(
-        '$_baseUrl/auth/delete-account',
+        Uri.parse(
+        '$_baseUrl/auth/delete-account'),
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Authorization': "Bearer " + userToken,
@@ -258,14 +262,14 @@ class _SettingsViewState extends State<SettingsView> {
     }
   }
 
-  Future<String> sendVerificationEmail({@required String email}) async {
+  Future<String> sendVerificationEmail({@required String? email}) async {
     final url = '$_baseUrl/auth/send-password-reset';
     Map<String, dynamic> data = {
       'email': email,
     };
 
     final response = await http.post(
-      url,
+      Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',
       },
@@ -279,19 +283,20 @@ class _SettingsViewState extends State<SettingsView> {
   }
 
   void submitEmail() async {
-    if (_formKey.currentState.validate()) {
-      _formKey.currentState.save();
-      Token token = await _tokenDao.getToken();
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      Token? token = await _tokenDao.getToken();
       setState(() {
-        userToken = token.accessToken;
+        userToken = token!.accessToken!;
       });
 
       Map<String, dynamic> data = {
-        'email': _newEmail.trim(),
+        'email': _newEmail!.trim(),
       };
       try {
         final response = await http.post(
-          '$_baseUrl/auth/update-email-request',
+          Uri.parse(
+          '$_baseUrl/auth/update-email-request'),
           headers: <String, String>{
             'Content-Type': 'application/json',
             'Authorization': "Bearer " + userToken,
@@ -307,20 +312,21 @@ class _SettingsViewState extends State<SettingsView> {
   }
 
   void submitVerificationCode() async {
-    if (_secondFormKey.currentState.validate()) {
-      _secondFormKey.currentState.save();
-      Token token = await _tokenDao.getToken();
+    if (_secondFormKey.currentState!.validate()) {
+      _secondFormKey.currentState!.save();
+      Token? token = await _tokenDao.getToken();
       setState(() {
-        userToken = token.accessToken;
+        userToken = token!.accessToken!;
       });
       Map<String, dynamic> data = {
-        'NewEmail': _newEmail.trim(),
-        'code': code.trim()
+        'NewEmail': _newEmail!.trim(),
+        'code': code!.trim()
       };
 
       try {
         final response = await http.post(
-          '$_baseUrl/auth/update-email',
+          Uri.parse(
+          '$_baseUrl/auth/update-email'),
           headers: <String, String>{
             'Content-Type': 'application/json',
             'Authorization': "Bearer " + userToken,
@@ -340,7 +346,7 @@ class _SettingsViewState extends State<SettingsView> {
                       child: const Text(
                           "Ihr eingegebener Aktivierungscode war nicht korrekt")),
                   actions: <Widget>[
-                    FlatButton(
+                    ElevatedButton(
                       child: Text('Ok'),
                       onPressed: () async {
                         Navigator.of(context).pop();
@@ -354,7 +360,7 @@ class _SettingsViewState extends State<SettingsView> {
     }
   }
 
-  String _email,
+  String? _email,
       _password,
       _name,
       _confirmPassword,
@@ -363,9 +369,9 @@ class _SettingsViewState extends State<SettingsView> {
       _verifyNewEmail = '',
       _confirmationEmail,
       code;
-  TextEditingController controller;
-  TextEditingController controllerName;
-  TextEditingController controllerLastName;
+  TextEditingController? controller;
+  TextEditingController? controllerName;
+  TextEditingController? controllerLastName;
 
   final _formKey = GlobalKey<FormState>();
   final _secondFormKey = GlobalKey<FormState>();
@@ -477,7 +483,7 @@ class _SettingsViewState extends State<SettingsView> {
                                           15.0, 10.0, 20.0, 10.0),
                                       hintText: 'Aktivierungscode',
                                     )),
-                                    validator: (input) => input.length < 3
+                                    validator: (input) => input!.length < 3
                                         ? 'Name muss mindestens 3 Zeichen lang sein'
                                         : null,
                                     onSaved: (input) => code = input,
@@ -496,7 +502,7 @@ class _SettingsViewState extends State<SettingsView> {
                             width: MediaQuery.of(context).size.width * 0.3,
                             child: Row(
                               children: [
-                                FlatButton(
+                                ElevatedButton(
                                   child: Text(
                                     'Abbrechen',
                                     style: TextStyle(
@@ -507,7 +513,7 @@ class _SettingsViewState extends State<SettingsView> {
                                   },
                                 ),
                                 Spacer(),
-                                FlatButton(
+                                ElevatedButton(
                                   child: Text(
                                     'Weiter',
                                     style: TextStyle(
@@ -627,7 +633,7 @@ class _SettingsViewState extends State<SettingsView> {
                                                                   color: Color(
                                                                       0xFF213344)))),
                                                           validator: (input) =>
-                                                              input.length < 3
+                                                              input!.length < 3
                                                                   ? 'Der Name muss mindestens 3 Buchstaben enthalten'
                                                                   : null,
                                                           onSaved: (input) =>
@@ -682,7 +688,7 @@ class _SettingsViewState extends State<SettingsView> {
                                                                           color:
                                                                               Color(0xFF213344)))),
                                                               validator: (input) =>
-                                                                  input.length <
+                                                                  input!.length <
                                                                           3
                                                                       ? 'Der Name muss mindestens 3 Buchstaben enthalten'
                                                                       : null,
@@ -702,7 +708,7 @@ class _SettingsViewState extends State<SettingsView> {
                                                             const EdgeInsets
                                                                     .only(
                                                                 right: 80.0),
-                                                        child: FlatButton(
+                                                        child: ElevatedButton(
                                                           child: Text(
                                                             'E-Mail ändern',
                                                             style: TextStyle(
@@ -772,7 +778,7 @@ class _SettingsViewState extends State<SettingsView> {
                                                                                               children: [
                                                                                                 TextFormField(
                                                                                                   decoration: (InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.fromLTRB(15.0, 10.0, 20.0, 10.0), labelText: 'E-Mail', icon: const Icon(Icons.email), labelStyle: TextStyle(color: Color(0xFFaeaeae), fontSize: 14.7))),
-                                                                                                  validator: (input) => !input.contains('@') ? 'Bitte geben Sie eine gültige E-Mail an' : null,
+                                                                                                  validator: (input) => !input!.contains('@') ? 'Bitte geben Sie eine gültige E-Mail an' : null,
                                                                                                   keyboardType: TextInputType.emailAddress,
                                                                                                   onSaved: (input) => {_newEmail = input},
                                                                                                   onChanged: (value) {
@@ -784,7 +790,7 @@ class _SettingsViewState extends State<SettingsView> {
                                                                                                 TextFormField(
                                                                                                   decoration: (InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.fromLTRB(15.0, 10.0, 20.0, 10.0), labelText: 'Neue E-Mail Adresse bestätigen', icon: const Icon(Icons.email), labelStyle: TextStyle(color: Color(0xFFaeaeae), fontSize: 14.7))),
                                                                                                   keyboardType: TextInputType.emailAddress,
-                                                                                                  validator: (input) => !input.contains('@') ? 'Bitte geben Sie eine gültige E-Mail an' : null,
+                                                                                                  validator: (input) => !input!.contains('@') ? 'Bitte geben Sie eine gültige E-Mail an' : null,
                                                                                                   onSaved: (input) {
                                                                                                     _verifyNewEmail = input;
                                                                                                   },
@@ -799,7 +805,7 @@ class _SettingsViewState extends State<SettingsView> {
                                                                                         width: MediaQuery.of(context).size.width * 0.3,
                                                                                         child: Row(
                                                                                           children: [
-                                                                                            FlatButton(
+                                                                                            ElevatedButton(
                                                                                               child: Text(
                                                                                                 'Abbrechen',
                                                                                                 style: TextStyle(fontSize: 15, color: Color(0xFF333951)),
@@ -809,16 +815,16 @@ class _SettingsViewState extends State<SettingsView> {
                                                                                               },
                                                                                             ),
                                                                                             Spacer(),
-                                                                                            FlatButton(
+                                                                                            ElevatedButton(
                                                                                               child: Text(
                                                                                                 'Weiter',
                                                                                                 style: TextStyle(fontSize: 15, color: Color(0xFFf97209)),
                                                                                               ),
                                                                                               onPressed: () {
-                                                                                                if (_formKey.currentState.validate()) {
-                                                                                                  _formKey.currentState.save();
+                                                                                                if (_formKey.currentState!.validate()) {
+                                                                                                  _formKey.currentState!.save();
 
-                                                                                                  if (_verifyNewEmail.trim() != _newEmail.trim())
+                                                                                                  if (_verifyNewEmail!.trim() != _newEmail!.trim())
                                                                                                     return;
                                                                                                   else
                                                                                                     submitEmail();
@@ -883,7 +889,7 @@ class _SettingsViewState extends State<SettingsView> {
                                                                           color:
                                                                               Color(0xFF213344)))),
                                                               validator: (input) =>
-                                                                  input.length <
+                                                                  input!.length <
                                                                           3
                                                                       ? 'Der Name muss mindestens 3 Buchstaben enthalten'
                                                                       : null,
@@ -903,7 +909,7 @@ class _SettingsViewState extends State<SettingsView> {
                                                             const EdgeInsets
                                                                     .only(
                                                                 right: 80.0),
-                                                        child: FlatButton(
+                                                        child: ElevatedButton(
                                                           child: Text(
                                                             'Passwort ändern',
                                                             style: TextStyle(
@@ -928,7 +934,7 @@ class _SettingsViewState extends State<SettingsView> {
                                                                             'Sie haben an Ihre E-Mail Adresse einen Bestätigungscode gesendet bekommen. Bitte kopieren Sie diesen und geben ihn gemeinsam mit Ihrem neuen Passwort im folgenden Screen ein')),
                                                                     actions: <
                                                                         Widget>[
-                                                                      FlatButton(
+                                                                      ElevatedButton(
                                                                         child: Text(
                                                                             'Ok'),
                                                                         onPressed:
@@ -970,7 +976,7 @@ class _SettingsViewState extends State<SettingsView> {
                                                           children: [
                                                             Spacer(),
                                                             InkWell(
-                                                              child: FlatButton(
+                                                              child: ElevatedButton(
                                                                 onPressed:
                                                                     () async {
                                                                   showDialog(
@@ -1026,7 +1032,7 @@ class _SettingsViewState extends State<SettingsView> {
                                                                                             ),
                                                                                             child: TextFormField(
                                                                                               decoration: (InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.fromLTRB(15.0, 10.0, 20.0, 10.0), labelText: 'Passwort', icon: const Padding(padding: const EdgeInsets.only(top: 15.0), child: const Icon(Icons.lock)), labelStyle: TextStyle(color: Color(0xFFaeaeae), fontSize: 14.7))),
-                                                                                              validator: (input) => input.length < 7 ? 'Bitte geben Sie einen Vornamen an' : null,
+                                                                                              validator: (input) => input!.length < 7 ? 'Bitte geben Sie einen Vornamen an' : null,
                                                                                               onSaved: (input) => _confirmDeletePassword = input,
                                                                                               obscureText: true,
                                                                                               onChanged: (value) {
@@ -1042,7 +1048,7 @@ class _SettingsViewState extends State<SettingsView> {
                                                                                           width: MediaQuery.of(context).size.width * 0.3,
                                                                                           child: Row(
                                                                                             children: [
-                                                                                              FlatButton(
+                                                                                              ElevatedButton(
                                                                                                 child: Text(
                                                                                                   'Abbrechen',
                                                                                                   style: TextStyle(fontSize: 15, color: Color(0xFF333951)),
@@ -1052,7 +1058,7 @@ class _SettingsViewState extends State<SettingsView> {
                                                                                                 },
                                                                                               ),
                                                                                               Spacer(),
-                                                                                              FlatButton(
+                                                                                              ElevatedButton(
                                                                                                 child: Text(
                                                                                                   'Löschen',
                                                                                                   style: TextStyle(fontSize: 15, color: Color(0xFFf97209)),
@@ -1163,7 +1169,7 @@ class _SettingsViewState extends State<SettingsView> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(75.0),
                             child: _bytesImage != null
-                                ? Image.memory(_bytesImage)
+                                ? Image.memory(_bytesImage!)
                                 : Image.asset('assets/images/profile.png'),
                           ),
                         ),
@@ -1175,7 +1181,7 @@ class _SettingsViewState extends State<SettingsView> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: <Widget>[
-                                OutlineButton(
+                                ElevatedButton(
                                   onPressed: uploadProfilePicture,
                                   child: Text('Foto hochladen'),
                                 ),
@@ -1189,7 +1195,7 @@ class _SettingsViewState extends State<SettingsView> {
                                   crossAxisAlignment:
                                       CrossAxisAlignment.stretch,
                                   children: <Widget>[
-                                    OutlineButton(
+                                    ElevatedButton(
                                       onPressed: chooseFileUsingFilePicker,
                                       child: Text('Foto hochladen'),
                                     ),
@@ -1201,7 +1207,7 @@ class _SettingsViewState extends State<SettingsView> {
                               ),
                     Spacer(),
                     !kIsWeb
-                        ? _infoTile('Versionsnummer : ', _packageInfo.version)
+                        ? _infoTile('Versionsnummer : ', _packageInfo!.version)
                         : Container(
                             width: 0,
                           ),

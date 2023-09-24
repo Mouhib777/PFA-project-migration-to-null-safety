@@ -39,13 +39,13 @@ class StudentsLoadClassSuccess extends StudentsState {
   final bool checked;
 
   const StudentsLoadClassSuccess(
-      {this.selectedYear,
-      this.selectedClassName,
-      this.selectData,
-      this.classeId,
-      this.studentId,
-      this.urlPicture,
-      this.checked});
+      {required this.selectedYear,
+      required this.selectedClassName,
+      required this.selectData,
+      required this.classeId,
+      required this.studentId,
+     required this.urlPicture,
+     required this.checked});
 
   @override
   List<Object> get props => [

@@ -5,12 +5,12 @@ Classes classesFromJson(String str) => Classes.fromJson(json.decode(str));
 String classesToJson(Classes data) => json.encode(data.toJson());
 
 class Classes {
-  String teacherId;
-  String className;
-  String sid;
-  String createdAt;
-  String updatedAt;
-  int version;
+  String? teacherId;
+  String? className;
+  String? sid;
+  String? createdAt;
+  String? updatedAt;
+  int? version;
   Classes(this.sid, this.teacherId, this.className);
 
 // get

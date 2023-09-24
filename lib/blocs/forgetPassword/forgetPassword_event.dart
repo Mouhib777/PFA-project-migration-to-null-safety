@@ -13,7 +13,7 @@ abstract class ForgetPasswordEvent extends Equatable {
 class EmailChanged extends ForgetPasswordEvent {
   final String email;
 
-  const EmailChanged({@required this.email});
+  const EmailChanged({required this.email});
 
   @override
   List<Object> get props => [email];

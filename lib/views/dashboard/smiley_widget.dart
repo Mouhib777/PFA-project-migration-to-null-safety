@@ -5,14 +5,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 final _smileys = <String>['pain', 'sad', 'happy', 'amazing'];
 
 class SmileyWidget extends StatefulWidget {
-  final String classId;
-  final String observationId;
-  final String studentId;
-  final int rating;
-  final bool isShowAllSmileys;
+  final String? classId;
+  final String? observationId;
+  final String? studentId;
+  final int? rating;
+  final bool? isShowAllSmileys;
 
   const SmileyWidget(
-      {Key key,
+      {Key? key,
       @required this.classId,
       @required this.observationId,
       @required this.studentId,
@@ -22,19 +22,19 @@ class SmileyWidget extends StatefulWidget {
 
   @override
   SmileyWidgetState createState() => SmileyWidgetState(
-      classId: this.classId,
-      observationId: this.observationId,
-      studentId: this.studentId,
-      rating: this.rating,
-      isShowAllSmileys: this.isShowAllSmileys);
+      classId: this.classId!,
+      observationId: this.observationId!,
+      studentId: this.studentId!,
+      rating: this.rating!,
+      isShowAllSmileys: this.isShowAllSmileys!);
 }
 
 class SmileyWidgetState extends State<SmileyWidget> {
-  String classId;
-  String observationId;
-  String studentId;
-  int rating;
-  bool isShowAllSmileys;
+  String? classId;
+  String? observationId;
+  String? studentId;
+  int? rating;
+  bool? isShowAllSmileys;
   SmileyWidgetState(
       {this.classId,
       this.observationId,
@@ -55,9 +55,9 @@ class SmileyWidgetState extends State<SmileyWidget> {
 
   @override
   Widget build(BuildContext context) {
-    int iconIdx = rating > 0 ? rating - 1 : 0;
+    int iconIdx = rating! > 0 ? rating! - 1 : 0;
 
-    if (isShowAllSmileys && iconIdx < 0) {
+    if (isShowAllSmileys! && iconIdx < 0) {
       return Row(
         children: [
           Container(
@@ -70,12 +70,12 @@ class SmileyWidgetState extends State<SmileyWidget> {
       );
     }
 
-    if (isShowAllSmileys) {
+    if (isShowAllSmileys!) {
       return Smiley(
-          classId: classId,
-          observationId: observationId,
-          studentId: studentId,
-          rating: rating);
+          classId: classId!,
+          observationId: observationId!,
+          studentId: studentId!,
+          rating: rating!);
     }
 
     return Container(
@@ -92,13 +92,13 @@ class SmileyWidgetState extends State<SmileyWidget> {
 }
 
 class Smiley extends StatefulWidget {
-  final String classId;
-  final String observationId;
-  final String studentId;
-  final int rating;
+  final String? classId;
+  final String? observationId;
+  final String? studentId;
+  final int? rating;
 
   Smiley(
-      {Key key,
+      {Key? key,
       @required this.classId,
       @required this.observationId,
       @required this.studentId,
@@ -107,7 +107,7 @@ class Smiley extends StatefulWidget {
 
   @override
   _SmileyState createState() => _SmileyState(
-      this.classId, this.observationId, this.studentId, this.rating);
+      this.classId!, this.observationId!, this.studentId!, this.rating!);
 }
 
 class _SmileyState extends State<Smiley> {
@@ -120,10 +120,10 @@ class _SmileyState extends State<Smiley> {
   @override
   didUpdateWidget(Smiley oldWidget) {
     setState(() {
-      classId = widget.classId;
-      observationId = widget.observationId;
-      studentId = widget.studentId;
-      rating = widget.rating;
+      classId = widget.classId!;
+      observationId = widget.observationId!;
+      studentId = widget.studentId!;
+      rating = widget.rating!;
     });
   }
 
@@ -137,12 +137,12 @@ class _SmileyState extends State<Smiley> {
             rating = index + 1;
           }
         });
-        context.bloc<DashboardBloc>()
-          ..add(UpdateRating(
-              classId: classId,
-              observationId: observationId,
-              studentId: studentId,
-              rating: rating));
+        // context.bloc<DashboardBloc>()
+        //   ..add(UpdateRating(
+        //       classId: classId,
+        //       observationId: observationId,
+        //       studentId: studentId,
+        //       rating: rating));
       },
       child: Container(
         padding: const EdgeInsets.all(2.0),

@@ -1,12 +1,11 @@
 import 'dart:async';
 
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:autocomplete_textfield/autocomplete_textfield.dart';
+// import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:docu_diary/blocs/config/bloc.dart';
 import 'package:docu_diary/connectionStatusSingleton.dart';
 import 'package:docu_diary/models/models.dart';
-import 'package:docu_diary/utils/snackbar.dart';
-import 'package:docu_diary/views/config/suggestions.dart';
+
 import 'package:docu_diary/widgets/loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -36,20 +35,31 @@ class AddTopicWidget extends StatelessWidget {
 }
 
 class AddTopicWidgetContent extends StatefulWidget {
-  final Function moveToPage;
+  final Function? moveToPage;
   final GlobalKey<ScaffoldState> _scaffoldKey;
-  AddTopicWidgetContent(this.moveToPage, this._scaffoldKey);
+  AddTopicWidgetContent(this.moveToPage, 
+  this._scaffoldKey);
   @override
-  _AddTopicWidgetContentState createState() =>
-      _AddTopicWidgetContentState(moveToPage, _scaffoldKey);
+  // _AddTopicWidgetContentState createState() =>
+  //     _AddTopicWidgetContentState(moveToPage, _scaffoldKey);
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 class _AddTopicWidgetContentState extends State<AddTopicWidgetContent> {
-  final Function moveToPage;
+  final Function? moveToPage;
   final GlobalKey<ScaffoldState> _scaffoldKey;
-  _AddTopicWidgetContentState(this.moveToPage, this._scaffoldKey);
+  // _AddTopicWidgetContentState(this.moveToPage, this._scaffoldKey);
 
-  StreamSubscription _connectionChangeStream;
+  StreamSubscription? _connectionChangeStream;
+
+  _AddTopicWidgetContentState({required this.moveToPage, required GlobalKey<ScaffoldState> scaffoldKey}) : _scaffoldKey = scaffoldKey;
+
+  // _AddTopicWidgetContentState(Function? moveToPage, GlobalKey<ScaffoldState> scaffoldKey, this.moveToPage, 
+  // { 
+  //   // required GlobalKey<ScaffoldState> scaffoldKey
+  // }) : _scaffoldKey = scaffoldKey;
 
   @override
   void initState() {
@@ -59,48 +69,49 @@ class _AddTopicWidgetContentState extends State<AddTopicWidgetContent> {
     new Future.delayed(Duration.zero, () {
       _connectionChangeStream =
           connectionStatus.connectionChange.listen(connectionChanged);
-      context.bloc<ConfigBloc>()..add(LoadTopics());
+      // context.bloc<ConfigBloc>()..add(LoadTopics());
     });
   }
 
   void connectionChanged(dynamic hasConnection) {
-    context.bloc<ConfigBloc>()..add(UpdateConnectionStatus(hasConnection));
+    // context.bloc<ConfigBloc>()..add(UpdateConnectionStatus(hasConnection));
     if (hasConnection) {
-      synchronize();
+      // synchronize();
     }
   }
 
   @override
   void dispose() {
-    _connectionChangeStream.cancel();
+    _connectionChangeStream!.cancel();
     super.dispose();
-  }
+  } 
+  //! voir lib/utils/snackbar
 
-  void _showSnackbarConfigFailure() {
-    _hideSnackbar();
-  }
+  // void _showSnackbarConfigFailure() {
+  //   _hideSnackbar();
+  // }
 
-  void synchronize() => context.bloc<ConfigBloc>()..add(Synchronize());
+  // void synchronize() => context.bloc<ConfigBloc>()..add(Synchronize());
 
-  void _showSnackbarConnectionStatus(bool connected) {
-    _hideSnackbar();
-    SnackBarUtils.showSnackbarConnectionStatus(
-        _scaffoldKey, connected, _hideSnackbar);
-  }
+  // void _showSnackbarConnectionStatus(bool connected) {
+  //   _hideSnackbar();
+  //   SnackBarUtils.showSnackbarConnectionStatus(
+  //       _scaffoldKey, connected, _hideSnackbar);
+  // }
 
-  void _showSnackbarSynchronizeStart() {
-    _hideSnackbar();
-    SnackBarUtils.showSnackbarSynchronizeStart(_scaffoldKey);
-  }
+  // void _showSnackbarSynchronizeStart() {
+  //   _hideSnackbar();
+  //   SnackBarUtils.showSnackbarSynchronizeStart(_scaffoldKey);
+  // }
 
-  void _showSnackbarSynchronizeRetry() {
-    _hideSnackbar();
-    SnackBarUtils.showSnackbarSynchronizeRetry(_scaffoldKey, synchronize);
-  }
+  // void _showSnackbarSynchronizeRetry() {
+  //   _hideSnackbar();
+  //   SnackBarUtils.showSnackbarSynchronizeRetry(_scaffoldKey, synchronize);
+  // }
 
-  void _hideSnackbar() {
-    SnackBarUtils.hideSnackbar(_scaffoldKey);
-  }
+  // void _hideSnackbar() {
+  //   SnackBarUtils.hideSnackbar(_scaffoldKey);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -116,16 +127,16 @@ class _AddTopicWidgetContentState extends State<AddTopicWidgetContent> {
           current is SynchronizeEnd;
     }, listener: (context, state) {
       if (state is ConfigFailure) {
-        _showSnackbarConfigFailure();
+        // _showSnackbarConfigFailure();
       } else if (state is SynchronizeStart) {
-        _showSnackbarSynchronizeStart();
+        // _showSnackbarSynchronizeStart();
       } else if (state is SynchronizeError) {
-        _showSnackbarSynchronizeRetry();
+        // _showSnackbarSynchronizeRetry();
       } else if (state is SynchronizeEnd) {
-        _hideSnackbar();
+        // _hideSnackbar();
       } else if (state is ConnectionStatus) {
         final connected = state.isConnected;
-        _showSnackbarConnectionStatus(connected);
+        // _showSnackbarConnectionStatus(connected);
       }
     }, buildWhen: (previous, current) {
       return current is ConfigLoadInProgress ||
@@ -185,7 +196,7 @@ class _AddTopicWidgetContentState extends State<AddTopicWidgetContent> {
                     ],
                   ),
                 ),
-                Container(height: 100, child: Actions(moveToPage)),
+                Container(height: 100, child: Actions(moveToPage!)),
               ])),
         );
       } else {
@@ -197,7 +208,7 @@ class _AddTopicWidgetContentState extends State<AddTopicWidgetContent> {
 
 class AddTopicFormField extends StatefulWidget {
   final Class cls;
-  AddTopicFormField({Key key, @required this.cls}) : super(key: key);
+  AddTopicFormField({Key? key, required this.cls}) : super(key: key);
 
   @override
   _AddTopicFormFieldState createState() => _AddTopicFormFieldState(this.cls);
@@ -214,13 +225,13 @@ class _AddTopicFormFieldState extends State<AddTopicFormField> {
     });
   }
 
-  final GlobalKey<AutoCompleteTextFieldState<String>> textKey = GlobalKey();
-  SimpleAutoCompleteTextField textField;
+  // final GlobalKey<AutoCompleteTextFieldState<String>> textKey = GlobalKey();
+  // SimpleAutoCompleteTextField textField;
 
   showDialogNoClass(BuildContext context) {
     // set up the buttons
 
-    Widget continueButton = FlatButton(
+    Widget continueButton = ElevatedButton(
       child: Text("OK"),
       onPressed: () {
         Navigator.of(context).pop();
@@ -249,7 +260,7 @@ class _AddTopicFormFieldState extends State<AddTopicFormField> {
   showDialogexistTopics(BuildContext context) {
     // set up the buttons
 
-    Widget continueButton = FlatButton(
+    Widget continueButton = ElevatedButton(
       child: Text("OK"),
       onPressed: () {
         Navigator.of(context).pop();
@@ -282,25 +293,25 @@ class _AddTopicFormFieldState extends State<AddTopicFormField> {
       return showDialogNoClass(context);
     }
     final Topic topic =
-        cls.topics.firstWhere((e) => e.name == topicName, orElse: () => null);
+        cls.topics.firstWhere((e) => e.name == topicName, orElse: () => Topic());
     if (topic != null) {
       return showDialogexistTopics(context);
     }
-    context.bloc<ConfigBloc>()..add(AddTopic(topicName));
+    // context.bloc<ConfigBloc>()..add(AddTopic(topicName));
   }
 
   @override
   Widget build(BuildContext context) {
-    textField = SimpleAutoCompleteTextField(
-        key: textKey,
-        decoration: InputDecoration(
-            labelText: 'Fächer, Bereiche, Themen ...',
-            labelStyle: TextStyle(color: Color(0xFFaeaeae), fontSize: 15.3)),
-        suggestions: suggestions,
-        clearOnSubmit: true,
-        textSubmitted: (text) {
-          _triggerSubmit(context, text);
-        });
+    // textField = SimpleAutoCompleteTextField(
+    //     key: textKey,
+    //     decoration: InputDecoration(
+    //         labelText: 'Fächer, Bereiche, Themen ...',
+    //         labelStyle: TextStyle(color: Color(0xFFaeaeae), fontSize: 15.3)),
+    //     suggestions: suggestions,
+    //     clearOnSubmit: true,
+    //     textSubmitted: (text) {
+    //       _triggerSubmit(context, text);
+    //     });
 
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
@@ -328,7 +339,7 @@ class _AddTopicFormFieldState extends State<AddTopicFormField> {
               )),
             ),
             child: ListTile(
-                title: textField,
+                title: Text("data"),
                 trailing: InkWell(
                   highlightColor: Colors.white,
                   child: Icon(
@@ -337,7 +348,7 @@ class _AddTopicFormFieldState extends State<AddTopicFormField> {
                     size: 24,
                   ),
                   onTap: () {
-                    textField.triggerSubmitted();
+                    // textField.triggerSubmitted();
                   },
                 )),
           ),
@@ -349,7 +360,7 @@ class _AddTopicFormFieldState extends State<AddTopicFormField> {
 
 class TopicList extends StatefulWidget {
   final Class cls;
-  TopicList({Key key, @required this.cls}) : super(key: key);
+  TopicList({Key? key, required this.cls}) : super(key: key);
   @override
   _ClassListState createState() => _ClassListState(cls);
 }
@@ -373,11 +384,11 @@ class _ClassListState extends State<TopicList> {
           title: Text('Wählen Sie eine passende Farbe'),
           content: SingleChildScrollView(
             child: BlockPicker(
-                pickerColor: getTopicColor(topic.color),
+                pickerColor: getTopicColor(topic.color!),
                 onColorChanged: (Color color) {
-                  context.bloc<ConfigBloc>()
-                    ..add(UpdateTopicColor(
-                        topic, "0x" + color.value.toRadixString(16)));
+                  // context.bloc<ConfigBloc>()
+                    // ..add(UpdateTopicColor(
+                        // topic, "0x" + color.value.toRadixString(16)));
                   Navigator.of(context).pop();
                 }),
           ),
@@ -392,12 +403,12 @@ class _ClassListState extends State<TopicList> {
       return;
     }
     final Topic fetchTopic =
-        cls.topics.firstWhere((e) => e.name == topicName, orElse: () => null);
+        cls.topics.firstWhere((e) => e.name == topicName, orElse: () => Topic());
     if (fetchTopic != null) {
       Navigator.of(context).pop();
       return;
     }
-    context.bloc<ConfigBloc>()..add(UpdateTopicName(topic, topicName));
+    // context.bloc<ConfigBloc>()..add(UpdateTopicName(topic, topicName));
     Navigator.of(context).pop();
   }
 
@@ -408,7 +419,7 @@ class _ClassListState extends State<TopicList> {
         final topicController = TextEditingController(text: topic.name);
         return AlertDialog(
           actions: [
-            FlatButton(
+            ElevatedButton(
                 onPressed: () async {
                   _updateTopicName(context, topic, topicController.text);
                 },
@@ -543,16 +554,16 @@ class _ClassListState extends State<TopicList> {
 
   showDialogDeleteTopic(BuildContext context, Topic topic) {
     // set up the buttons
-    Widget cancelButton = FlatButton(
+    Widget cancelButton = ElevatedButton(
       child: Text("Abbrechen"),
       onPressed: () {
         Navigator.of(context).pop();
       },
     );
-    Widget continueButton = FlatButton(
+    Widget continueButton = ElevatedButton(
       child: Text("Fortfahren"),
       onPressed: () {
-        context.bloc<ConfigBloc>()..add(DeleteTopic(topic));
+        // context.bloc<ConfigBloc>()..add(DeleteTopic(topic));
         Navigator.of(context).pop();
       },
     );
@@ -606,7 +617,7 @@ class _ClassListState extends State<TopicList> {
                       padding: EdgeInsets.only(left: 10.0),
                       child: Icon(
                         Icons.adjust,
-                        color: getTopicColor(topic.color),
+                        color: getTopicColor(topic.color!),
                       ),
                     ))),
               ),
@@ -614,10 +625,10 @@ class _ClassListState extends State<TopicList> {
                 child: Expanded(
                     child: Center(
                   child: Text(
-                    topic.name,
+                    topic.name!,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: getTopicColor(topic.color),
+                      color: getTopicColor(topic.color!),
                       fontSize: 13.0,
                     ),
                     maxLines: 2,
@@ -699,8 +710,8 @@ class Actions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      FlatButton(
-          highlightColor: Colors.white,
+      ElevatedButton(
+          // highlightColor: Colors.white,
           onPressed: () {
             moveToPage(1);
           },
@@ -724,8 +735,8 @@ class Actions extends StatelessWidget {
               ),
             ],
           )),
-      FlatButton(
-          highlightColor: Colors.white,
+      ElevatedButton(
+          // highlightColor: Colors.white,
           onPressed: () {
             _skip(context);
           },
@@ -740,8 +751,8 @@ class Actions extends StatelessWidget {
               ),
             ],
           )),
-      FlatButton(
-          highlightColor: Colors.white,
+      ElevatedButton(
+          // highlightColor: Colors.white,
           onPressed: () {
             moveToPage(3);
           },

@@ -1,9 +1,9 @@
 class ObservationsModel {
-  String title;
-  String classId;
-  String topicId;
-  String controlId;
-  Rating rating;
+  String? title;
+  String? classId;
+  String? topicId;
+  String? controlId;
+  Rating? rating;
 
   ObservationsModel(
       {this.title, this.classId, this.topicId, this.controlId, this.rating});
@@ -30,8 +30,8 @@ class ObservationsModel {
 }
 
 class Rating {
-  int value;
-  String studentId;
+  int? value;
+  String? studentId;
   Rating(int v , String studentId ){
 
     this.value = v ;

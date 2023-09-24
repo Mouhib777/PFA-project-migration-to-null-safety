@@ -1,7 +1,7 @@
 class PaidYears {
-  String sId;
-  String name;
-  int updatedAt;
+  String? sId;
+  String? name;
+  int? updatedAt;
 
   PaidYears({this.sId, this.name, this.updatedAt});
 

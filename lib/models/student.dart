@@ -1,22 +1,22 @@
 class Student {
-  int rating;
-  int observation;
-  String id;
-  String name;
-  String firstName;
-  String lastName;
-  String classId;
-  String className;
-  String emergencyNumber;
-  String schoolYear;
-  String teacherId;
-  String birthdayDate;
-  String picture;
-  List<TopicRating> topics;
+  int? rating;
+  int observation = 0;
+  String? id;
+  String? name;
+  String? firstName;
+  String? lastName;
+  String? classId;
+  String? className;
+  String? emergencyNumber;
+  String? schoolYear;
+  String? teacherId;
+  String? birthdayDate;
+  String? picture;
+  List<TopicRating>? topics;
 
   Student(
       {this.rating,
-      this.observation,
+      required this.observation,
       this.id,
       this.firstName,
       this.lastName,
@@ -35,7 +35,7 @@ class Student {
     id = json['_id'] ?? json['id'];
     firstName = json['firstName'];
     lastName = json['lastName'];
-    name = firstName + " " + lastName;
+    name = firstName! + " " + lastName!;
     classId = json['classId'];
     className = json['className'];
     emergencyNumber = json['emergencyNumber'];
@@ -66,17 +66,17 @@ class Student {
     data['teacherId'] = this.teacherId;
     data['birthdayDate'] = this.birthdayDate;
     data['picture'] = this.picture;
-    data['topics'] = List<dynamic>.from(this.topics.map((e) => e.toJson()));
+    data['topics'] = List<dynamic>.from(this.topics!.map((e) => e.toJson()));
 
     return data;
   }
 }
 
 class TopicRating {
-  int rating;
-  int observation;
-  String id;
-  String name;
+  int? rating;
+  int? observation;
+  String? id;
+  String? name;
 
   TopicRating({this.rating, this.observation, this.id, this.name});
 

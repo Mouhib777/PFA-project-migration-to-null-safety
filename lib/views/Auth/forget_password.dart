@@ -30,7 +30,7 @@ class ForgetPasswordForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<ForgetPasswordBloc, ForgetPasswordState>(
         listener: (context, state) {
-          if (state.status.isSubmissionSuccess) {
+          if (state.status.isSuccess) {
             showDialog(
                 context: context,
                 builder: (BuildContext context) {
@@ -38,7 +38,7 @@ class ForgetPasswordForm extends StatelessWidget {
                     title: Text('E-Mail gesendet'),
                     content: const Text('Bitte öffnen Sie diese.'),
                     actions: <Widget>[
-                      FlatButton(
+                      ElevatedButton(
                         child: Text('Ok'),
                         onPressed: () {
                           Navigator.of(context).pushNamed('/ResetPasswordView');
@@ -48,22 +48,26 @@ class ForgetPasswordForm extends StatelessWidget {
                   );
                 });
           }
-          if (state.status.isSubmissionFailure) {
-            Scaffold.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                    backgroundColor: Colors.red,
-                    content: Text('E-Mail existiert nicht')),
-              );
+          if (state.status.isFailure) {
+            //! voir lib/utils/snackbar
+            // Scaffold.of(context)
+              // ..hideCurrentSnackBar()
+              // ..showSnackBar(
+                // SnackBar(
+                //     backgroundColor: Colors.red,
+                //     content: Text('E-Mail existiert nicht')
+                //     ),
+              // );
           }
 
-          if (state.status.isSubmissionInProgress) {
-            Scaffold.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(content: Text('Submitting...')),
-              );
+          if (state.status.isInProgress) {
+                        //! voir lib/utils/snackbar
+
+            // Scaffold.of(context)
+              // ..hideCurrentSnackBar()
+              // ..showSnackBar(
+                // SnackBar(content: Text('Submitting...')),
+              // );
           }
         },
         child: Form(
@@ -211,14 +215,14 @@ class InputForm extends StatelessWidget {
                       contentPadding:
                           EdgeInsets.fromLTRB(15.0, 10.0, 20.0, 10.0),
                       hintText: 'Email',
-                      errorText: state.email.invalid
+                      errorText: state.email.isNotValid
                           ? 'Bitte geben Sie eine gültige E-Mail an'
                           : null,
                     )),
                     onChanged: (value) {
-                      context
-                          .bloc<ForgetPasswordBloc>()
-                          .add(EmailChanged(email: value));
+                      // context
+                          // .bloc<ForgetPasswordBloc>()
+                          // .add(EmailChanged(email: value));
                     },
                   ),
                 ),
@@ -243,7 +247,7 @@ class SubmitForm extends StatelessWidget {
                       // color: Colors.blue,
 
                       child: InkWell(
-                          child: FlatButton(
+                          child: ElevatedButton(
                               onPressed: () {
                                 Navigator.push(
                                     context,
@@ -287,13 +291,13 @@ class SubmitForm extends StatelessWidget {
                     child: SizedBox(),
                   ),
                   Container(
-                    child: FlatButton(
-                      onPressed: state.status.isValidated
+                    child: ElevatedButton(
+                      onPressed: state.status.isSuccess
                           ? () => context
-                              .bloc<ForgetPasswordBloc>()
-                              .add(FormSubmitted())
+                              // .bloc<ForgetPasswordBloc>()
+                              // .add(FormSubmitted())
                           : null,
-                      padding: EdgeInsets.all(10.0),
+                      // padding: EdgeInsets.all(10.0),
                       child: Text(
                         "Bestätigen",
                         style:

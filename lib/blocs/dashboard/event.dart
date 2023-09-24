@@ -12,12 +12,12 @@ class LoadClasses extends DashboardEvent {}
 class LoadLocalClasses extends DashboardEvent {}
 
 class UpdateClass extends DashboardEvent {
-  final Class oldClass;
-  final Class newClass;
+  final Class? oldClass;
+  final Class ?newClass;
   const UpdateClass({this.oldClass, this.newClass});
 
   @override
-  List<Object> get props => [oldClass, newClass];
+  List<Object> get props => [oldClass!, newClass!];
 
   @override
   String toString() =>
@@ -41,13 +41,13 @@ class UpdateYear extends DashboardEvent {
 }
 
 class LoadControls extends DashboardEvent {
-  final String classId;
-  final String topicId;
-  final bool selected;
+  final String? classId;
+  final String? topicId;
+  final bool? selected;
   const LoadControls({this.classId, this.topicId, this.selected});
 
   @override
-  List<Object> get props => [classId, topicId, selected];
+  List<Object> get props => [classId!, topicId!, selected!];
 
   @override
   String toString() =>
@@ -79,16 +79,16 @@ class LoadStudentsClass extends DashboardEvent {
 }
 
 class LoadObservation extends DashboardEvent {
-  final String classId;
-  final String topicId;
-  final String controlId;
-  final bool selected;
+  final String? classId;
+  final String? topicId;
+  final String? controlId;
+  final bool? selected;
 
   const LoadObservation(
       {this.classId, this.topicId, this.controlId, this.selected});
 
   @override
-  List<Object> get props => [classId, topicId, controlId, selected];
+  List<Object> get props => [classId!, topicId!, controlId!, selected!];
 
   @override
   String toString() =>
@@ -96,16 +96,16 @@ class LoadObservation extends DashboardEvent {
 }
 
 class CreateStructureObservation extends DashboardEvent {
-  final String classId;
-  final String topicId;
-  final String controlId;
-  final String name;
+  final String? classId;
+  final String? topicId;
+  final String? controlId;
+  final String? name;
 
   const CreateStructureObservation(
       {this.classId, this.topicId, this.controlId, this.name});
 
   @override
-  List<Object> get props => [classId, topicId, controlId, name];
+  List<Object> get props => [classId!, topicId!, controlId!, name!];
 
   @override
   String toString() =>
@@ -113,13 +113,13 @@ class CreateStructureObservation extends DashboardEvent {
 }
 
 class EditObservationName extends DashboardEvent {
-  final Class cls;
-  final Observation observation;
+  final Class? cls;
+  final Observation? observation;
 
   const EditObservationName({this.cls, this.observation});
 
   @override
-  List<Object> get props => [cls, observation];
+  List<Object> get props => [cls!, observation!];
 
   @override
   String toString() =>
@@ -127,40 +127,40 @@ class EditObservationName extends DashboardEvent {
 }
 
 class CompleteObservation extends DashboardEvent {
-  final Class cls;
+  final Class? cls;
 
   const CompleteObservation({this.cls});
 
   @override
-  List<Object> get props => [cls];
+  List<Object> get props => [cls!];
 
   @override
   String toString() => 'CompleteObservation { class: $cls }';
 }
 
 class DeleteObservation extends DashboardEvent {
-  final Class cls;
+  final Class? cls;
 
   const DeleteObservation({this.cls});
 
   @override
-  List<Object> get props => [cls];
+  List<Object> get props => [cls!];
 
   @override
   String toString() => 'DeleteObservation { class: $cls }';
 }
 
 class UpdateRating extends DashboardEvent {
-  final String classId;
-  final String observationId;
-  final String studentId;
-  final int rating;
+  final String? classId;
+  final String? observationId;
+  final String? studentId;
+  final int? rating;
 
   const UpdateRating(
       {this.classId, this.observationId, this.studentId, this.rating});
 
   @override
-  List<Object> get props => [classId, observationId, studentId, rating];
+  List<Object> get props => [classId!, observationId!, studentId!, rating!];
 
   @override
   String toString() =>
@@ -168,16 +168,16 @@ class UpdateRating extends DashboardEvent {
 }
 
 class UpdateFavorite extends DashboardEvent {
-  final String classId;
-  final String observationId;
-  final String studentId;
-  final bool isFavorite;
+  final String? classId;
+  final String? observationId;
+  final String? studentId;
+  final bool? isFavorite;
 
   const UpdateFavorite(
       {this.classId, this.observationId, this.studentId, this.isFavorite});
 
   @override
-  List<Object> get props => [classId, observationId, studentId, isFavorite];
+  List<Object> get props => [classId!, observationId!, studentId!, isFavorite!];
 
   @override
   String toString() =>
@@ -185,13 +185,13 @@ class UpdateFavorite extends DashboardEvent {
 }
 
 class FilterStudents extends DashboardEvent {
-  final Class cls;
-  final String text;
+  final Class? cls;
+  final String? text;
 
   const FilterStudents({this.cls, this.text});
 
   @override
-  List<Object> get props => [cls, text];
+  List<Object> get props => [cls!, text!];
 
   @override
   String toString() => 'FilterStudents {  class: $cls, text: $text }';

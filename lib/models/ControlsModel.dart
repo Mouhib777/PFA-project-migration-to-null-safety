@@ -1,7 +1,7 @@
 class ControlModel {
-  bool hasActiveObservation;
-  String sId;
-  String controlName;
+  bool? hasActiveObservation;
+  String? sId;
+  String? controlName;
 
   ControlModel({this.hasActiveObservation, this.sId, this.controlName});
 

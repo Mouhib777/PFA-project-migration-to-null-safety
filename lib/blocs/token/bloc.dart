@@ -19,7 +19,7 @@ class TokenBloc extends Bloc<TokenEvent, TokenState> {
   @override
   Stream<TokenState> mapEventToState(TokenEvent event) async* {
     if (event is LoadToken) {
-      Token token = await _tokenDao.getToken();
+      Token? token = await _tokenDao.getToken();
       yield TokenLoadSuccess(token: token);
     } else if (event is TokenAdded) {
       yield* _mapTokenAddedToState(event);

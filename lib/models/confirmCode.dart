@@ -9,7 +9,7 @@ class ConfirmCode extends FormzInput<String, ConfirmCodeValidationError> {
   static final _confirmcodeRegex = RegExp(r"(\w+).{4,}");
 
   @override
-  ConfirmCodeValidationError validator(String value) {
+  ConfirmCodeValidationError? validator(String value) {
     return _confirmcodeRegex.hasMatch(value)
         ? null
         : ConfirmCodeValidationError.invalid;

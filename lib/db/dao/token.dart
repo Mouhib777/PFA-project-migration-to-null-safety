@@ -22,7 +22,7 @@ class TokenDao {
     );
   }
 
-  Future<Token> getToken() async {
+  Future<Token?> getToken() async {
     // Finder object can also sort data.
     final finder = Finder(sortOrders: [
       SortOrder('accessToken'),

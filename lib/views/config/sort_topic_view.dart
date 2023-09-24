@@ -29,7 +29,7 @@ class SortTopicWidget extends StatelessWidget {
 }
 
 class SortTopicWidgetContent extends StatefulWidget {
-  final Function moveToPage;
+  final Function? moveToPage;
   final GlobalKey<ScaffoldState> _scaffoldKey;
   SortTopicWidgetContent(this.moveToPage, this._scaffoldKey);
 
@@ -39,11 +39,13 @@ class SortTopicWidgetContent extends StatefulWidget {
 }
 
 class _SortTopicWidgetContentState extends State<SortTopicWidgetContent> {
-  final Function moveToPage;
-  final GlobalKey<ScaffoldState> _scaffoldKey;
-  _SortTopicWidgetContentState(this.moveToPage, this._scaffoldKey);
+  late final Function moveToPage;
+  late final GlobalKey<ScaffoldState> _scaffoldKey;
+  // _SortTopicWidgetContentState(this.moveToPage, this._scaffoldKey);
 
-  StreamSubscription _connectionChangeStream;
+  late StreamSubscription _connectionChangeStream;
+  
+  _SortTopicWidgetContentState(Function? moveToPage, GlobalKey<ScaffoldState> scaffoldKey);
 
   @override
   void initState() {
@@ -53,14 +55,14 @@ class _SortTopicWidgetContentState extends State<SortTopicWidgetContent> {
     new Future.delayed(Duration.zero, () {
       _connectionChangeStream =
           connectionStatus.connectionChange.listen(connectionChanged);
-      context.bloc<ConfigBloc>()..add(LoadTopics());
+      // context.bloc<ConfigBloc>()..add(LoadTopics());
     });
   }
 
   void connectionChanged(dynamic hasConnection) {
-    context.bloc<ConfigBloc>()..add(UpdateConnectionStatus(hasConnection));
+    // context.bloc<ConfigBloc>()..add(UpdateConnectionStatus(hasConnection));
     if (hasConnection) {
-      synchronize();
+      // synchronize();
     }
   }
 
@@ -70,31 +72,31 @@ class _SortTopicWidgetContentState extends State<SortTopicWidgetContent> {
     super.dispose();
   }
 
-  void _showSnackbarConfigFailure() {
-    _hideSnackbar();
-  }
+  // void _showSnackbarConfigFailure() {
+  //   _hideSnackbar();
+  // }
 
-  void synchronize() => context.bloc<ConfigBloc>()..add(Synchronize());
+  // void synchronize() => context.bloc<ConfigBloc>()..add(Synchronize());
 
-  void _showSnackbarConnectionStatus(bool connected) {
-    _hideSnackbar();
-    SnackBarUtils.showSnackbarConnectionStatus(
-        _scaffoldKey, connected, _hideSnackbar);
-  }
+  // void _showSnackbarConnectionStatus(bool connected) {
+  //   _hideSnackbar();
+  //   SnackBarUtils.showSnackbarConnectionStatus(
+  //       _scaffoldKey, connected, _hideSnackbar);
+  // }
 
-  void _showSnackbarSynchronizeStart() {
-    _hideSnackbar();
-    SnackBarUtils.showSnackbarSynchronizeStart(_scaffoldKey);
-  }
+  // void _showSnackbarSynchronizeStart() {
+  //   _hideSnackbar();
+  //   SnackBarUtils.showSnackbarSynchronizeStart(_scaffoldKey);
+  // }
 
-  void _showSnackbarSynchronizeRetry() {
-    _hideSnackbar();
-    SnackBarUtils.showSnackbarSynchronizeRetry(_scaffoldKey, synchronize);
-  }
+  // void _showSnackbarSynchronizeRetry() {
+  //   _hideSnackbar();
+  //   SnackBarUtils.showSnackbarSynchronizeRetry(_scaffoldKey, synchronize);
+  // }
 
-  void _hideSnackbar() {
-    SnackBarUtils.hideSnackbar(_scaffoldKey);
-  }
+  // void _hideSnackbar() {
+  //   SnackBarUtils.hideSnackbar(_scaffoldKey);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -110,16 +112,16 @@ class _SortTopicWidgetContentState extends State<SortTopicWidgetContent> {
           current is SynchronizeEnd;
     }, listener: (context, state) {
       if (state is ConfigFailure) {
-        _showSnackbarConfigFailure();
+        // _showSnackbarConfigFailure();
       } else if (state is SynchronizeStart) {
-        _showSnackbarSynchronizeStart();
+        // _showSnackbarSynchronizeStart();
       } else if (state is SynchronizeError) {
-        _showSnackbarSynchronizeRetry();
+        // _showSnackbarSynchronizeRetry();
       } else if (state is SynchronizeEnd) {
-        _hideSnackbar();
+        // _hideSnackbar();
       } else if (state is ConnectionStatus) {
         final connected = state.isConnected;
-        _showSnackbarConnectionStatus(connected);
+        // _showSnackbarConnectionStatus(connected);
       }
     }, buildWhen: (previous, current) {
       return current is ConfigLoadInProgress ||
@@ -190,7 +192,7 @@ class _SortTopicWidgetContentState extends State<SortTopicWidgetContent> {
 
 class TopicList extends StatefulWidget {
   final Class cls;
-  TopicList({Key key, @required this.cls}) : super(key: key);
+  TopicList({Key? key, required this.cls}) : super(key: key);
   @override
   _ClassListState createState() => _ClassListState(cls);
 }
@@ -275,19 +277,19 @@ class _ClassListState extends State<TopicList> {
     );
 
     return DragTarget(
-      onWillAccept: (fromChange) {
-        return cls.topics.indexOf(fromChange) != index;
-      },
+      // onWillAccept: (fromChange) {
+      //   // return cls.topics.indexOf(fromChange) != index;
+      // },
       onAccept: (fromChange) {
-        final int changeFromIndex = cls.topics.indexOf(fromChange);
-        final Topic changeToValue = cls.topics[index];
+        // final int changeFromIndex = cls.topics.indexOf(fromChange);
+        // final Topic changeToValue = cls.topics[index];
 
         setState(() {
-          cls.topics[index] = fromChange;
-          cls.topics[changeFromIndex] = changeToValue;
+          // cls.topics[index] = fromChange;
+          // cls.topics[changeFromIndex] = changeToValue;
         });
 
-        context.bloc<ConfigBloc>()..add(SortTopics(cls.topics));
+        // context.bloc<ConfigBloc>()..add(SortTopics(cls.topics));
       },
       builder:
           (BuildContext context, selectedData, List<dynamic> rejectedData) {
@@ -338,8 +340,8 @@ class Actions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      FlatButton(
-          highlightColor: Colors.white,
+      ElevatedButton(
+          // highlightColor: Colors.white,
           onPressed: () {
             moveToPage(2);
           },
@@ -363,8 +365,8 @@ class Actions extends StatelessWidget {
               ),
             ],
           )),
-      FlatButton(
-          highlightColor: Colors.white,
+      ElevatedButton(
+          // highlightColor: Colors.white,
           onPressed: () {
             _skip(context);
           },
@@ -379,8 +381,8 @@ class Actions extends StatelessWidget {
               ),
             ],
           )),
-      FlatButton(
-          highlightColor: Colors.white,
+      ElevatedButton(
+          // highlightColor: Colors.white,
           onPressed: () {
             moveToPage(4);
           },

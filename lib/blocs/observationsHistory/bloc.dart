@@ -58,25 +58,25 @@ class ObservationsBloc extends Bloc<ObservationsEvent, ObservationsState> {
       String filter = '',
       bool sortBySelectedClass = false}) async* {
     try {
-      Token token = await _tokenDao.getToken();
-      Class cls = await _selectedClassDao.getClass();
+      Token? token = await _tokenDao.getToken();
+      Class? cls = await _selectedClassDao.getClass();
       var selectyear = await _selectedYearDao.getYear();
-      var currentYear = selectyear.name;
+      var currentYear = selectyear!.name;
 
-      var selectedClassId = cls.id;
+      var selectedClassId = cls!.id;
       // var selectedClassName = cls.className;
-      var userToken = token.accessToken;
+      var userToken = token!.accessToken;
 
       List<Observation> listObservations = [];
       String defaultSelectValue;
 
       List<String> observations = [];
 
-      List<Class> classes = await _classDao.getClasses(currentYear);
+      List<Class>? classes = await _classDao.getClasses(currentYear!);
       if (classes.isEmpty) {
         yield ObservationsFailure();
       } else {
-        final Class selectedClass = await _selectedClassDao.getClass();
+        final Class? selectedClass = await _selectedClassDao.getClass();
         if (selectedClass != null) {
           classes = rearrange(classes, selectedClass);
         } else {
@@ -84,45 +84,49 @@ class ObservationsBloc extends Bloc<ObservationsEvent, ObservationsState> {
         }
 
         var responseJsonThree = await _observationRepository
-            .getStudentsObservations(token: userToken, id: selectedClassId);
+            .getStudentsObservations(token: userToken, id: selectedClassId.toString());
 
         responseJsonThree.forEach((v) => {
               listObservations.add(Observation.fromJson(v)),
-              observations.add(Observation.fromJson(v).sId),
-              observations.add(Observation.fromJson(v).classId),
-              observations.add(Observation.fromJson(v).date),
-              observations.add(Observation.fromJson(v).topicName),
-              observations.add(Observation.fromJson(v).title),
-              observations.add(Observation.fromJson(v).topicColor),
-              observations.add(Observation.fromJson(v).type),
+              observations.add(Observation.fromJson(v).sId!),
+              observations.add(Observation.fromJson(v).classId!),
+              observations.add(Observation.fromJson(v).date!),
+              observations.add(Observation.fromJson(v).topicName!),
+              observations.add(Observation.fromJson(v).title!),
+              observations.add(Observation.fromJson(v).topicColor!),
+              observations.add(Observation.fromJson(v).type!),
               Observation.fromJson(v).student != null
-                  ? observations.add(Observation.fromJson(v).student.firstName)
+                  ? observations.add(Observation.fromJson(v).student!.firstName!)
                   : '',
               Observation.fromJson(v).student != null
-                  ? observations.add(Observation.fromJson(v).student.lastName)
+                  ? observations.add(Observation.fromJson(v).student!.lastName!)
                   : '',
               Observation.fromJson(v).student != null
-                  ? observations.add(Observation.fromJson(v).student.picture)
+                  ? observations.add(Observation.fromJson(v).student!.picture!)
                   : '',
             });
         if (filter != '') {
           listObservations = listObservations
-              .where((e) => (e.student.firstName.toLowerCase() +
-                      e.student.lastName.toLowerCase() +
-                      e.topicName.toLowerCase() +
-                      e.controlName.toLowerCase())
+              .where((e) => (e.student!.firstName!.toLowerCase() +
+                      e.student!.lastName!.toLowerCase() +
+                      e.topicName!.toLowerCase() +
+                      e.controlName!.toLowerCase())
                   .contains(filter
                       .toLowerCase()
                       .replaceAll(new RegExp(r"\s+\b|\b\s"), "")))
               .toList();
         }
+        String defaultSelectValue = '';
+        if(defaultSelectValue !=""){
 
+        
         yield ObservationsLoadSuccess(
           classes: classes,
           listObservations: listObservations,
           defaultSelectValue: defaultSelectValue,
           selectedYear: currentYear,
         );
+        }
       }
     } catch (_) {
       yield ObservationsFailure();
@@ -156,20 +160,20 @@ class ObservationsBloc extends Bloc<ObservationsEvent, ObservationsState> {
 
   Stream<ObservationsState> _mapLoadedStudentObservationToState(
       LoadStudent event) async* {
-    final String id = event.id;
-    Token token = await _tokenDao.getToken();
+    final String? id = event.id;
+    Token? token = await _tokenDao.getToken();
     List<PupilsModel> listPeoples = [];
     List<Observation> listObservations = [];
 
     List<String> observations = [];
 
-    var items = List<PupilsModel>();
+    var items = <PupilsModel>[];
     // String classID = id;
 
-    var userToken = token.accessToken;
+    var userToken = token!.accessToken;
 
     var responseJson =
-        await _observationRepository.fetchPeople(token: userToken, id: id);
+        await _observationRepository.fetchPeople(token: userToken, id: id!);
 
     responseJson.forEach((v) => {
           listPeoples.add(PupilsModel.fromJson(v)),
@@ -177,24 +181,24 @@ class ObservationsBloc extends Bloc<ObservationsEvent, ObservationsState> {
         });
 
     var responseJsonTwo = await _observationRepository.getStudentsObservations(
-        token: userToken, id: id);
+        token: userToken, id: id!);
     responseJsonTwo.forEach((v) => {
           listObservations.add(Observation.fromJson(v)),
-          observations.add(Observation.fromJson(v).sId),
-          observations.add(Observation.fromJson(v).classId),
-          observations.add(Observation.fromJson(v).date),
-          observations.add(Observation.fromJson(v).topicName),
-          observations.add(Observation.fromJson(v).title),
-          observations.add(Observation.fromJson(v).topicColor),
-          observations.add(Observation.fromJson(v).type),
+          observations.add(Observation.fromJson(v).sId!),
+          observations.add(Observation.fromJson(v).classId!),
+          observations.add(Observation.fromJson(v).date!),
+          observations.add(Observation.fromJson(v).topicName!),
+          observations.add(Observation.fromJson(v).title!),
+          observations.add(Observation.fromJson(v).topicColor!),
+          observations.add(Observation.fromJson(v).type!),
           Observation.fromJson(v).student != null
-              ? observations.add(Observation.fromJson(v).student.firstName)
+              ? observations.add(Observation.fromJson(v).student!.firstName!)
               : '',
           Observation.fromJson(v).student != null
-              ? observations.add(Observation.fromJson(v).student.lastName)
+              ? observations.add(Observation.fromJson(v).student!.lastName!)
               : '',
           Observation.fromJson(v).student != null
-              ? observations.add(Observation.fromJson(v).student.picture)
+              ? observations.add(Observation.fromJson(v).student!.picture!)
               : '',
         });
 
@@ -206,9 +210,9 @@ class ObservationsBloc extends Bloc<ObservationsEvent, ObservationsState> {
   Stream<ObservationsState> _mapDeleteSpontaneousObservation(
       DeleteSpontaneousObservation event) async* {
     final String id = event.observationId;
-    Token token = await _tokenDao.getToken();
+    Token? token = await _tokenDao.getToken();
 
-    var userToken = token.accessToken;
+    var userToken = token!.accessToken;
 
     await _observationRepository.deleteSpontaneousObservation(
         token: userToken, observationId: id);
@@ -221,13 +225,13 @@ class ObservationsBloc extends Bloc<ObservationsEvent, ObservationsState> {
 
   Stream<ObservationsState> _mapDeleteStructuredObservation(
       DeleteStructuredObservation event) async* {
-    final String id = event.observationId;
-    Token token = await _tokenDao.getToken();
+    final String? id = event.observationId;
+    Token? token = await _tokenDao.getToken();
 
-    var userToken = token.accessToken;
+    var userToken = token!.accessToken;
 
     await _observationRepository.deleteStructuredObservation(
-        token: userToken, observationId: id, studentId: event.studentId);
+        token: userToken, observationId: id!, studentId: event.studentId!);
     yield* _reloadObservations(sortBySelectedClass: true);
 
     try {} catch (_) {
@@ -252,11 +256,11 @@ class ObservationsBloc extends Bloc<ObservationsEvent, ObservationsState> {
   Stream<ObservationsState> _mapEditObservationToState(
       EditObservation event) async* {
     try {
-      Token token = await _tokenDao.getToken();
+      Token? token = await _tokenDao.getToken();
       var idobservation = event.id;
       // String classID = id;
 
-      var userToken = token.accessToken;
+      var userToken = token!.accessToken;
 
       Map<String, dynamic> data = {
         'title': event.title,
@@ -269,7 +273,7 @@ class ObservationsBloc extends Bloc<ObservationsEvent, ObservationsState> {
       };
 
       await _observationRepository.sendeditObservation(
-          token: userToken, id: idobservation, observation: data);
+          token: userToken, id: idobservation!, observation: data);
 
       yield* _reloadObservations(sortBySelectedClass: true);
     } catch (_) {

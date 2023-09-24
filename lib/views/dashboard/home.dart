@@ -66,24 +66,32 @@ class DashboardContent extends StatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
   final Function updateHasConnection;
   DashboardContent(
-      {@required this.scaffoldKey, @required this.updateHasConnection});
-  @override
-  _DashboardContentState createState() => _DashboardContentState(
-      scaffoldKey: scaffoldKey, updateHasConnection: updateHasConnection);
+      {required this.scaffoldKey, required this.updateHasConnection});
+      
+        @override
+        State<StatefulWidget> createState() {
+          // TODO: implement createState
+          throw UnimplementedError();
+        }
+  // @override
+  // _DashboardContentState createState() => _DashboardContentState(
+  //     scaffoldKey: scaffoldKey, updateHasConnection: updateHasConnection);
 }
 
 class _DashboardContentState extends State<DashboardContent> {
-  final GlobalKey<ScaffoldState> scaffoldKey;
-  final Function updateHasConnection;
-  _DashboardContentState(
-      {@required this.scaffoldKey, @required this.updateHasConnection});
+  late final GlobalKey<ScaffoldState> scaffoldKey;
+  late final Function updateHasConnection;
+  // _DashboardContentState(
+  //     {
+  //       required this.scaffoldKey, required this.updateHasConnection
+  //     });
 
-  StreamSubscription _connectionChangeStream;
+  StreamSubscription? _connectionChangeStream;
 
   @override
   void initState() {
     super.initState();
-    context.bloc<DashboardBloc>()..add(LoadYears());
+    // context.bloc<DashboardBloc>()..add(LoadYears());
 
     ConnectionStatusSingleton connectionStatus =
         ConnectionStatusSingleton.getInstance();
@@ -95,44 +103,44 @@ class _DashboardContentState extends State<DashboardContent> {
   }
 
   void connectionChanged(dynamic hasConnection) {
-    context.bloc<DashboardBloc>()..add(UpdateConnectionStatus(hasConnection));
+    // context.bloc<DashboardBloc>()..add(UpdateConnectionStatus(hasConnection));
     updateHasConnection(hasConnection);
     if (hasConnection) {
-      synchronize();
+      // synchronize();
     }
   }
 
   @override
   void dispose() {
-    _connectionChangeStream.cancel();
+    _connectionChangeStream!.cancel();
     super.dispose();
   }
+//! voir lib/utiles/snackbar
+  // void _showSnackbarConfigFailure() {
+  //   _hideSnackbar();
+  // }
 
-  void _showSnackbarConfigFailure() {
-    _hideSnackbar();
-  }
+  // void synchronize() => context.bloc<DashboardBloc>()..add(Synchronize());
 
-  void synchronize() => context.bloc<DashboardBloc>()..add(Synchronize());
+  // void _showSnackbarConnectionStatus(bool connected) {
+  //   _hideSnackbar();
+  //   SnackBarUtils.showSnackbarConnectionStatus(
+  //       scaffoldKey, connected, _hideSnackbar);
+  // }
 
-  void _showSnackbarConnectionStatus(bool connected) {
-    _hideSnackbar();
-    SnackBarUtils.showSnackbarConnectionStatus(
-        scaffoldKey, connected, _hideSnackbar);
-  }
+  // void _showSnackbarSynchronizeStart() {
+  //   _hideSnackbar();
+  //   SnackBarUtils.showSnackbarSynchronizeStart(scaffoldKey);
+  // }
 
-  void _showSnackbarSynchronizeStart() {
-    _hideSnackbar();
-    SnackBarUtils.showSnackbarSynchronizeStart(scaffoldKey);
-  }
+  // void _showSnackbarSynchronizeRetry() {
+  //   _hideSnackbar();
+  //   SnackBarUtils.showSnackbarSynchronizeRetry(scaffoldKey, synchronize);
+  // }
 
-  void _showSnackbarSynchronizeRetry() {
-    _hideSnackbar();
-    SnackBarUtils.showSnackbarSynchronizeRetry(scaffoldKey, synchronize);
-  }
-
-  void _hideSnackbar() {
-    SnackBarUtils.hideSnackbar(scaffoldKey);
-  }
+  // void _hideSnackbar() {
+  //   SnackBarUtils.hideSnackbar(scaffoldKey);
+  // }
 
   Widget build(BuildContext context) {
     return BlocConsumer<DashboardBloc, DashboardState>(
@@ -144,16 +152,16 @@ class _DashboardContentState extends State<DashboardContent> {
           current is SynchronizeEnd;
     }, listener: (context, state) {
       if (state is DashboardFailure) {
-        _showSnackbarConfigFailure();
+        // _showSnackbarConfigFailure();
       } else if (state is SynchronizeStart) {
-        _showSnackbarSynchronizeStart();
+        // _showSnackbarSynchronizeStart();
       } else if (state is SynchronizeError) {
-        _showSnackbarSynchronizeRetry();
+        // _showSnackbarSynchronizeRetry();
       } else if (state is SynchronizeEnd) {
-        _hideSnackbar();
+        // _hideSnackbar();
       } else if (state is ConnectionStatus) {
         final connected = state.isConnected;
-        _showSnackbarConnectionStatus(connected);
+        // _showSnackbarConnectionStatus(connected);
       }
     }, buildWhen: (previous, current) {
       return current is DashboardLoadInProgress ||
@@ -183,7 +191,7 @@ class _DashboardContentState extends State<DashboardContent> {
             ]));
       } else if (state is DashboardLoadClassSuccess) {
         final List<Class> classes = state.classes;
-        final Class selectedClass = classes.length > 0 ? classes.first : null;
+        final Class? selectedClass = classes.length > 0 ? classes.first : null;
         return Row(children: [
           Container(
             alignment: Alignment.topLeft,
@@ -202,7 +210,7 @@ class _DashboardContentState extends State<DashboardContent> {
                         DropDownClasses(),
                       ],
                     ),
-                    Search(selectedClass: selectedClass),
+                    Search(selectedClass: selectedClass!),
                   ],
                 ),
                 SizedBox(height: 25),
@@ -251,13 +259,13 @@ class SchoolYear extends StatelessWidget {
             icon: Icon(Icons.keyboard_arrow_down),
             iconSize: 40.0,
             iconEnabledColor: Color(0xFFff7f00),
-            onChanged: (PaidYears newValue) {
-              context.bloc<DashboardBloc>()..add(UpdateYear(newValue));
+            onChanged: (PaidYears? newValue) {
+              // context.bloc<DashboardBloc>()..add(UpdateYear(newValue));
             },
             items: years.map<DropdownMenuItem<PaidYears>>((PaidYears value) {
               return DropdownMenuItem<PaidYears>(
                 value: value,
-                child: Text(value.sId,
+                child: Text(value.sId!,
                     style: TextStyle(fontSize: 19, color: Color(0xFF87333951))),
               );
             }).toList(),
@@ -290,18 +298,18 @@ class DropDownClasses extends StatelessWidget {
             icon: Icon(Icons.keyboard_arrow_down),
             iconSize: 50.0,
             iconEnabledColor: Color(0xFFff7f00),
-            onChanged: (Class newValue) {
-              if (newValue.id != selectedClass.id) {
-                context.bloc<DashboardBloc>()
-                  ..add(
-                      UpdateClass(oldClass: selectedClass, newClass: newValue));
+            onChanged: (Class? newValue) {
+              if (newValue!.id != selectedClass.id) {
+                // context.bloc<DashboardBloc>()
+                //   ..add(
+                //       UpdateClass(oldClass: selectedClass, newClass: newValue));
                 // context.bloc<DashboardBloc>()..add(LoadStudentsClass(newValue));
               }
             },
             items: classes.map<DropdownMenuItem<Class>>((Class value) {
               return DropdownMenuItem<Class>(
                 value: value,
-                child: Text(value.className,
+                child: Text(value.className!,
                     style: TextStyle(fontSize: 34.7, color: Color(0xFF333951))),
               );
             }).toList(),
@@ -315,11 +323,11 @@ class DropDownClasses extends StatelessWidget {
 }
 
 class Search extends StatefulWidget {
-  final Class selectedClass;
-  Search({Key key, @required this.selectedClass}) : super(key: key);
+  final Class? selectedClass;
+  Search({Key? key, @required this.selectedClass}) : super(key: key);
 
   @override
-  _SearchState createState() => _SearchState(selectedClass);
+  _SearchState createState() => _SearchState(selectedClass!);
 }
 
 class _SearchState extends State<Search> {
@@ -333,14 +341,14 @@ class _SearchState extends State<Search> {
   }
 
   _filterStudents() {
-    context.bloc<DashboardBloc>()
-      ..add(FilterStudents(cls: selectedClass, text: textController.text));
+    // context.bloc<DashboardBloc>()
+    //   ..add(FilterStudents(cls: selectedClass, text: textController.text));
   }
 
   @override
   didUpdateWidget(Search oldWidget) {
     setState(() {
-      selectedClass = widget.selectedClass;
+      selectedClass = widget.selectedClass!;
       if (oldWidget.selectedClass?.id != widget.selectedClass?.id) {
         textController.text = '';
         FocusScope.of(context).unfocus();
@@ -389,11 +397,11 @@ class _SearchState extends State<Search> {
 }
 
 class Filters extends StatefulWidget {
-  final Class selectedClass;
-  Filters({Key key, @required this.selectedClass}) : super(key: key);
+  final Class? selectedClass;
+  Filters({Key? key, @required this.selectedClass}) : super(key: key);
 
   @override
-  _FiltersState createState() => _FiltersState(selectedClass);
+  _FiltersState createState() => _FiltersState(selectedClass!);
 }
 
 class _FiltersState extends State<Filters> {
@@ -404,7 +412,7 @@ class _FiltersState extends State<Filters> {
   @override
   didUpdateWidget(Filters oldWidget) {
     setState(() {
-      selectedClass = widget.selectedClass;
+      selectedClass = widget.selectedClass!;
     });
   }
 
@@ -413,7 +421,7 @@ class _FiltersState extends State<Filters> {
     if (selectedClass == null) {
       return Container();
     }
-    Topic selectedTopic;
+    Topic? selectedTopic;
     if (selectedClass.selectedTopicId != null) {
       selectedTopic = selectedClass.topics.firstWhere((t) =>
           t.id == selectedClass.selectedTopicId ||
@@ -472,11 +480,11 @@ class _FiltersState extends State<Filters> {
                         builder: (BuildContext context) => TopicDialog());
                     if (data == null) return;
                     if (data[0] != null) {
-                      context.bloc<DashboardBloc>()
-                        ..add(UpdateTopicsClass(data[0]));
+                      // context.bloc<DashboardBloc>()
+                        // ..add(UpdateTopicsClass(data[0]));
                     }
                     if (data[1] == '/') {
-                      context.bloc<DashboardBloc>()..add(LoadLocalClasses());
+                      // context.bloc<DashboardBloc>()..add(LoadLocalClasses());
                     } else {
                       Navigator.pushNamed(context, '/sort_topics');
                     }
@@ -488,47 +496,49 @@ class _FiltersState extends State<Filters> {
           SizedBox(height: 20),
           Topics(selectedClass: selectedClass),
           SizedBox(height: 20),
-          Controls(classId: selectedClass.id, selectedTopic: selectedTopic)
+          Controls(classId: selectedClass.id!, selectedTopic: selectedTopic!)
         ]));
   }
 }
 
 class Topics extends StatefulWidget {
-  final Class selectedClass;
-  Topics({Key key, @required this.selectedClass}) : super(key: key);
+  final Class? selectedClass;
+  Topics({Key? key, @required this.selectedClass}) : super(key: key);
 
   @override
-  _TopicsState createState() => _TopicsState(selectedClass);
+  _TopicsState createState() => _TopicsState(selectedClass!);
 }
 
 class _TopicsState extends State<Topics> {
-  Class selectedClass;
-  _TopicsState(this.selectedClass);
-  List<Topic> topics;
-  List<bool> isSelected = [];
-  Topic selectedTopic;
+  Class? selectedClass;
+  // _TopicsState(this.selectedClass);
+  List<Topic>? topics;
+  List<bool>? isSelected = [];
+  Topic? selectedTopic;
+  
+  _TopicsState(Class? cclass);
 
   @override
   void initState() {
     super.initState();
-    topics = selectedClass.topics.where((e) => e.selected).toList();
-    isSelected = List<bool>.generate(topics.length, (i) => false);
+    topics = selectedClass!.topics.where((e) => e.selected!).toList();
+    isSelected = List<bool>.generate(topics!.length, (i) => false);
   }
 
   @override
   didUpdateWidget(Topics oldWidget) {
-    if (oldWidget.selectedClass.id != widget.selectedClass.id) {
+    if (oldWidget.selectedClass!.id != widget.selectedClass!.id) {
       setState(() {
         selectedClass = widget.selectedClass;
-        topics = selectedClass.topics.where((e) => e.selected).toList();
-        isSelected = List<bool>.generate(topics.length, (i) => false);
+        topics = selectedClass!.topics.where((e) => e.selected!).toList();
+        isSelected = List<bool>.generate(topics!.length, (i) => false);
       });
     } else {
       setState(() {
         selectedClass = widget.selectedClass;
-        topics = selectedClass.topics.where((e) => e.selected).toList();
-        if (isSelected.length != topics.length) {
-          isSelected = List<bool>.generate(topics.length, (i) => false);
+        topics = selectedClass!.topics.where((e) => e.selected!).toList();
+        if (isSelected!.length != topics!.length) {
+          isSelected = List<bool>.generate(topics!.length, (i) => false);
         }
       });
     }
@@ -536,7 +546,7 @@ class _TopicsState extends State<Topics> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> topicsWidget = topics.map((topic) {
+    final List<Widget> topicsWidget = topics!.map((topic) {
       return Center(
         child: Container(
             height: 85,
@@ -547,7 +557,7 @@ class _TopicsState extends State<Topics> {
             ),
             child: Center(
                 child: Text(
-              topic.name.substring(0, 2).toUpperCase(),
+              topic.name!.substring(0, 2).toUpperCase(),
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 16, color: Color(0xFFffffff)),
             ))),
@@ -557,31 +567,32 @@ class _TopicsState extends State<Topics> {
       child: Container(
         child: WrapToggleToggleButtons(
             iconList: topicsWidget,
-            isSelected: isSelected,
+            isSelected: isSelected!,
             onPressed: (int index) {
-              if (selectedClass.students.length > 0) {
+              if (selectedClass!.students.length > 0) {
                 setState(() {
                   for (int buttonIndex = 0;
-                      buttonIndex < isSelected.length;
+                      buttonIndex < isSelected!.length;
                       buttonIndex++) {
                     if (buttonIndex == index) {
-                      isSelected[buttonIndex] = !isSelected[buttonIndex];
-                      if (isSelected[buttonIndex]) {
-                        selectedTopic = topics.elementAt(buttonIndex);
+                      isSelected![buttonIndex] = !isSelected![buttonIndex];
+                      if (isSelected![buttonIndex]) {
+                        selectedTopic = topics!.elementAt(buttonIndex);
                       } else {
                         selectedTopic = null;
                       }
                     } else {
-                      isSelected[buttonIndex] = false;
+                      isSelected![buttonIndex] = false;
                     }
                   }
                 });
 
-                context.bloc<DashboardBloc>()
-                  ..add(LoadControls(
-                      classId: selectedClass?.id,
-                      topicId: selectedTopic?.id ?? selectedTopic?.name,
-                      selected: selectedTopic != null));
+                // context.bloc<DashboardBloc>()
+                  // ..add(LoadControls(
+                  //     classId: selectedClass?.id,
+                  //     topicId: selectedTopic?.id ?? selectedTopic?.name,
+                  //     selected: selectedTopic != null)
+                      // );
               }
             }),
       ),
@@ -590,38 +601,40 @@ class _TopicsState extends State<Topics> {
 }
 
 class Controls extends StatefulWidget {
-  final Topic selectedTopic;
-  final String classId;
-  Controls({Key key, @required this.classId, @required this.selectedTopic})
+  final Topic? selectedTopic;
+  final String? classId;
+  Controls({Key? key, @required this.classId, @required this.selectedTopic})
       : super(key: key);
 
   @override
-  _ControlsState createState() => _ControlsState(classId, selectedTopic);
+  _ControlsState createState() => _ControlsState(classId!, selectedTopic!);
 }
 
 class _ControlsState extends State<Controls> {
-  String classId;
-  Topic selectedTopic;
-  _ControlsState(this.classId, this.selectedTopic);
-  List<Control> controls;
+  String? classId;
+  Topic? selectedTopic;
+  // _ControlsState(this.classId, this.selectedTopic);
+  List<Control>? controls;
   List<bool> isSelected = [];
+  
+  _ControlsState(String s, Topic topic);
 
   @override
   void initState() {
     super.initState();
 
-    controls = selectedTopic != null ? selectedTopic.controls : [];
-    isSelected = List<bool>.generate(controls.length, (i) => false);
-    if (controls.length == 1) {
+    controls = selectedTopic != null ? selectedTopic!.controls : [];
+    isSelected = List<bool>.generate(controls!.length, (i) => false);
+    if (controls!.length == 1) {
       isSelected[0] = true;
-      context.bloc<DashboardBloc>()
-        ..add(
-          LoadObservation(
-              classId: classId,
-              topicId: selectedTopic?.id ?? selectedTopic?.name,
-              controlId: controls.first.id ?? controls.first.controlName,
-              selected: isSelected[0]),
-        );
+      // context.bloc<DashboardBloc>()
+      //   ..add(
+      //     LoadObservation(
+      //         classId: classId,
+      //         topicId: selectedTopic?.id ?? selectedTopic?.name,
+      //         controlId: controls.first.id ?? controls.first.controlName,
+      //         selected: isSelected[0]),
+        // );
     }
   }
 
@@ -631,38 +644,38 @@ class _ControlsState extends State<Controls> {
       setState(() {
         classId = widget.classId;
         selectedTopic = widget.selectedTopic;
-        controls = selectedTopic != null ? selectedTopic.controls : [];
-        isSelected = List<bool>.generate(controls.length, (i) => false);
-        if (controls.length == 1) {
+        controls = selectedTopic != null ? selectedTopic!.controls : [];
+        isSelected = List<bool>.generate(controls!.length, (i) => false);
+        if (controls!.length == 1) {
           isSelected[0] = true;
-          context.bloc<DashboardBloc>()
-            ..add(
-              LoadObservation(
-                  classId: classId,
-                  topicId: selectedTopic?.id ?? selectedTopic?.name,
-                  controlId: controls.first.id ?? controls.first.controlName,
-                  selected: isSelected[0]),
-            );
+          // context.bloc<DashboardBloc>()
+          //   ..add(
+          //     LoadObservation(
+          //         classId: classId,
+          //         topicId: selectedTopic?.id ?? selectedTopic?.name,
+          //         controlId: controls!.first.id ?? controls!.first.controlName,
+          //         selected: isSelected[0]),
+          //   );
         }
       });
     } else {
       setState(() {
         classId = widget.classId;
         selectedTopic = widget.selectedTopic;
-        controls = selectedTopic != null ? selectedTopic.controls : [];
-        if (isSelected.length != controls.length ||
+        controls = selectedTopic != null ? selectedTopic!.controls : [];
+        if (isSelected.length != controls!.length ||
             oldWidget.selectedTopic?.id != widget.selectedTopic?.id) {
-          isSelected = List<bool>.generate(controls.length, (i) => false);
-          if (controls.length == 1) {
+          isSelected = List<bool>.generate(controls!.length, (i) => false);
+          if (controls!.length == 1) {
             isSelected[0] = true;
-            context.bloc<DashboardBloc>()
-              ..add(
-                LoadObservation(
-                    classId: classId,
-                    topicId: selectedTopic?.id ?? selectedTopic?.name,
-                    controlId: controls.first.id ?? controls.first.controlName,
-                    selected: isSelected[0]),
-              );
+            // context.bloc<DashboardBloc>()
+            //   ..add(
+            //     LoadObservation(
+            //         classId: classId,
+            //         topicId: selectedTopic?.id ?? selectedTopic?.name,
+            //         controlId: controls.first.id ?? controls.first.controlName,
+            //         selected: isSelected[0]),
+            //   );
           }
         }
       });
@@ -688,7 +701,7 @@ class _ControlsState extends State<Controls> {
                     children: <TextSpan>[
                       TextSpan(
                         text:
-                            '${selectedTopic != null ? selectedTopic.name : ''}',
+                            '${selectedTopic != null ? selectedTopic!.name : ''}',
                         style: TextStyle(
                             fontSize: 15, fontWeight: FontWeight.bold),
                       )
@@ -711,8 +724,8 @@ class _ControlsState extends State<Controls> {
                         selectedBorderColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         hoverColor: Colors.transparent,
-                        children: controls.map((control) {
-                          var index = controls.indexOf(control);
+                        children: controls!.map((control) {
+                          var index = controls!.indexOf(control);
                           return RotatedBox(
                             quarterTurns: 3,
                             child: Container(
@@ -723,7 +736,7 @@ class _ControlsState extends State<Controls> {
                                   border: isSelected[index]
                                       ? Border.all(
                                           color: Color(int.parse(
-                                              '${selectedTopic.color}')),
+                                              '${selectedTopic!.color}')),
                                           width: 4.0)
                                       : null,
                                   borderRadius:
@@ -745,7 +758,7 @@ class _ControlsState extends State<Controls> {
                                         Expanded(
                                           flex: 6,
                                           child: Text(
-                                            control.controlName,
+                                            control.controlName!,
                                             style: TextStyle(
                                                 fontSize: 16,
                                                 color: Colors.black),
@@ -753,7 +766,7 @@ class _ControlsState extends State<Controls> {
                                         ),
                                         Expanded(
                                             flex: 4,
-                                            child: control.hasActiveObservation
+                                            child: control.hasActiveObservation!
                                                 ? Image.asset(
                                                     'assets/images/papel_copy.png',
                                                     color: Colors.black,
@@ -775,20 +788,20 @@ class _ControlsState extends State<Controls> {
                               if (buttonIndex == index) {
                                 isSelected[buttonIndex] =
                                     !isSelected[buttonIndex];
-                                context.bloc<DashboardBloc>()
-                                  ..add(
-                                    LoadObservation(
-                                        classId: classId,
-                                        topicId: selectedTopic?.id ??
-                                            selectedTopic?.name,
-                                        controlId: controls
-                                                .elementAt(buttonIndex)
-                                                .id ??
-                                            controls
-                                                .elementAt(buttonIndex)
-                                                .controlName,
-                                        selected: isSelected[buttonIndex]),
-                                  );
+                                // context.bloc<DashboardBloc>()
+                                //   ..add(
+                                //     LoadObservation(
+                                //         classId: classId,
+                                //         topicId: selectedTopic?.id ??
+                                //             selectedTopic?.name,
+                                //         controlId: controls
+                                //                 .elementAt(buttonIndex)
+                                //                 .id ??
+                                //             controls
+                                //                 .elementAt(buttonIndex)
+                                //                 .controlName,
+                                //         selected: isSelected[buttonIndex]),
+                                //   );
                               } else {
                                 isSelected[buttonIndex] = false;
                               }
@@ -867,7 +880,7 @@ class _ObservationActionsState extends State<ObservationActions> {
   @override
   Widget build(BuildContext context) {
     if (selectedClass.hasActiveObservation) {
-      final Observation observation = selectedClass.observation;
+      final Observation observation = selectedClass.observation!;
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -878,7 +891,7 @@ class _ObservationActionsState extends State<ObservationActions> {
               Container(
                 // color: Colors.red,
                 width: MediaQuery.of(context).size.width * 0.25,
-                child: Text(observation.title,
+                child: Text(observation.title!,
                     style: TextStyle(color: Color(0xFFff6c00), fontSize: 20),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
@@ -890,15 +903,15 @@ class _ObservationActionsState extends State<ObservationActions> {
                   final String name = await showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return DialogObservation(observation.title);
+                        return DialogObservation(observation.title!);
                       });
                   if (name != null && name.isNotEmpty) {
                     observation.title = name;
-                    context.bloc<DashboardBloc>()
-                      ..add(EditObservationName(
-                        cls: selectedClass,
-                        observation: observation,
-                      ));
+                    // context.bloc<DashboardBloc>()
+                    //   ..add(EditObservationName(
+                    //     cls: selectedClass,
+                    //     observation: observation,
+                    //   ));
                   }
                 },
                 child: Image.asset('assets/images/tools_and_utensils_2.png',
@@ -908,18 +921,21 @@ class _ObservationActionsState extends State<ObservationActions> {
           )),
           Row(children: [
             Container(
-              child: RaisedButton(
-                shape: RoundedRectangleBorder(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                   shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
+                ),
+               
                 onPressed: () {
-                  context.bloc<DashboardBloc>()
-                    ..add(CompleteObservation(
-                      cls: selectedClass,
-                    ));
+                  // context.bloc<DashboardBloc>()
+                  //   ..add(CompleteObservation(
+                  //     cls: selectedClass,
+                  //   ));
                 },
-                color: Color(0xFFff6c00),
-                textColor: Colors.white,
+                // color: Color(0xFFff6c00),
+                // textColor: Colors.white,
                 child: Row(
                   children: [
                     Text("Abschließen",
@@ -937,17 +953,20 @@ class _ObservationActionsState extends State<ObservationActions> {
             Container(
               width: MediaQuery.of(context).size.width * 0.05,
               child: InkWell(
-                child: RaisedButton(
+                child: ElevatedButton(
                   onPressed: () {
-                    context.bloc<DashboardBloc>()
-                      ..add(DeleteObservation(
-                        cls: selectedClass,
-                      ));
+                    // context.bloc<DashboardBloc>()
+                    //   ..add(DeleteObservation(
+                    //     cls: selectedClass,
+                    //   ));
                   },
-                  color: Colors.white,
-                  shape: RoundedRectangleBorder(
+                  style: ElevatedButton.styleFrom(
+                     shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
+                  ),
+                 
+                 
                   child: Icon(Icons.close, color: Color(0xFF333951)),
                 ),
               ),
@@ -966,7 +985,11 @@ class _ObservationActionsState extends State<ObservationActions> {
             child: Container(
               // color : Colors.yellow,
               height: 50.0,
-              child: RaisedButton(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                   shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0)),
+                ),
                 onPressed: () async {
                   if (btnIsActive) {
                     final String name = await showDialog(
@@ -975,20 +998,19 @@ class _ObservationActionsState extends State<ObservationActions> {
                           return DialogObservation('');
                         });
                     if (name != null && name.isNotEmpty) {
-                      context.bloc<DashboardBloc>()
-                        ..add(CreateStructureObservation(
-                          classId: selectedClass.id,
-                          topicId: selectedClass.selectedTopicId,
-                          controlId: selectedClass.selectedControlId,
-                          name: name,
-                        ));
+                      // context.bloc<DashboardBloc>()
+                      //   ..add(CreateStructureObservation(
+                      //     classId: selectedClass.id,
+                      //     topicId: selectedClass.selectedTopicId,
+                      //     controlId: selectedClass.selectedControlId,
+                      //     name: name,
+                      //   ));
                     }
                   }
                 },
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0)),
-                padding: EdgeInsets.all(0.0),
-                textColor: Colors.white,
+               
+                // padding: EdgeInsets.all(0.0),
+                // textColor: Colors.white,
                 child: Ink(
                   decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -1089,7 +1111,7 @@ class _DialogObservationState extends State<DialogObservation> {
         ),
       ),
       actions: <Widget>[
-        FlatButton(
+        ElevatedButton(
           child: Text(
             "Speichern",
             style: TextStyle(fontSize: 15, color: Colors.orange),
@@ -1104,13 +1126,13 @@ class _DialogObservationState extends State<DialogObservation> {
 }
 
 class StarIcon extends StatefulWidget {
-  final Class cls;
-  final String observationId;
-  final String studentId;
-  final bool isFavorite;
+  final Class? cls;
+  final String? observationId;
+  final String? studentId;
+  final bool? isFavorite;
 
   StarIcon(
-      {Key key,
+      {Key? key,
       @required this.cls,
       @required this.observationId,
       @required this.studentId,
@@ -1118,7 +1140,7 @@ class StarIcon extends StatefulWidget {
       : super(key: key);
   @override
   _StarIconState createState() =>
-      _StarIconState(cls, observationId, studentId, isFavorite);
+      _StarIconState(cls!, observationId!, studentId!, isFavorite!);
 }
 
 class _StarIconState extends State<StarIcon> {
@@ -1138,10 +1160,10 @@ class _StarIconState extends State<StarIcon> {
   @override
   didUpdateWidget(StarIcon oldWidget) {
     setState(() {
-      cls = widget.cls;
-      observationId = widget.observationId;
-      studentId = widget.studentId;
-      isFavorite = widget.isFavorite;
+      cls = widget.cls!;
+      observationId = widget.observationId!;
+      studentId = widget.studentId!;
+      isFavorite = widget.isFavorite!;
       isSelected = [isFavorite];
     });
   }
@@ -1163,12 +1185,12 @@ class _StarIconState extends State<StarIcon> {
         setState(() {
           isSelected[index] = !isSelected[index];
           isFavorite = isSelected[index];
-          context.bloc<DashboardBloc>()
-            ..add(UpdateFavorite(
-                classId: cls.id,
-                observationId: observationId,
-                studentId: studentId,
-                isFavorite: isFavorite));
+          // context.bloc<DashboardBloc>()
+          //   ..add(UpdateFavorite(
+          //       classId: cls.id,
+          //       observationId: observationId,
+          //       studentId: studentId,
+          //       isFavorite: isFavorite));
         });
       },
       isSelected: isSelected,
@@ -1206,7 +1228,7 @@ class Students extends StatelessWidget {
         final Class selectedClass = classes.first;
         if (selectedClass.hasActiveObservation) {
           final List<ObservationRating> ratings =
-              selectedClass.observation.ratings;
+              selectedClass.observation!.ratings!;
 
           return Theme(
             data: ThemeData(highlightColor: Colors.grey[900]),
@@ -1214,7 +1236,7 @@ class Students extends StatelessWidget {
               child: Container(
                   child: Stack(children: <Widget>[
                 Scrollbar(
-                  isAlwaysShown: true,
+                  // isAlwaysShown: true,
                   controller: _scrollController,
                   child: ListView.separated(
                     shrinkWrap: true,
@@ -1238,7 +1260,7 @@ class Students extends StatelessWidget {
                                         child: StarIcon(
                                             cls: selectedClass,
                                             observationId:
-                                                selectedClass.observation.id,
+                                                selectedClass.observation!.id,
                                             studentId: student.studentId,
                                             isFavorite: student.isFavorite)),
                                   )),
@@ -1252,8 +1274,8 @@ class Students extends StatelessWidget {
                                           _showSpontaneousObservation(context,
                                               selectedClass, student, false);
                                       await bottomSheetController.closed;
-                                      context.bloc<DashboardBloc>()
-                                        ..add(LoadStudentsClass(selectedClass));
+                                      // context.bloc<DashboardBloc>()
+                                      //   ..add(LoadStudentsClass(selectedClass));
                                     },
                                     child: Container(
                                       margin: EdgeInsets.only(left: 15),
@@ -1289,9 +1311,9 @@ class Students extends StatelessWidget {
                                             _showSpontaneousObservation(context,
                                                 selectedClass, student, false);
                                         await bottomSheetController.closed;
-                                        context.bloc<DashboardBloc>()
-                                          ..add(
-                                              LoadStudentsClass(selectedClass));
+                                        // context.bloc<DashboardBloc>()
+                                        //   ..add(
+                                        //       LoadStudentsClass(selectedClass));
                                       },
                                       child: Container(
                                         child: Text('${student.name}',
@@ -1301,11 +1323,11 @@ class Students extends StatelessWidget {
                                   flex: 2,
                                   child: Container(
                                     child: SmileyWidget(
-                                        classId: selectedClass.id,
-                                        studentId: student.studentId,
+                                        classId: selectedClass.id!,
+                                        studentId: student.studentId!,
                                         observationId:
-                                            selectedClass.observation.id,
-                                        rating: student.rating,
+                                            selectedClass.observation!.id!,
+                                        rating: student.rating!,
                                         isShowAllSmileys: true),
                                   )),
                               Container(
@@ -1317,8 +1339,8 @@ class Students extends StatelessWidget {
                                       _showSpontaneousObservation(context,
                                           selectedClass, student, false);
                                   await bottomSheetController.closed;
-                                  context.bloc<DashboardBloc>()
-                                    ..add(LoadStudentsClass(selectedClass));
+                                  // context.bloc<DashboardBloc>()
+                                  //   ..add(LoadStudentsClass(selectedClass));
                                 },
                                 child: ClipRRect(
                                   child: Image.asset(
@@ -1349,8 +1371,8 @@ class Students extends StatelessWidget {
                           bottomSheetController = _showSpontaneousObservation(
                               context, selectedClass, null, true);
                       await bottomSheetController.closed;
-                      context.bloc<DashboardBloc>()
-                        ..add(LoadStudentsClass(selectedClass));
+                      // context.bloc<DashboardBloc>()
+                      //   ..add(LoadStudentsClass(selectedClass));
                     },
                     color: Color(0xFF333951),
                     textColor: Colors.white,
@@ -1373,7 +1395,7 @@ class Students extends StatelessWidget {
               child: Stack(children: <Widget>[
             Container(
                 child: Scrollbar(
-              isAlwaysShown: true,
+              // isAlwaysShown: true,
               controller: _scrollController,
               child: ListView.separated(
                 shrinkWrap: true,
@@ -1389,8 +1411,8 @@ class Students extends StatelessWidget {
                             bottomSheetController = _showSpontaneousObservation(
                                 context, selectedClass, student, false);
                         await bottomSheetController.closed;
-                        context.bloc<DashboardBloc>()
-                          ..add(LoadStudentsClass(selectedClass));
+                        // context.bloc<DashboardBloc>()
+                        //   ..add(LoadStudentsClass(selectedClass));
                       },
                       child: Container(
                         decoration: BoxDecoration(boxShadow: [
@@ -1440,12 +1462,12 @@ class Students extends StatelessWidget {
                                             context,
                                             '/addPupil',
                                             arguments: <String, String>{
-                                              'id': student.id,
-                                              'firstName': student.firstName,
-                                              'lastName': student.lastName,
+                                              'id': student.id!,
+                                              'firstName': student.firstName!,
+                                              'lastName': student.lastName!,
                                               'birthdayDate':
-                                                  student.birthdayDate,
-                                              'className': student.className,
+                                                  student.birthdayDate!,
+                                              'className': student.className!,
                                               'CurrentPage': 'home',
                                             },
                                           );
@@ -1463,7 +1485,7 @@ class Students extends StatelessWidget {
                                       child: Container(
                                         child: Text(
                                             getObservationCountText(
-                                                student.observation),
+                                                student.observation!),
                                             style: TextStyle(
                                                 color: Color(0xFFd0d1d4),
                                                 fontSize: 15)),
@@ -1472,10 +1494,10 @@ class Students extends StatelessWidget {
                                       flex: 1,
                                       child: Container(
                                         child: SmileyWidget(
-                                            classId: selectedClass.id,
-                                            studentId: student.id,
+                                            classId: selectedClass.id!,
+                                            studentId: student.id!,
                                             observationId: '',
-                                            rating: student.rating,
+                                            rating: student.rating!,
                                             isShowAllSmileys: false),
                                       )),
                                   Expanded(
@@ -1493,9 +1515,9 @@ class Students extends StatelessWidget {
                                                   false);
                                           await bottomSheetController.closed;
 
-                                          context.bloc<DashboardBloc>()
-                                            ..add(LoadStudentsClass(
-                                                selectedClass));
+                                          // context.bloc<DashboardBloc>()
+                                          //   ..add(LoadStudentsClass(
+                                          //       selectedClass));
                                         },
                                         child: ClipRRect(
                                           child: Image.asset(
@@ -1525,8 +1547,8 @@ class Students extends StatelessWidget {
                       _showSpontaneousObservation(
                           context, selectedClass, null, true);
                   await bottomSheetController.closed;
-                  context.bloc<DashboardBloc>()
-                    ..add(LoadStudentsClass(selectedClass));
+                  // context.bloc<DashboardBloc>()
+                  //   ..add(LoadStudentsClass(selectedClass));
                 },
                 color: Color(0xFF333951),
                 textColor: Colors.white,

@@ -9,7 +9,7 @@ Color hexToColor(String code) {
 }
 
 Color getTopicColor(Topic topic) {
-  return topic.selected ? hexToColor(topic.color) : Colors.grey.withAlpha(80);
+  return topic.selected! ? hexToColor(topic.color!) : Colors.grey.withAlpha(80);
 }
 
 class TopicDialog extends StatelessWidget {
@@ -27,7 +27,7 @@ class DialogContent extends StatefulWidget {
 }
 
 class _DialogContentState extends State<DialogContent> {
-  Class cls;
+  Class? cls;
 
   updateClass(Class newClass) {
     setState(() {
@@ -43,7 +43,7 @@ class _DialogContentState extends State<DialogContent> {
           current is DashboardLoadClassSuccess;
     }, builder: (context, state) {
       if (state is DashboardLoadInProgress) {
-        context.bloc<DashboardBloc>()..add(LoadLocalClasses());
+        // context.bloc<DashboardBloc>()..add(LoadLocalClasses());
         return Dialog(
             elevation: 0.0,
             backgroundColor: Colors.white,
@@ -98,7 +98,7 @@ class _DialogContentState extends State<DialogContent> {
                       child: Row(children: <Widget>[
                         Container(
                             child: InkWell(
-                                child: FlatButton(
+                                child: ElevatedButton(
                                     onPressed: () async {
                                       Navigator.of(context)
                                           .pop([cls, '/sort_topics']);
@@ -128,11 +128,11 @@ class _DialogContentState extends State<DialogContent> {
                           child: SizedBox(),
                         ),
                         Container(
-                          child: FlatButton(
+                          child: ElevatedButton(
                             onPressed: () async {
                               Navigator.of(context).pop([cls, '/']);
                             },
-                            padding: EdgeInsets.all(10.0),
+                            // padding: EdgeInsets.all(10.0),
                             child: Row(
                               children: <Widget>[
                                 Text(
@@ -214,17 +214,18 @@ class DropDownClasses extends StatelessWidget {
                 isExpanded: true,
                 iconEnabledColor: Color(0xFFff8400),
                 iconSize: 40,
-                onChanged: (Class newValue) {
-                  if (newValue.id != selectedClass.id) {
-                    context.bloc<DashboardBloc>()
-                      ..add(UpdateClass(
-                          oldClass: selectedClass, newClass: newValue));
+                onChanged: (Class? newValue) {
+                  if (newValue!.id != selectedClass.id) {
+                    // context.bloc<DashboardBloc>()
+                    //   ..add(UpdateClass(
+                    //       oldClass: selectedClass, newClass: newValue)
+                          // );
                   }
                 },
                 items: classes.map<DropdownMenuItem<Class>>((Class value) {
                   return DropdownMenuItem<Class>(
                     value: value,
-                    child: Text(value.className),
+                    child: Text(value.className!),
                   );
                 }).toList(),
               ),
@@ -260,15 +261,15 @@ class Topics extends StatelessWidget {
 }
 
 class TopicsItems extends StatefulWidget {
-  final Class selectedClass;
-  final Function updateClass;
+  final Class? selectedClass;
+  final Function? updateClass;
   TopicsItems(
-      {Key key, @required this.selectedClass, @required this.updateClass})
+      {Key? key, @required this.selectedClass, @required this.updateClass})
       : super(key: key);
 
   @override
   _TopicsItemsState createState() =>
-      _TopicsItemsState(selectedClass, updateClass);
+      _TopicsItemsState(selectedClass!, updateClass!);
 }
 
 class _TopicsItemsState extends State<TopicsItems> {
@@ -278,10 +279,10 @@ class _TopicsItemsState extends State<TopicsItems> {
 
   @override
   didUpdateWidget(TopicsItems oldWidget) {
-    if (oldWidget.selectedClass.id != widget.selectedClass.id) {
+    if (oldWidget.selectedClass!.id != widget.selectedClass!.id) {
       setState(() {
-        selectedClass = widget.selectedClass;
-        updateClass = widget.updateClass;
+        selectedClass = widget.selectedClass!;
+        updateClass = widget.updateClass!;
       });
     }
   }
@@ -289,7 +290,7 @@ class _TopicsItemsState extends State<TopicsItems> {
   void updateTopic(Topic topic) {
     Topic tpc = selectedClass.topics
         .firstWhere((element) => element.name == topic.name);
-    tpc.selected = !tpc.selected;
+    tpc.selected = !tpc.selected!;
     updateClass(selectedClass);
     setState(() {});
   }
@@ -332,7 +333,7 @@ class _TopicsItemsState extends State<TopicsItems> {
                               flex: 5,
                               child: Center(
                                   child: Text(
-                                topic.name,
+                                topic.name!,
                                 style: TextStyle(
                                     fontSize: 15, color: getTopicColor(topic)),
                               ))),

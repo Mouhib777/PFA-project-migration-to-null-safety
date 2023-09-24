@@ -1,12 +1,12 @@
 import 'package:docu_diary/models/control.dart';
 
 class Topic {
-  String id;
-  bool selected;
-  String name;
-  String order;
-  String color;
-  List<Control> controls;
+  String? id;
+  bool? selected;
+  String? name;
+  String? order;
+  String? color;
+  List<Control>? controls;
 
   // default color is black
   Topic(
@@ -38,7 +38,7 @@ class Topic {
     data['name'] = this.name;
     data['order'] = this.order;
     data['color'] = this.color;
-    data['controls'] = List<dynamic>.from(this.controls.map((e) => e.toJson()));
+    data['controls'] = List<dynamic>.from(this.controls!.map((e) => e.toJson()));
     return data;
   }
 }

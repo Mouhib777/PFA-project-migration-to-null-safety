@@ -16,22 +16,22 @@ import 'package:docu_diary/db/dao/token.dart';
 import 'package:docu_diary/models/token.dart';
 import 'package:docu_diary/config/url.dart';
 import 'package:docu_diary/views/dashboard/save_inherited_widget.dart';
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+// import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
 
 class EditSpontaneousObservation extends StatelessWidget {
-  final String studentId;
-  final String obId;
-  final String title;
-  final String classId;
-  final String studentName;
-  final String studentSurName;
-  final String topicId;
-  final String controlId;
-  final Function fun;
-  final int rating;
-  final String picture;
-  final String date;
+  final String? studentId;
+  final String? obId;
+  final String? title;
+  final String? classId;
+  final String? studentName;
+  final String? studentSurName;
+  final String? topicId;
+  final String? controlId;
+  final Function? fun;
+  final int? rating;
+  final String? picture;
+  final String? date;
 
   EditSpontaneousObservation(
       {@required this.studentId,
@@ -51,35 +51,35 @@ class EditSpontaneousObservation extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: EditSpontaneousObservationContent(
-          studentId,
-          classId,
-          studentName,
-          studentSurName,
-          topicId,
-          controlId,
-          title,
-          fun,
-          rating,
-          obId,
-          picture,
-          date),
+          studentId!,
+          classId!,
+          studentName!,
+          studentSurName!,
+          topicId!,
+          controlId!,
+          title!,
+          fun!,
+          rating!,
+          obId!,
+          picture!,
+          date!),
     );
   }
 }
 
 class EditSpontaneousObservationContent extends StatefulWidget {
-  final String studentId;
-  final String obId;
-  final String title;
-  final String classId;
-  final String studentName;
-  final String studentSurName;
-  final String topicId;
-  final String controlId;
-  final Function fun;
-  final int rating;
-  final String picture;
-  final String date;
+  final String? studentId;
+  final String? obId;
+  final String? title;
+  final String? classId;
+  final String? studentName;
+  final String? studentSurName;
+  final String? topicId;
+  final String? controlId;
+  final Function? fun;
+  final int? rating;
+  final String? picture;
+  final String? date;
   EditSpontaneousObservationContent(
       this.studentId,
       this.classId,
@@ -112,44 +112,47 @@ class EditSpontaneousObservationContent extends StatefulWidget {
 
 class _EditSpontaneousObservationContentState
     extends State<EditSpontaneousObservationContent> {
-  final String studentId;
-  final String obId;
-  final String title;
-  final String classId;
-  final String studentName;
-  final String studentSurName;
-  final String topicId;
-  final String controlId;
-  final Function fun;
-  final int rating;
-  final String picture;
-  final String date;
-  _EditSpontaneousObservationContentState(
-      this.studentId,
-      this.classId,
-      this.studentName,
-      this.studentSurName,
-      this.topicId,
-      this.controlId,
-      this.title,
-      this.fun,
-      this.rating,
-      this.obId,
-      this.picture,
-      this.date);
+  late final String studentId;
+  late final String obId;
+  late final String title;
+  late final String classId;
+  late final String studentName;
+  late final String studentSurName;
+  late final String topicId;
+  late final String controlId;
+  late final Function fun;
+  late final int rating;
+  late final String picture;
+  late final String date;
+  // _EditSpontaneousObservationContentState(
+  //    {
+  //     required this.studentId,
+  //     required this.classId,
+  //     required this.studentName,
+  //     required this.studentSurName,
+  //     required this.topicId,
+  //     required this.controlId,
+  //     required this.title,
+  //     required this.fun,
+  //     required this.rating,
+  //     required this.obId,
+  //     required this.picture,
+  //     required this.date
+  //    } 
+  //     );
 
   static final _baseUrl = BaseUrl.urlAPi;
   final _smileys = <String>['pain', 'sad', 'happy', 'amazing'];
 
   int _selectedIndex = -1;
-  String _name;
-  String _controlename;
-  String _texttosend;
+  String? _name;
+  String? _controlename;
+  String? _texttosend;
   String dropdownValue = 'topic 1';
   String dropdownValu = 'Control 1';
-  String _topicId;
-  String _controleId;
-  DateTime _date;
+  String? _topicId;
+  String? _controleId;
+  DateTime? _date;
   bool deselectedSmiley = true;
   var isLoading = false;
   List<String> ctrs = [];
@@ -161,21 +164,26 @@ class _EditSpontaneousObservationContentState
   TokenDao _tokenDao = TokenDao();
   String userToken = '';
   bool secondSelected = false;
-  ObservationsBloc _observationBloc;
+  ObservationsBloc? _observationBloc;
 
   final _formKey = GlobalKey<FormState>();
+  
+  _EditSpontaneousObservationContentState(String? studentId, String? classId, String? studentName, String? studentSurName, String? topicId, String? controlId, String? title, Function? fun, int? rating, String? obId, String? picture, String? date);
 
   _getTopicsByClass(String classId) async {
-    Token token = await _tokenDao.getToken();
+    Token? token = await _tokenDao.getToken();
 
     setState(() {
       isLoading = true;
-      userToken = token.accessToken;
+      userToken = token!.accessToken!;
     });
     var w = widget.classId;
     try {
       final response = await http.get(
-        '$_baseUrl/class/getClassTopics?classId=$w',
+        Uri.parse(
+           '$_baseUrl/class/getClassTopics?classId=$w',
+        ),
+       
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Authorization': "bearer " + userToken
@@ -189,36 +197,39 @@ class _EditSpontaneousObservationContentState
                 if (v['selected'])
                   {
                     selectData.add(MyTopic.fromJson(v)),
-                    data.add(MyTopic.fromJson(v).name),
-                    data.add(MyTopic.fromJson(v).sId),
+                    data.add(MyTopic.fromJson(v).name!),
+                    data.add(MyTopic.fromJson(v).sId!),
                   }
               });
-          _selectedIndex = widget.rating - 1;
+          _selectedIndex = widget.rating! - 1;
         });
 
         if (widget.topicId != null) {
           var p = selectData.firstWhere((e) => e.sId == widget.topicId);
 
           setState(() {
-            _name = selectData[selectData.indexOf(p)].sId;
-            _topicId = selectData[selectData.indexOf(p)].sId;
+            _name = selectData[selectData.indexOf(p)].sId!;
+            _topicId = selectData[selectData.indexOf(p)].sId!;
           });
-          _getControlsByTopicsId(selectData[selectData.indexOf(p)].sId);
+          _getControlsByTopicsId(selectData[selectData.indexOf(p)].sId!);
         }
       } else {}
     } catch (e) {}
   }
 
   _getControlsByTopicsId(String id) async {
-    Token token = await _tokenDao.getToken();
+    Token? token = await _tokenDao.getToken();
 
     setState(() {
       isLoading = true;
-      userToken = token.accessToken;
+      userToken = token!.accessToken!;
     });
     try {
       final response = await http.get(
-        '$_baseUrl/teacher/getControlsByTopicsId/?classId=${widget.classId}&topicId=$id',
+        Uri.parse(
+          '$_baseUrl/teacher/getControlsByTopicsId/?classId=${widget.classId}&topicId=$id'
+        ),
+        
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Authorization': "bearer " + userToken,
@@ -235,15 +246,15 @@ class _EditSpontaneousObservationContentState
           responseJson.forEach((v) => {
                 controls.add(ControlModel.fromJson(v)),
                 listControls.add(MyTopic.fromJson(v)),
-                ctrs.add(MyTopic.fromJson(v).controlname),
+                ctrs.add(MyTopic.fromJson(v).controlname!),
               });
 
           if (widget.controlId != null && widget.topicId == id) {
-            _controlename = widget.controlId;
-            _controleId = widget.controlId;
+            _controlename = widget.controlId!;
+            _controleId = widget.controlId!;
           } else {
-            _controlename = null;
-            _controleId = null;
+            _controlename = "null";
+            _controleId = "null";
           }
         });
       } else {}
@@ -251,14 +262,14 @@ class _EditSpontaneousObservationContentState
   }
 
   Future _sendObservation(String id) async {
-    if (_formKey.currentState.validate() &&
+    if (_formKey.currentState!.validate() &&
         _topicId != null &&
         _controleId != null) {
-      _formKey.currentState.save();
+      _formKey.currentState!.save();
       int rating = _selectedIndex + 1;
 
       _observationBloc
-        ..add(EditObservation(
+        !..add(EditObservation(
           id: id,
           title: _texttosend,
           classId: widget.classId,
@@ -267,7 +278,7 @@ class _EditSpontaneousObservationContentState
           rating: rating,
           studentId: widget.studentId,
           date: _date != null
-              ? DateFormat("yyyy-MM-dd")?.format(_date)
+              ? DateFormat("yyyy-MM-dd")?.format(_date!)
               : date.substring(6, 10) +
                   '-' +
                   date.substring(3, 5) +
@@ -287,7 +298,7 @@ class _EditSpontaneousObservationContentState
     super.initState();
     _observationBloc = ObservationsBloc();
 
-    _getTopicsByClass(widget.classId);
+    _getTopicsByClass(widget.classId!);
   }
 
   @override
@@ -295,7 +306,7 @@ class _EditSpontaneousObservationContentState
     // Clean up the controller when the widget is removed from the
     // widget tree.
 
-    _observationBloc.close();
+    _observationBloc!.close();
     super.dispose();
   }
 
@@ -405,7 +416,7 @@ class _EditSpontaneousObservationContentState
                                                 return DropdownMenuItem<String>(
                                                   value: value.sId,
                                                   child: Text(
-                                                    value.name,
+                                                    value.name!,
                                                     style: TextStyle(
                                                         fontSize: 12,
                                                         fontWeight:
@@ -415,10 +426,10 @@ class _EditSpontaneousObservationContentState
                                                   ),
                                                 );
                                               }).toList(),
-                                              onChanged: (String value) {
-                                                _getControlsByTopicsId(value);
+                                              onChanged: (String? value) {
+                                                _getControlsByTopicsId(value!);
                                                 setState(() {
-                                                  _name = value;
+                                                  _name = value!;
                                                   _topicId = value;
                                                   //
                                                 });
@@ -474,7 +485,7 @@ class _EditSpontaneousObservationContentState
                                           return DropdownMenuItem<String>(
                                             value: value.sId,
                                             child: Text(
-                                              value.controlName,
+                                              value.controlName!,
                                               style: TextStyle(
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.bold,
@@ -482,11 +493,11 @@ class _EditSpontaneousObservationContentState
                                             ),
                                           );
                                         }).toList(),
-                                        onChanged: (String value) {
+                                        onChanged: (String? value) {
                                           setState(() {
                                             // Toggle value to display only one smiley
 
-                                            _controlename = value;
+                                            _controlename = value!;
                                             _controleId = value;
                                             //
                                           });
@@ -502,7 +513,7 @@ class _EditSpontaneousObservationContentState
                               Container(
                                 child: Row(
                                   children: <Widget>[
-                                    FlatButton(
+                                    ElevatedButton(
                                       child: Icon(
                                         Icons.close,
                                         size:
@@ -539,11 +550,11 @@ class _EditSpontaneousObservationContentState
                                     hintText:
                                         "Geben Sie hier Ihre Beobachtung ein",
                                   ),
-                                  validator: (input) => input.length < 3
+                                  validator: (input) => input!.length < 3
                                       ? 'Name muss mindestens 3 Zeichen lang sein'
                                       : null,
                                   onSaved: (input) {
-                                    _texttosend = input;
+                                    _texttosend = input!;
                                     setState(() {
                                       _texttosend = input.trim();
                                     });
@@ -676,14 +687,14 @@ class _EditSpontaneousObservationContentState
                                   locale: const Locale("de", "DE"),
                                   firstDate: DateTime(1960),
                                   initialDate:
-                                      (widget?.date != '') && _date == null
+                                      (widget?.date! != '') && _date! == null
                                           ? DateFormat("dd.MM.yyyy")
-                                              .parse(widget.date)
-                                          : _date,
+                                              .parse(widget.date!)
+                                          : _date!,
                                   lastDate: DateTime(2100));
-                              setState(() => _date = date);
+                              setState(() => _date = date!);
 
-                              return date;
+                              // return date;
                             },
                           ),
                           Container(
@@ -693,12 +704,12 @@ class _EditSpontaneousObservationContentState
                             child: Container(
                               child: Text(
                                 _date == null
-                                    ? widget.date
-                                    : _date.day.toString() +
+                                    ? widget.date!
+                                    : _date!.day.toString() +
                                         '.' +
-                                        _date.month.toString() +
+                                        _date!.month.toString() +
                                         '.' +
-                                        _date.year.toString(),
+                                        _date!.year.toString(),
                                 style: TextStyle(
                                     height: 1,
                                     color: Color(0xFF333951),
@@ -713,13 +724,13 @@ class _EditSpontaneousObservationContentState
                                   locale: const Locale("de", "DE"),
                                   firstDate: DateTime(1960),
                                   initialDate:
-                                      (widget?.date != '') && _date == null
+                                      (widget?.date! != '') && _date! == null
                                           ? DateFormat("dd.MM.yyyy")
-                                              .parse(widget.date)
-                                          : _date,
+                                              .parse(widget.date!)
+                                          : _date!,
                                   lastDate: DateTime(2100));
-                              setState(() => _date = date);
-                              return date;
+                              setState(() => _date = date!);
+                              // return date;
                             },
                           ),
                           Container(
@@ -770,7 +781,7 @@ class _EditSpontaneousObservationContentState
                                                 secondSelected = true;
                                               })
                                             : null;
-                                        _sendObservation(widget.obId);
+                                        _sendObservation(widget.obId!);
                                       }),
                                 ],
                               ))),

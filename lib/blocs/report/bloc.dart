@@ -57,28 +57,28 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
     bool sortBySelectedClass = false,
     String studentId = '',
     bool visibilityT = true,
-    int position,
+    int? position,
   }) async* {
     try {
-      Token token = await _tokenDao.getToken();
-      Class cls = await _selectedClassDao.getClass();
+      Token? token = await _tokenDao.getToken();
+      Class? cls = await _selectedClassDao.getClass();
 
       var selectyear = await _selectedYearDao.getYear();
-      var currentYear = selectyear.name;
+      var currentYear = selectyear!.name;
 
-      var selectedClassId = cls.id;
+      var selectedClassId = cls!.id;
       // var selectedClassName = cls.className;
-      var userToken = token.accessToken;
+      var userToken = token!.accessToken;
 
       List<Observation> listObservations = [];
       List<PupilsModel> listPeoples = [];
 
-      List<Class> classes = await _classDao.getClasses(currentYear);
+      List<Class> classes = await _classDao.getClasses(currentYear!);
       if (classes.isEmpty) {
       }
       // await _selectedClassDao.update(classes.first);
       else {
-        final Class selectedClass = await _selectedClassDao.getClass();
+        final Class? selectedClass = await _selectedClassDao.getClass();
         if (selectedClass != null) {
           classes = rearrange(classes, selectedClass);
         } else {
@@ -86,7 +86,7 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
         }
 
         var responseJsonTwo = await _observationRepository.fetchPeople(
-            token: userToken, id: selectedClassId);
+            token: userToken, id: selectedClassId!);
 
         responseJsonTwo.forEach((v) => {
               listPeoples.add(PupilsModel.fromJson(v)),
@@ -95,7 +95,7 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
         if (filter != '') {
           listPeoples = listPeoples
               .where((e) =>
-                  (e.firstName.toLowerCase() + e.lastName.toLowerCase())
+                  (e.firstName!.toLowerCase() + e.lastName!.toLowerCase())
                       .contains(filter
                           .toLowerCase()
                           .replaceAll(new RegExp(r"\s+\b|\b\s"), "")))
@@ -120,7 +120,7 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
             listPeoples: listPeoples,
             listReports: listReports,
             visibility: visibilityT,
-            position: position);
+            position: position!);
       }
     } catch (_) {
       yield ReportFailure();
@@ -176,11 +176,11 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
 
   Stream<ReportState> _mapEditObservationToState(EditObservation event) async* {
     try {
-      Token token = await _tokenDao.getToken();
+      Token? token = await _tokenDao.getToken();
       var idobservation = event.id;
       // String classID = id;
 
-      var userToken = token.accessToken;
+      var userToken = token!.accessToken;
 
       Map<String, dynamic> data = {
         'title': event.title,
@@ -192,7 +192,7 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
       };
 
       await _observationRepository.sendeditObservation(
-          token: userToken, id: idobservation, observation: data);
+          token: userToken, id: idobservation!, observation: data);
 
       yield* _reloadReport(sortBySelectedClass: true);
     } catch (_) {
@@ -209,8 +209,8 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
       // String classID = id;
 
       yield* _reloadReport(
-          studentId: studentId,
-          visibilityT: observationNbr > 0 ? !visibility : visibility,
+          studentId: studentId!,
+          visibilityT: observationNbr! > 0 ? !visibility! : visibility!,
           position: index);
     } catch (_) {
       yield ReportFailure();

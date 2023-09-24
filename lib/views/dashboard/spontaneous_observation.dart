@@ -1,4 +1,4 @@
-import 'package:autocomplete_textfield/autocomplete_textfield.dart';
+// import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:docu_diary/config/url.dart';
 import 'package:docu_diary/blocs/observation/bloc.dart';
@@ -10,11 +10,11 @@ final _smileys = <String>['pain', 'sad', 'happy', 'amazing'];
 final _baseUrl = BaseUrl.urlAPi;
 
 class SpontaneousObservation extends StatefulWidget {
-  final Class selectedClass;
+  final Class? selectedClass;
   final dynamic student;
   final bool isGlobal;
   SpontaneousObservation(
-      {Key key,
+      {Key? key,
       @required this.selectedClass,
       @required this.student,
       this.isGlobal = false})
@@ -25,42 +25,45 @@ class SpontaneousObservation extends StatefulWidget {
 }
 
 class _SpontaneousObservationState extends State<SpontaneousObservation> {
-  Class selectedClass;
+  Class? selectedClass;
   dynamic student;
-  bool isGlobal;
+  bool? isGlobal;
 
-  _SpontaneousObservationState(this.selectedClass, this.student, this.isGlobal);
-  Topic topic;
-  Control control;
+  // _SpontaneousObservationState(this.selectedClass, this.student, this.isGlobal);
+  Topic? topic;
+  Control? control;
   int rating = 0;
   final _formKey = GlobalKey<FormState>();
-  TextEditingController textController;
-  TextEditingController autoCompleteController;
+  TextEditingController? textController;
+  TextEditingController? autoCompleteController;
 
-  GlobalKey<AutoCompleteTextFieldState<Student>> autocompleteKey =
-      new GlobalKey();
+  // GlobalKey<AutoCompleteTextFieldState<Student>> autocompleteKey =
+  //     new GlobalKey();
 
-  ObservationBloc _observationBloc;
+  ObservationBloc? _observationBloc;
   final focusText = FocusNode();
+  
+  _SpontaneousObservationState(Class? selectedClass, student, bool isGlobal);
+  
   @override
   void initState() {
     super.initState();
     textController = TextEditingController();
     if (student != null) {
-      textController.text = '  ${student.name} ';
+      textController!.text = '  ${student.name} ';
     }
     autoCompleteController = TextEditingController();
     _observationBloc = ObservationBloc();
-    if (selectedClass.selectedTopicId != null) {
-      topic = selectedClass.topics.firstWhere((e) =>
-          e.id == selectedClass.selectedTopicId ||
-          e.name == selectedClass.selectedTopicId);
-      if (selectedClass.selectedControlId != null) {
-        control = topic.controls.firstWhere((e) =>
-            e.id == selectedClass.selectedControlId ||
-            e.controlName == selectedClass.selectedControlId);
-      } else if (topic.controls.length == 1) {
-        control = topic.controls[0];
+    if (selectedClass!.selectedTopicId != null) {
+      topic = selectedClass!.topics.firstWhere((e) =>
+          e.id == selectedClass!.selectedTopicId ||
+          e.name == selectedClass!.selectedTopicId);
+      if (selectedClass!.selectedControlId != null) {
+        control = topic!.controls!.firstWhere((e) =>
+            e.id == selectedClass!.selectedControlId ||
+            e.controlName == selectedClass!.selectedControlId);
+      } else if (topic!.controls!.length == 1) {
+        control = topic!.controls![0];
       }
     }
   }
@@ -69,9 +72,9 @@ class _SpontaneousObservationState extends State<SpontaneousObservation> {
   void dispose() {
     // Clean up the controller when the widget is removed from the
     // widget tree.
-    textController.dispose();
-    autoCompleteController.dispose();
-    _observationBloc.close();
+    textController!.dispose();
+    autoCompleteController!.dispose();
+    _observationBloc!.close();
     super.dispose();
   }
 
@@ -108,7 +111,7 @@ class _SpontaneousObservationState extends State<SpontaneousObservation> {
             height: 50,
             child: ClipRRect(
                 borderRadius: BorderRadius.circular(10.0),
-                child: st.picture != null && st.picture.isNotEmpty
+                child: st.picture != null && st.picture!.isNotEmpty
                     ? Image.network(
                         '$_baseUrl' + 'public/${st.picture}',
                         fit: BoxFit.cover,
@@ -135,11 +138,11 @@ class _SpontaneousObservationState extends State<SpontaneousObservation> {
 
   Future<bool> _sendObservation() async {
     try {
-      if (_formKey.currentState.validate() &&
+      if (_formKey.currentState!.validate() &&
           topic != null &&
           control != null &&
           student != null) {
-        _formKey.currentState.save();
+        _formKey.currentState!.save();
         var hasProperty = false;
         try {
           (student as dynamic).studentId;
@@ -147,12 +150,12 @@ class _SpontaneousObservationState extends State<SpontaneousObservation> {
         } on NoSuchMethodError {}
 
         _observationBloc
-          ..add(AddSpontaneousObservation(
-              selectedClass.id,
-              topic,
-              control,
+         ! ..add(AddSpontaneousObservation(
+              selectedClass!.id!,
+              topic!,
+              control!,
               hasProperty ? student.studentId : student.id,
-              textController.text,
+              textController!.text,
               rating));
         await Future.delayed(const Duration(milliseconds: 100));
         Navigator.of(context).pop();
@@ -219,14 +222,14 @@ class _SpontaneousObservationState extends State<SpontaneousObservation> {
                                 icon: Icon(Icons.keyboard_arrow_down),
                                 iconSize: 20.0,
                                 iconEnabledColor: Color(0xFFff7f00),
-                                items: selectedClass.topics
-                                    .where((e) => e.selected)
+                                items: selectedClass!.topics
+                                    .where((e) => e.selected!)
                                     .map<DropdownMenuItem<Topic>>(
                                         (Topic value) {
                                   return DropdownMenuItem<Topic>(
                                     value: value,
                                     child: Text(
-                                      value.name,
+                                      value.name!,
                                       style: TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.bold,
@@ -234,11 +237,11 @@ class _SpontaneousObservationState extends State<SpontaneousObservation> {
                                     ),
                                   );
                                 }).toList(),
-                                onChanged: (Topic value) {
+                                onChanged: (Topic? value) {
                                   setState(() {
                                     topic = value;
-                                    control = topic.controls.length == 1
-                                        ? topic.controls[0]
+                                    control = topic!.controls!.length == 1
+                                        ? topic!.controls![0]
                                         : null;
                                   });
                                 }),
@@ -285,7 +288,7 @@ class _SpontaneousObservationState extends State<SpontaneousObservation> {
                                 return DropdownMenuItem<Control>(
                                   value: value,
                                   child: Text(
-                                    value.controlName,
+                                    value.controlName!,
                                     style: TextStyle(
                                         fontSize: 12,
                                         color: Color(0xFF333951),
@@ -293,7 +296,7 @@ class _SpontaneousObservationState extends State<SpontaneousObservation> {
                                   ),
                                 );
                               })?.toList(),
-                              onChanged: (Control value) {
+                              onChanged: (Control? value) {
                                 setState(() {
                                   control = value;
                                 });
@@ -305,8 +308,8 @@ class _SpontaneousObservationState extends State<SpontaneousObservation> {
                     ),
                   ),
                   Container(
-                    child: FlatButton(
-                      highlightColor: Colors.transparent,
+                    child: ElevatedButton(
+                      // highlightColor: Colors.transparent,
                       child: Icon(
                         Icons.close,
                         size: 30,
@@ -320,17 +323,17 @@ class _SpontaneousObservationState extends State<SpontaneousObservation> {
               SizedBox(
                 height: 75,
               ),
-              buildAutoCompletedStudents(),
+              // buildAutoCompletedStudents(),
               Container(
                 color: Color(0xFFf7f7ff),
                 child: TextFormField(
                   focusNode: focusText,
-                  autofocus: !isGlobal,
+                  autofocus: !isGlobal!,
                   controller: textController,
                   maxLines: 5,
                   decoration: InputDecoration.collapsed(
                       hintText: "Geben Sie hier Ihre Beobachtung ein"),
-                  validator: (input) => input.length < 3
+                  validator: (input) => input!.length < 3
                       ? 'Name muss mindestens 3 Zeichen lang sein'
                       : null,
                 ),
@@ -416,40 +419,40 @@ class _SpontaneousObservationState extends State<SpontaneousObservation> {
 
   final focus = FocusNode();
 
-  Widget buildAutoCompletedStudents() {
-    if (!isGlobal) {
-      return SizedBox(height: 10);
-    }
+  // Widget buildAutoCompletedStudents() {
+  //   if (!isGlobal!) {
+  //     return SizedBox(height: 10);
+  //   }
 
-    return AutoCompleteTextField<Student>(
-      key: autocompleteKey,
-      controller: autoCompleteController,
-      clearOnSubmit: false,
-      suggestions: selectedClass.students,
-      style: TextStyle(color: Colors.black, fontSize: 16.0),
-      decoration: InputDecoration(
-        hintText: "Name des Schülers",
-        hintStyle: TextStyle(color: Colors.black),
-      ),
-      itemFilter: (item, query) {
-        return item.name.toLowerCase().contains(query.toLowerCase());
-      },
-      itemSorter: (a, b) {
-        return a.name.compareTo(b.name);
-      },
-      itemSubmitted: (item) {
-        textController.text = '  ${item.name} ';
-        autoCompleteController.text = '${item.name}';
-        setState(() {
-          student = item;
-        });
-        FocusScope.of(context).requestFocus(focusText);
-      },
-      itemBuilder: (context, item) {
-        // ui for the autocomplete row
+    // return AutoCompleteTextField<Student>(
+    //   key: autocompleteKey,
+    //   controller: autoCompleteController,
+    //   clearOnSubmit: false,
+    //   suggestions: selectedClass.students,
+    //   style: TextStyle(color: Colors.black, fontSize: 16.0),
+    //   decoration: InputDecoration(
+    //     hintText: "Name des Schülers",
+    //     hintStyle: TextStyle(color: Colors.black),
+    //   ),
+    //   itemFilter: (item, query) {
+    //     return item.name.toLowerCase().contains(query.toLowerCase());
+    //   },
+    //   itemSorter: (a, b) {
+    //     return a.name.compareTo(b.name);
+    //   },
+    //   itemSubmitted: (item) {
+    //     textController.text = '  ${item.name} ';
+    //     autoCompleteController.text = '${item.name}';
+    //     setState(() {
+    //       student = item;
+    //     });
+    //     FocusScope.of(context).requestFocus(focusText);
+    //   },
+    //   itemBuilder: (context, item) {
+    //     // ui for the autocomplete row
 
-        return row(item);
-      },
-    );
-  }
+    //     return row(item);
+    //   },
+    // );
+  // }
 }

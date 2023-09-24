@@ -10,7 +10,7 @@ class ConfirmPassword
   static final _confirmpasswordRegex = RegExp(r"(\w+).{5,}");
 
   @override
-  ConfirmPasswordValidationError validator(String value) {
+  ConfirmPasswordValidationError? validator(String value) {
     return _confirmpasswordRegex.hasMatch(value)
         ? null
         : ConfirmPasswordValidationError.invalid;

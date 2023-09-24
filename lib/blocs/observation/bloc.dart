@@ -39,7 +39,7 @@ class ObservationBloc extends Bloc<ObservationEvent, ObservationState> {
       final int rating = event.rating;
       final bool hasConnection = await connectionStatus.checkConnection();
       if (hasConnection) {
-        Token token = await _tokenDao.getToken();
+        Token? token = await _tokenDao.getToken();
         Map<String, dynamic> data = {
           'classId': classId,
           'topicId': topic.id,
@@ -50,9 +50,9 @@ class ObservationBloc extends Bloc<ObservationEvent, ObservationState> {
         };
 
         await _observationRepository.sendObservation(
-            token: token.accessToken, data: data);
+            token: token!.accessToken, data: data);
       } else {
-        Class cls = await _classDao.getClass(classId);
+        Class? cls = await _classDao.getClass(classId);
         Observation observation = new Observation(
             classId: classId,
             topicId: topic.id,
@@ -63,10 +63,10 @@ class ObservationBloc extends Bloc<ObservationEvent, ObservationState> {
             title: title,
             completed: true,
             synchronize: true);
-        Student student = cls.students.firstWhere((e) => e.id == studentId);
+        Student student = cls!.students.firstWhere((e) => e.id == studentId);
         student.observation += 1;
         if (rating > 0) {
-          student.rating = formatRating((student.rating + rating) / 2);
+          student.rating = formatRating((student.rating! + rating) / 2);
         }
         ObservationRating observationRating = new ObservationRating(
             studentId: student.id,

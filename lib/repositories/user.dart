@@ -9,11 +9,11 @@ class UserRepository {
   static final _baseUrl = BaseUrl.urlAPi;
 
   Future<UserData> login(
-      {@required String email, @required String password}) async {
-    final url = '$_baseUrl/auth/login';
+      {@required String? email, @required String? password}) async {
+    final url = Uri.parse('$_baseUrl/auth/login');
     Map<String, dynamic> data = {
-      'email': email.trim(),
-      'password': password.trim(),
+      'email': email!.trim(),
+      'password': password!.trim(),
     };
     final prefs = await SharedPreferences.getInstance();
 
@@ -37,11 +37,11 @@ class UserRepository {
   }
 
   Future<UserData> register(
-      {@required String name,
-      @required String email,
-      @required String password,
-      @required String confirmPassword}) async {
-    final url = '$_baseUrl/auth/register';
+      {@required String? name,
+      @required String? email,
+      @required String? password,
+      @required String? confirmPassword}) async {
+    final url = Uri.parse('$_baseUrl/auth/register');
     Map<String, dynamic> data = {
       'email': email,
       'password': password,
@@ -50,8 +50,8 @@ class UserRepository {
     final prefs = await SharedPreferences.getInstance();
 
     // set value
-    prefs.setString('email', email);
-    prefs.setString('password', password);
+    prefs.setString('email', email!);
+    prefs.setString('password', password!);
 
     final response = await http.post(
       url,
@@ -68,15 +68,15 @@ class UserRepository {
     return UserData.fromJson(json);
   }
 
-  Future<String> forgetPassword({@required String email}) async {
-    final url = '$_baseUrl/auth/send-password-reset';
+  Future<String> forgetPassword({@required String? email}) async {
+    final url = Uri.parse('$_baseUrl/auth/send-password-reset');
     Map<String, dynamic> data = {
       'email': email,
     };
     final prefs = await SharedPreferences.getInstance();
 
     // set value
-    prefs.setString('email', email);
+    prefs.setString('email', email!);
     final response = await http.post(
       url,
       headers: <String, String>{
@@ -92,8 +92,8 @@ class UserRepository {
   }
 
   Future<String> resetPassword(
-      {@required String code, @required String password}) async {
-    final url = '$_baseUrl/auth/send-password-reset-by-code';
+      {@required String? code, @required String? password}) async {
+    final url = Uri.parse('$_baseUrl/auth/send-password-reset-by-code');
     final prefs = await SharedPreferences.getInstance();
 
     final email = prefs.getString('email') ?? '';

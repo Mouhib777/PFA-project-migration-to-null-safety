@@ -87,8 +87,8 @@ class ConfigStartView extends StatelessWidget {
                         Container(
                           width: MediaQuery.of(context).size.width * 0.3,
                           height: 60,
-                          child: FlatButton(
-                            highlightColor: Colors.white,
+                          child: ElevatedButton(
+                            // highlightColor: Colors.white,
                             onPressed: () {
                               _skip(context);
                             },
@@ -116,8 +116,8 @@ class ConfigStartView extends StatelessWidget {
                         Container(
                           width: MediaQuery.of(context).size.width * 0.2,
                           height: 60,
-                          child: FlatButton(
-                            highlightColor: Colors.white,
+                          child: ElevatedButton(
+                            // highlightColor: Colors.white,
                             onPressed: () async {
                               moveToPage(1);
                             },

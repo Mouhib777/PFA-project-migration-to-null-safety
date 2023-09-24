@@ -9,7 +9,7 @@ class Name extends FormzInput<String, NameValidationError> {
   static final _nameRegex = RegExp(r"(\w+).{3,}");
 
   @override
-  NameValidationError validator(String value) {
+  NameValidationError? validator(String value) {
     return _nameRegex.hasMatch(value) ? null : NameValidationError.invalid;
   }
 }

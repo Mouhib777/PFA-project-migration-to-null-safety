@@ -21,8 +21,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   }
 
   Stream<UserState> _mapLoadUserToState(LoadUser event) async* {
-    final User user = await _userDao.getUser();
-    yield UserLoadSuccess(user);
+    final User? user = await _userDao.getUser();
+    yield UserLoadSuccess(user!);
   }
 
   Stream<UserState> _mapUserAddedToState(UserAdded event) async* {

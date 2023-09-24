@@ -2,8 +2,8 @@ import 'package:docu_diary/models/token.dart';
 import 'package:docu_diary/models/user.dart';
 
 class UserData {
-  Token token;
-  User user;
+  Token? token;
+  User? user;
 
   UserData({this.token, this.user});
 
@@ -15,10 +15,10 @@ class UserData {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.token != null) {
-      data['token'] = this.token.toJson();
+      data['token'] = this.token!.toJson();
     }
     if (this.user != null) {
-      data['user'] = this.user.toJson();
+      data['user'] = this.user!.toJson();
     }
     return data;
   }

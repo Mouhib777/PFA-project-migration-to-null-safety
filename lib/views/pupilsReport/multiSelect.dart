@@ -11,16 +11,16 @@ import 'package:docu_diary/db/dao/classSelected.dart';
 import 'package:docu_diary/db/dao/dao.dart';
 
 class MultiSelect extends StatefulWidget {
-  final Class selectedClass;
-  final Function updateTopics;
+  final Class? selectedClass;
+  final Function? updateTopics;
 
   MultiSelect(
-      {Key key, @required this.selectedClass, @required this.updateTopics})
+      {Key? key, @required this.selectedClass, @required this.updateTopics})
       : super(key: key);
 
   @override
   _MultiSelectState createState() =>
-      _MultiSelectState(selectedClass, updateTopics);
+      _MultiSelectState(selectedClass!, updateTopics!);
 }
 
 class _MultiSelectState extends State<MultiSelect> {
@@ -44,16 +44,17 @@ class _MultiSelectState extends State<MultiSelect> {
   }
 
   _fetchData() async {
-    Class cls = await _selectedclassDao.getClass();
-    Token token = await _tokenDao.getToken();
+    Class? cls = await _selectedclassDao.getClass();
+    Token? token = await _tokenDao.getToken();
     setState(() {
       isLoading = true;
-      userToken = token.accessToken;
-      _selectedClassId = cls.id;
+      userToken = token!.accessToken!;
+      _selectedClassId = cls!.id!;
     });
     try {
       final response = await http.get(
-        '$_baseUrl/class',
+        Uri.parse(
+        '$_baseUrl/class'),
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Authorization': "bearer " + userToken,
@@ -88,15 +89,15 @@ class _MultiSelectState extends State<MultiSelect> {
   }
 
   Color getTopicColor(Topic topic) {
-    return topic.selected ? hexToColor(topic.color) : Colors.grey[400];
+    return topic.selected! ? hexToColor(topic.color!) : Colors.grey[400]!;
   }
 
   void updateTopic(Topic topic) {
     Topic tpc =
         selectedClass.topics.firstWhere((element) => element.id == topic.id);
-    tpc.selected = !tpc.selected;
+    tpc.selected = !tpc.selected!;
 
-    if (tpc.selected) {
+    if (tpc.selected!) {
       selectedValues.add(topic);
     } else {
       selectedValues.remove(topic);
@@ -116,7 +117,7 @@ class _MultiSelectState extends State<MultiSelect> {
             child: Scrollbar(
                 controller: _scrollController, // <---- Here, the controller
 
-                isAlwaysShown: true,
+                // isAlwaysShown: true,
                 child: SingleChildScrollView(
                   controller:
                       _scrollController, // <---- Same as the Scrollbar controller
@@ -160,7 +161,7 @@ class _MultiSelectState extends State<MultiSelect> {
                                           flex: 6,
                                           child: Center(
                                               child: Text(
-                                            topic.name,
+                                            topic.name!,
                                             style: TextStyle(
                                                 fontSize: 13,
                                                 color: getTopicColor(topic)),

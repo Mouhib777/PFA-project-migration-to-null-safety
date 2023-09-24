@@ -21,11 +21,11 @@ class UpdateClass extends ReportEvent {
 }
 
 class LoadStudent extends ReportEvent {
-  final String id;
+  final String? id;
   const LoadStudent({this.id});
 
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [id!];
 
   @override
   String toString() => 'UpdateClass { oldClass: $id }';
@@ -43,12 +43,12 @@ class DeleteSpontaneousObservation extends ReportEvent {
 }
 
 class DeleteStructuredObservation extends ReportEvent {
-  final String observationId;
-  final String studentId;
+  final String? observationId;
+  final String? studentId;
   const DeleteStructuredObservation({this.observationId, this.studentId});
 
   @override
-  List<Object> get props => [observationId, studentId];
+  List<Object> get props => [observationId!, studentId!];
 
   @override
   String toString() =>
@@ -68,16 +68,16 @@ class FilterObservation extends ReportEvent {
 }
 
 class GetPuplisReport extends ReportEvent {
-  final String studentId;
-  final bool visibility;
-  final int observationNbr;
-  final int index;
+  final String? studentId;
+  final bool? visibility;
+  final int? observationNbr;
+  final int? index;
 
   const GetPuplisReport(
       {this.studentId, this.visibility, this.observationNbr, this.index});
 
   @override
-  List<Object> get props => [studentId, visibility, observationNbr, index];
+  List<Object> get props => [studentId!, visibility!, observationNbr!, index!];
 
   @override
   String toString() => 'FilterStudents {  text: $studentId }';
@@ -108,13 +108,13 @@ class FilterReportByTopics extends ReportEvent {
 }
 
 class EditObservation extends ReportEvent {
-  final String id;
-  final String title;
-  final String classId;
-  final String topicId;
-  final String controlId;
-  final int rating;
-  final String studentId;
+  final String? id;
+  final String? title;
+  final String? classId;
+  final String? topicId;
+  final String? controlId;
+  final int? rating;
+  final String? studentId;
 
   const EditObservation(
       {this.id,
@@ -127,7 +127,7 @@ class EditObservation extends ReportEvent {
 
   @override
   List<Object> get props =>
-      [id, title, classId, topicId, controlId, rating, studentId];
+      [id!, title!, classId!, topicId!, controlId!, rating!, studentId!];
 
   @override
   String toString() => 'AddStudent { student: $title }';

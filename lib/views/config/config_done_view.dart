@@ -72,7 +72,7 @@ class ConfigDoneView extends StatelessWidget {
               Container(
                 width: MediaQuery.of(context).size.width * 0.6,
                 height: 60,
-                child: FlatButton(
+                child: ElevatedButton(
                   onPressed: () async {
                     _skip(context);
                   },
@@ -107,7 +107,7 @@ class ConfigDoneView extends StatelessWidget {
                     Container(
                         height: 80,
                         width: MediaQuery.of(context).size.width * 0.3,
-                        child: FlatButton(
+                        child: ElevatedButton(
                             onPressed: () {
                               moveToPage(4);
                             },

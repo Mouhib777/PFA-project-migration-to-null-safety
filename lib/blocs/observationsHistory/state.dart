@@ -28,10 +28,10 @@ class ObservationsUpdatePictureError extends ObservationsState {}
 class ObservationsDeletePictureError extends ObservationsState {}
 
 class ObservationsLoadSuccess extends ObservationsState {
-  final List<Observation> listObservations;
-  final String defaultSelectValue;
-  final String selectedYear;
-  final List<Class> classes;
+  final List<Observation>? listObservations;
+  final String? defaultSelectValue;
+  final String? selectedYear;
+  final List<Class>? classes;
 
   const ObservationsLoadSuccess({
     this.listObservations,

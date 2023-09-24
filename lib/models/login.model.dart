@@ -1,6 +1,6 @@
 class UserData {
-  Token token;
-  User user;
+  Token? token;
+  User? user;
 
   UserData({this.token, this.user});
 
@@ -12,20 +12,20 @@ class UserData {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.token != null) {
-      data['token'] = this.token.toJson();
+      data['token'] = this.token!.toJson();
     }
     if (this.user != null) {
-      data['user'] = this.user.toJson();
+      data['user'] = this.user!.toJson();
     }
     return data;
   }
 }
 
 class Token {
-  String tokenType;
-  String accessToken;
-  String refreshToken;
-  String expiresIn;
+  String? tokenType;
+  String? accessToken;
+  String? refreshToken;
+  String? expiresIn;
 
   Token({this.tokenType, this.accessToken, this.refreshToken, this.expiresIn});
 
@@ -47,15 +47,15 @@ class Token {
 }
 
 class User {
-  String id;
-  String name;
-  String lastname;
-  String email;
-  String confirmationCode;
-  bool validateCompte;
-  String role;
-  List<Null> topics;
-  String createdAt;
+  String? id;
+  String? name;
+  String? lastname;
+  String? email;
+  String? confirmationCode;
+  bool? validateCompte;
+  String? role;
+  List<Null>? topics;
+  String? createdAt;
 
   User(
       {this.id,

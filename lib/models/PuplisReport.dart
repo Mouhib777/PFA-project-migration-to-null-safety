@@ -6,16 +6,16 @@ PuplisReport puplisReportFromJson(String str) =>
 String puplisReportToJson(PuplisReport data) => json.encode(data.toJson());
 
 class PuplisReport {
-  String sId;
-  String className;
-  String schoolYear;
-  String firstName;
-  String lastName;
-  String emergencyNumber;
-  int rating;
-  int observation;
-  String picture;
-  List<Topics> topics;
+  String? sId;
+  String? className;
+  String? schoolYear;
+  String? firstName;
+  String? lastName;
+  String? emergencyNumber;
+  int? rating;
+  int? observation;
+  String? picture;
+  List<Topics>? topics;
 
   PuplisReport(
       {this.sId,
@@ -40,9 +40,9 @@ class PuplisReport {
     observation = json['observation'];
     picture = json['picture'];
     if (json['topics'] != null) {
-      topics = new List<Topics>();
+      topics =  [];
       json['topics'].forEach((v) {
-        topics.add(new Topics.fromJson(v));
+        topics!.add(new Topics.fromJson(v));
       });
     }
   }
@@ -59,19 +59,19 @@ class PuplisReport {
     data['observation'] = this.observation;
     data['picture'] = this.picture;
     if (this.topics != null) {
-      data['topics'] = this.topics.map((v) => v.toJson()).toList();
+      data['topics'] = this.topics!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
 class Topics {
-  String sId;
-  String name;
-  int rating;
-  int observation;
-  List<Controls> controls;
-  String topicColor;
+  String? sId;
+  String? name;
+  int? rating;
+  int? observation;
+  List<Controls>? controls;
+  String? topicColor;
 
   Topics(
       {this.sId,
@@ -87,9 +87,9 @@ class Topics {
     rating = json['rating'];
     observation = json['observation'];
     if (json['controls'] != null) {
-      controls = new List<Controls>();
+      controls =  [];
       json['controls'].forEach((v) {
-        controls.add(new Controls.fromJson(v));
+        controls!.add(new Controls.fromJson(v));
       });
     }
     topicColor = json['topicColor'];
@@ -102,7 +102,7 @@ class Topics {
     data['rating'] = this.rating;
     data['observation'] = this.observation;
     if (this.controls != null) {
-      data['controls'] = this.controls.map((v) => v.toJson()).toList();
+      data['controls'] = this.controls!.map((v) => v.toJson()).toList();
     }
     data['topicColor'] = this.topicColor;
     return data;
@@ -110,9 +110,9 @@ class Topics {
 }
 
 class Controls {
-  String sId;
-  String name;
-  List<Observations> observations;
+  String? sId;
+  String? name;
+  List<Observations>? observations;
 
   Controls({this.sId, this.name, this.observations});
 
@@ -120,9 +120,9 @@ class Controls {
     sId = json['_id'];
     name = json['name'];
     if (json['observations'] != null) {
-      observations = new List<Observations>();
+      observations =  [];
       json['observations'].forEach((v) {
-        observations.add(new Observations.fromJson(v));
+        observations!.add(new Observations.fromJson(v));
       });
     }
   }
@@ -132,24 +132,24 @@ class Controls {
     data['_id'] = this.sId;
     data['name'] = this.name;
     if (this.observations != null) {
-      data['observations'] = this.observations.map((v) => v.toJson()).toList();
+      data['observations'] = this.observations!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
 class Observations {
-  String observationId;
-  bool completed;
-  String topicId;
-  String controlId;
-  String type;
-  String title;
-  String topicName;
-  String controlName;
-  int rating;
-  String date;
-  String dateOfUpdate;
+  String? observationId;
+  bool? completed;
+  String? topicId;
+  String? controlId;
+  String? type;
+  String? title;
+  String? topicName;
+  String? controlName;
+  int? rating;
+  String? date;
+  String? dateOfUpdate;
 
   Observations(
       {this.observationId,

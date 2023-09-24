@@ -1,3 +1,5 @@
+import 'package:docu_diary/views/Observations/Observation_history.dart';
+import 'package:docu_diary/views/dashboard/home.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:async';
 import 'package:docu_diary/config/url.dart';
@@ -63,27 +65,34 @@ class PupilsReport extends StatelessWidget {
 class PupilsReportContent extends StatefulWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey;
   PupilsReportContent(this._scaffoldKey);
+  
   @override
-  _PupilsReportContentState createState() =>
-      _PupilsReportContentState(_scaffoldKey);
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    throw UnimplementedError();
+  }
+  
+//   _PupilsReportContentState createState() =>
+//       _PupilsReportContentState(_scaffoldKey);
+//
 }
 
 class _PupilsReportContentState extends State<PupilsReportContent> {
-  final GlobalKey<ScaffoldState> _scaffoldKey;
-  _PupilsReportContentState(this._scaffoldKey);
+  late final GlobalKey<ScaffoldState> _scaffoldKey;
+  // _PupilsReportContentState(this._scaffoldKey);
 
-  StreamSubscription _connectionChangeStream;
+  late StreamSubscription _connectionChangeStream;
 
-  SingingCharacter _character = SingingCharacter.full_report;
+  // SingingCharacter _character = SingingCharacter.full_report;
   static final _baseUrl = BaseUrl.urlAPi;
   ObservationsModel observations = ObservationsModel();
   String userToken = '';
   final TokenDao _tokenDao = TokenDao();
   final ObservationRepository _observationRepository = ObservationRepository();
 
-  Class selectedClass;
+  Class? selectedClass;
 
-  var items = List<PupilsModel>();
+  var items = [];
 
   final ScrollController _scrollController = ScrollController();
 
@@ -92,38 +101,38 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
   void initState() {
     super.initState();
     new Future.delayed(Duration.zero, () {
-      context.bloc<ReportBloc>()..add(LoadReport());
+      // context.bloc<ReportBloc>()..add(LoadReport());
     });
+//! voir lib/utils/snackbar
+    // ConnectionStatusSingleton connectionStatus =
+    //     ConnectionStatusSingleton.getInstance();
+    // new Future.delayed(Duration.zero, () {
+    //   _hasConnection = connectionStatus.hasConnection;
+  //     if (!connectionStatus.hasConnection) {
+  //       _showSnackbarConnectionStatus(false);
+  //     }
+  //     _connectionChangeStream =
+  //         connectionStatus.connectionChange.listen(connectionChanged);
+  //   });
+  // }
 
-    ConnectionStatusSingleton connectionStatus =
-        ConnectionStatusSingleton.getInstance();
-    new Future.delayed(Duration.zero, () {
-      _hasConnection = connectionStatus.hasConnection;
-      if (!connectionStatus.hasConnection) {
-        _showSnackbarConnectionStatus(false);
-      }
-      _connectionChangeStream =
-          connectionStatus.connectionChange.listen(connectionChanged);
-    });
+  // void _hideSnackbar() {
+  //   SnackBarUtils.hideSnackbar(_scaffoldKey);
+  // }
+
+  // void _showSnackbarConnectionStatus(bool connected) {
+  //   _hideSnackbar();
+  //   SnackBarUtils.showSnackbarPupilsReportConnectionStatus(
+  //       _scaffoldKey, connected, _hideSnackbar);
+  // }
+
+  // void connectionChanged(dynamic hasConnection) {
+  //   _showSnackbarConnectionStatus(hasConnection);
+  //   setState(() {
+  //     _hasConnection = hasConnection;
+  //   });
+  // }
   }
-
-  void _hideSnackbar() {
-    SnackBarUtils.hideSnackbar(_scaffoldKey);
-  }
-
-  void _showSnackbarConnectionStatus(bool connected) {
-    _hideSnackbar();
-    SnackBarUtils.showSnackbarPupilsReportConnectionStatus(
-        _scaffoldKey, connected, _hideSnackbar);
-  }
-
-  void connectionChanged(dynamic hasConnection) {
-    _showSnackbarConnectionStatus(hasConnection);
-    setState(() {
-      _hasConnection = hasConnection;
-    });
-  }
-
   @override
   void dispose() {
     _connectionChangeStream.cancel();
@@ -133,11 +142,11 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
 
   var isLoading = false;
 
-  List<String> filteredTopics = [];
+  List<String>? filteredTopics = [];
 
   updateFilteredTopics(List<Topic> filtered) {
     setState(() {
-      filteredTopics = filtered.map((e) => e.id).toList();
+      filteredTopics = filtered.map((e) => e.id!).toList();
     });
   }
 
@@ -151,19 +160,19 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
     }
 
     print('---------------------- pdf save');
-    Token token = await _tokenDao.getToken();
+    Token? token = await _tokenDao.getToken();
     // var selectedClassName = cls.className;
-    var userToken = token.accessToken;
+    var userToken = token!.accessToken;
     // String classID = id;
 
-    final topicList = filteredTopics.isEmpty
+    final topicList = filteredTopics!.isEmpty
         ? listReports.first.topics
         : listReports.first.topics
-            .where((e) => filteredTopics.indexOf(e.sId) > -1)
+            !.where((e) => filteredTopics!.indexOf(e.sId!) > -1)
             .toList();
 
     final x = [];
-    for (var i = 0; i < topicList.length; i++) {
+    for (var i = 0; i < topicList!.length; i++) {
       x.add(topicList[i].sId);
     }
 
@@ -177,14 +186,14 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
       // Set web-specific directory
       if (responseJson != '') {
         try {
-          http.Response response = await http.get('$_baseUrl$responseJson');
+          http.Response response = await http.get(Uri.parse('$_baseUrl$responseJson'));
 
           await Printing.sharePdf(
               bytes: response.bodyBytes,
               filename: '' +
-                  listPupils[position].firstName +
+                  listPupils[position].firstName! +
                   ' ' +
-                  listPupils[position].lastName +
+                  listPupils[position].lastName! +
                   '_' +
                   new DateFormat('yyyyMMdd').format(new DateTime.now()) +
                   '.pdf');
@@ -193,14 +202,14 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
         }
       }
     } else {
-      http.Response response = await http.get('$_baseUrl$responseJson');
+      http.Response response = await http.get(Uri.parse('$_baseUrl$responseJson'));
 
       await Printing.sharePdf(
           bytes: response.bodyBytes,
           filename: '' +
-              listPupils[position].firstName +
+              listPupils[position].firstName! +
               ' ' +
-              listPupils[position].lastName +
+              listPupils[position].lastName! +
               '_' +
               new DateFormat('yyyyMMdd').format(new DateTime.now()) +
               '.pdf');
@@ -218,19 +227,19 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
     final String currentDate =
         new DateFormat('yyyyMMdd').format(new DateTime.now());
 
-    Token token = await _tokenDao.getToken();
+    Token? token = await _tokenDao.getToken();
     // var selectedClassName = cls.className;
-    var userToken = token.accessToken;
+    var userToken = token!.accessToken;
     // String classID = id;
 
-    final topicList = filteredTopics.isEmpty
+    final topicList = filteredTopics!.isEmpty
         ? listReports.first.topics
         : listReports.first.topics
-            .where((e) => filteredTopics.indexOf(e.sId) > -1)
+            !.where((e) => filteredTopics!.indexOf(e.sId!) > -1)
             .toList();
 
     final x = [];
-    for (var i = 0; i < topicList.length; i++) {
+    for (var i = 0; i < topicList!.length; i++) {
       x.add(topicList[i].sId);
     }
 
@@ -243,7 +252,7 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
     //     await buildPdfDocument(listPupils, listReports, className, position);
     if (responseJson != '') {
       try {
-        http.Response response = await http.get('$_baseUrl/$responseJson');
+        http.Response response = await http.get(Uri.parse('$_baseUrl/$responseJson'));
 
         // await Printing.sharePdf(
         //     bytes: response.bodyBytes,
@@ -262,9 +271,9 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
             '/' +
             currentDate +
             '_' +
-            student.firstName +
+            student.firstName! +
             ' ' +
-            student.lastName +
+            student.lastName! +
             '.pdf');
         await file.writeAsBytes(response.bodyBytes);
         OpenFile.open(file.path);
@@ -283,16 +292,16 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
         marginRight: 1 * PdfPageFormat.cm);
     final PupilsModel student = listPupils[position];
 
-    final topicList = filteredTopics.isEmpty
+    final topicList = filteredTopics!.isEmpty
         ? listReports.first.topics
         : listReports.first.topics
-            .where((e) => filteredTopics.indexOf(e.sId) > -1)
+            !.where((e) => filteredTopics!.indexOf(e.sId!) > -1)
             .toList();
 
     final String currentDate =
         new DateFormat('yyyyMMdd').format(new DateTime.now());
     final doc = pw.Document(
-        title: currentDate + '_' + student.firstName + ' ' + student.lastName);
+        title: currentDate + '_' + student.firstName! + ' ' + student.lastName!);
 
     final PdfImage logoImage = PdfImage.file(
       doc.document,
@@ -363,7 +372,7 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                         horizontalRadius: 5,
                         verticalRadius: 5,
                         child: pw.Image(
-                          logoImage,
+                          logoImage as pw.ImageProvider,
                           width: 100,
                         )),
                     pw.Text(
@@ -386,7 +395,7 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                             horizontalRadius: 5,
                             verticalRadius: 5,
                             child: pw.Image(
-                              profileImage,
+                              profileImage as pw.ImageProvider,
                               width: 40,
                               height: 40,
                             )),
@@ -397,15 +406,15 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                             crossAxisAlignment: pw.CrossAxisAlignment.start,
                             children: [
                               pw.Text(
-                                (filteredTopics.isEmpty &&
+                                (filteredTopics!.isEmpty &&
                                             listReports.isNotEmpty
                                         ? listReports.first.firstName
-                                        : student.firstName) +
+                                        : student.firstName)! +
                                     ' ' +
-                                    (filteredTopics.isEmpty &&
+                                    (filteredTopics!.isEmpty &&
                                             listReports.isNotEmpty
-                                        ? listReports.first.lastName
-                                        : student.lastName),
+                                        ? listReports.first.lastName!
+                                        : student.lastName!),
                                 style: pw.TextStyle(
                                     color: PdfColor.fromInt(0x808080),
                                     fontSize: 14.0,
@@ -415,7 +424,7 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                                 "Klasse " +
                                     className +
                                     ", Schuljahr " +
-                                    student.schoolYear,
+                                    student.schoolYear!,
                                 style: pw.TextStyle(
                                     color: PdfColor.fromInt(0x808080),
                                     fontSize: 13.0,
@@ -425,10 +434,10 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                         pw.Spacer(),
                         pw.Container(
                           child: pw.Text(
-                            getObservationCountText((filteredTopics.isEmpty &&
+                            getObservationCountText((filteredTopics!.isEmpty &&
                                     listReports.isNotEmpty
-                                ? listReports.first.observation
-                                : student.observation)),
+                                ? listReports.first.observation!
+                                : student.observation!)),
                             style: pw.TextStyle(
                                 color: PdfColor.fromInt(0xFFff6c00),
                                 fontSize: 12.0,
@@ -437,7 +446,7 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                         ),
                       ])),
               pw.Column(
-                  children: topicList.map((topic) {
+                  children: topicList!.map((topic) {
                 return pw.Container(
                     margin: pw.EdgeInsets.only(top: 10),
                     padding: pw.EdgeInsets.symmetric(horizontal: 20),
@@ -446,19 +455,19 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                           mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                           children: [
                             pw.Text(
-                                topic.name +
+                                topic.name! +
                                     ' ( ' +
                                     topic.observation.toString() +
                                     ' )',
                                 style: pw.TextStyle(
                                     fontWeight: pw.FontWeight.bold,
                                     fontSize: 12.0,
-                                    color: getTopicColor(topic.topicColor))),
+                                    color:PdfColors.black)),
                           ]),
                       pw.Row(children: [
                         pw.Column(
                             crossAxisAlignment: pw.CrossAxisAlignment.start,
-                            children: topic.controls.map((control) {
+                            children: topic.controls!.map((control) {
                               return pw.Container(
                                   padding: pw.EdgeInsets.only(
                                       left: 30, top: 10, bottom: 10),
@@ -468,12 +477,11 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                                       children: [
                                         pw.Container(
                                           child: pw.Text(
-                                            control.name,
+                                            control.name!,
                                             style: pw.TextStyle(
                                                 fontWeight: pw.FontWeight.bold,
                                                 fontSize: 12.0,
-                                                color: getTopicColor(
-                                                    topic.topicColor)),
+                                                color: PdfColors.black),
                                           ),
                                         ),
                                         pw.Container(
@@ -483,7 +491,7 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                                                 crossAxisAlignment:
                                                     pw.CrossAxisAlignment.start,
                                                 children: control.observations
-                                                    .map((value) {
+                                                    !.map((value) {
                                                   return pw.Container(
                                                       width: pageFormat.width *
                                                           0.76,
@@ -495,10 +503,10 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                                                               .MainAxisAlignment
                                                               .spaceBetween,
                                                           children: [
-                                                            value.rating > 0
+                                                            value.rating! > 0
                                                                 ? pw.Image(
                                                                     _getRating(value
-                                                                        .rating),
+                                                                        .rating) as pw.ImageProvider,
                                                                     width: 25,
                                                                     height: 25,
                                                                   )
@@ -527,9 +535,9 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                                                             pw.Text(
                                                               value.dateOfUpdate ==
                                                                       null
-                                                                  ? value.date
+                                                                  ? value.date!
                                                                   : value
-                                                                      .dateOfUpdate,
+                                                                      .dateOfUpdate!,
                                                               style: pw.TextStyle(
                                                                   fontSize:
                                                                       12.0,
@@ -552,18 +560,18 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
     if (position == null) {
       return;
     }
-    Token token = await _tokenDao.getToken();
+    Token? token = await _tokenDao.getToken();
     // var selectedClassName = cls.className;
-    var userToken = token.accessToken;
+    var userToken = token!.accessToken;
     // String classID = id;
-    final topicList = filteredTopics.isEmpty
+    final topicList = filteredTopics!.isEmpty
         ? listReports.first.topics
         : listReports.first.topics
-            .where((e) => filteredTopics.indexOf(e.sId) > -1)
+            !.where((e) => filteredTopics!.indexOf(e.sId!) > -1)
             .toList();
 
     final x = [];
-    for (var i = 0; i < topicList.length; i++) {
+    for (var i = 0; i < topicList!.length; i++) {
       x.add(topicList[i].sId);
     }
     var responseJson = await _observationRepository.getPuplisReportPdf(
@@ -575,7 +583,7 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
     if (responseJson != "") {
       // Set web-specific directory
       try {
-        http.Response response = await http.get('$_baseUrl$responseJson');
+        http.Response response = await http.get(Uri.parse('$_baseUrl$responseJson'));
         var pdfData = response.bodyBytes;
 
         Printing.layoutPdf(
@@ -604,15 +612,15 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
           child: Container(child: LoadingIndicator()),
         );
       } else if (state is ReportLoadSuccess) {
-        final List<Class> classes = state.classes;
+        final List<Class> classes = state.classes!;
         final Class selectedClass = classes.first;
-        final List<PupilsModel> listPupils = state.listPeoples;
-        final List<PuplisReport> listReports = state.listReports;
+        final List<PupilsModel> listPupils = state.listPeoples!;
+        final List<PuplisReport> listReports = state.listReports!;
 
         final selectedYear = state.selectedYear;
         final visibility = state.visibility;
 
-        final int position = state.position != null ? state.position : null;
+        final int? position = state.position != null ? state.position : null;
 
         return Row(
           children: <Widget>[
@@ -628,7 +636,7 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                       Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          SchoolYear(currentYear: selectedYear),
+                          // SchoolYear(currentYear: selectedYear),
                           Container(
                             child: DropdownButton<Class>(
                               value: selectedClass,
@@ -636,15 +644,15 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                               icon: Icon(Icons.keyboard_arrow_down),
                               iconSize: 50.0,
                               iconEnabledColor: Color(0xFFff7f00),
-                              onChanged: (Class newValue) {
-                                context.bloc<ReportBloc>()
-                                  ..add(UpdateClass(newValue));
+                              onChanged: (Class? newValue) {
+                                // context.bloc<ReportBloc>()
+                                //   ..add(UpdateClass(newValue));
                               },
                               items: classes
                                   .map<DropdownMenuItem<Class>>((Class value) {
                                 return DropdownMenuItem<Class>(
                                   value: value,
-                                  child: Text(value.className,
+                                  child: Text(value.className!,
                                       style: TextStyle(
                                           fontSize: 34.7,
                                           color: Color(0xFF333951))),
@@ -659,7 +667,9 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                           child: Container(
                               width: MediaQuery.of(context).size.width * 0.24,
                               height: MediaQuery.of(context).size.height * 0.05,
-                              child: Search(selectedClass: selectedClass)))
+                              // child: Search(selectedClass: selectedClass)
+                              )
+                              )
                     ],
                   ),
                   SizedBox(
@@ -669,9 +679,9 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                   Expanded(
                     child: Container(
                         child: Scrollbar(
-                      isAlwaysShown: true,
+                      // isAlwaysShown: true,
                       controller: _scrollController,
-                      child: visibility
+                      child: visibility!
                           ? Container(
                               child: ListView.separated(
                                 shrinkWrap: true,
@@ -680,13 +690,13 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                                 itemBuilder: (context, index) {
                                   return InkWell(
                                     onTap: () {
-                                      context.bloc<ReportBloc>()
-                                        ..add(GetPuplisReport(
-                                            studentId: listPupils[index].sId,
-                                            observationNbr:
-                                                listPupils[index].observation,
-                                            visibility: visibility,
-                                            index: index));
+                                      // context.bloc<ReportBloc>()
+                                      //   ..add(GetPuplisReport(
+                                      //       studentId: listPupils[index].sId,
+                                      //       observationNbr:
+                                      //           listPupils[index].observation,
+                                      //       visibility: visibility,
+                                      //       index: index));
                                     },
                                     child: Container(
                                         decoration:
@@ -753,23 +763,23 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                                                               String>{
                                                             'id': listPupils[
                                                                     index]
-                                                                .sId,
+                                                                .sId!,
                                                             'firstName':
                                                                 listPupils[
                                                                         index]
-                                                                    .firstName,
+                                                                    .firstName!,
                                                             'lastName':
                                                                 listPupils[
                                                                         index]
-                                                                    .lastName,
+                                                                    .lastName!,
                                                             'className':
                                                                 listPupils[
                                                                         index]
-                                                                    .className,
+                                                                    .className!,
                                                             'birthdayDate':
                                                                 listPupils[
                                                                         index]
-                                                                    .birthdayDate,
+                                                                    .birthdayDate!,
                                                             'CurrentPage':
                                                                 'pupilsReport',
                                                           },
@@ -783,11 +793,11 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                                                       child: Container(
                                                         child: Text(
                                                             listPupils[index]
-                                                                    .firstName +
+                                                                    .firstName! +
                                                                 ' ' +
                                                                 listPupils[
                                                                         index]
-                                                                    .lastName,
+                                                                    .lastName!,
                                                             style: TextStyle(
                                                                 fontSize: 15)),
                                                       )),
@@ -798,7 +808,7 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                                                             getObservationCountText(
                                                                 listPupils[
                                                                         index]
-                                                                    .observation),
+                                                                    .observation!),
                                                             style: TextStyle(
                                                                 color: Color(
                                                                     0xFFd0d1d4),
@@ -835,21 +845,21 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                                                           ),
                                                           onTap: () {
                                                             // change here
-                                                            context.bloc<
-                                                                ReportBloc>()
-                                                              ..add(GetPuplisReport(
-                                                                  studentId:
-                                                                      listPupils[
-                                                                              index]
-                                                                          .sId,
-                                                                  observationNbr:
-                                                                      listPupils[
-                                                                              index]
-                                                                          .observation,
-                                                                  visibility:
-                                                                      visibility,
-                                                                  index:
-                                                                      index));
+                                                            // context.bloc<
+                                                            //     ReportBloc>()
+                                                            //   ..add(GetPuplisReport(
+                                                            //       studentId:
+                                                            //           listPupils[
+                                                            //                   index]
+                                                            //               .sId,
+                                                            //       observationNbr:
+                                                            //           listPupils[
+                                                            //                   index]
+                                                            //               .observation,
+                                                            //       visibility:
+                                                            //           visibility,
+                                                            //       index:
+                                                            //           index));
                                                           },
                                                         ),
                                                       ))
@@ -921,7 +931,7 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                                           child: ClipRRect(
                                               borderRadius:
                                                   BorderRadius.circular(10),
-                                              child: listPupils[position]
+                                              child: listPupils[position!]
                                                               .picture !=
                                                           null &&
                                                       listPupils[position]
@@ -948,18 +958,18 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                                         new GestureDetector(
                                           onTap: () {},
                                           child: new Text(
-                                            (filteredTopics.isEmpty &&
+                                            (filteredTopics!.isEmpty &&
                                                         listReports.isNotEmpty
                                                     ? listReports
                                                         .first.firstName
                                                     : listPupils[position]
-                                                        .firstName) +
+                                                        .firstName)! +
                                                 ' ' +
-                                                (filteredTopics.isEmpty &&
+                                                (filteredTopics!.isEmpty &&
                                                         listReports.isNotEmpty
                                                     ? listReports.first.lastName
                                                     : listPupils[position]
-                                                        .lastName),
+                                                        .lastName)!,
                                             style: TextStyle(
                                                 color: Colors.grey[700],
                                                 fontSize: 18.0,
@@ -971,12 +981,12 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                                           margin: EdgeInsets.only(right: 15.0),
                                           child: Text(
                                             getObservationCountText(
-                                                (filteredTopics.isEmpty &&
+                                                (filteredTopics!.isEmpty &&
                                                         listReports.isNotEmpty
                                                     ? listReports
                                                         .first.observation
                                                     : listPupils[position]
-                                                        .observation)),
+                                                        .observation)!),
                                             style: TextStyle(
                                                 color: Color(0xFFff6c00),
                                                 fontSize: 18.0,
@@ -987,20 +997,20 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                                     ),
                                     Expanded(
                                       child: ExpandableCardView(
-                                        topicList: filteredTopics.isEmpty &&
+                                        topicList: filteredTopics!.isEmpty &&
                                                 listReports.isNotEmpty
                                             ? listReports.first.topics
                                             : listReports.first.topics
-                                                .where((e) =>
+                                                !.where((e) =>
                                                     filteredTopics
-                                                        .indexOf(e.sId) >
+                                                        !.indexOf(e.sId!) >
                                                     -1)
                                                 .toList(),
                                         sid: listPupils[position].sId,
                                       ),
                                     ),
                                     InkWell(
-                                        child: FlatButton(
+                                        child: ElevatedButton(
                                             onPressed: () {
                                               Navigator.push(
                                                 context,
@@ -1119,25 +1129,26 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                                       fontSize: 17.0,
                                     ),
                                   ),
-                            leading: ((position != null) &&
-                                    listPupils[position].observation > 0)
-                                ? Radio(
-                                    value: SingingCharacter.full_report,
-                                    groupValue: _character,
-                                    onChanged: (SingingCharacter value) {
-                                      setState(() {
-                                        _character = value;
-                                        updateFilteredTopics(
-                                            selectedClass.topics);
-                                      });
-                                    },
-                                  )
-                                : Container(
-                                    width: 45,
-                                    child: Icon(
-                                      Icons.radio_button_unchecked,
-                                      size: 21.0,
-                                    )),
+                            // leading: ((position != null) &&
+                            //         listPupils[position].observation! > 0)
+                                // ? Radio(
+                                //     // value: SingingCharacter.full_report,
+                                //     groupValue: _character,
+                                //     // onChanged: (SingingCharacter value) {
+                                //     //   setState(() {
+                                //     //     _character = value;
+                                //     //     updateFilteredTopics(
+                                //     //         selectedClass.topics);
+                                //     //   });
+                                //     // },
+                                //   )
+                                // : Container(
+                                //     width: 45,
+                                //     child: Icon(
+                                //       Icons.radio_button_unchecked,
+                                //       size: 21.0,
+                                    // )
+                                // ),
                           ),
                           ListTile(
                               title: kIsWeb
@@ -1155,37 +1166,38 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                                         fontSize: 17.0,
                                       ),
                                     ),
-                              leading: (position != null &&
-                                      listPupils[position].observation > 0)
-                                  ? Radio(
-                                      value: SingingCharacter.select_topic,
-                                      groupValue: _character,
-                                      onChanged: (SingingCharacter value) {
-                                        setState(() {
-                                          _character = value;
-                                          updateFilteredTopics(
-                                              selectedClass.topics);
-                                        });
-                                      },
-                                    )
-                                  : Container(
-                                      width: 45,
-                                      child: Icon(
-                                        Icons.radio_button_unchecked,
-                                        size: 21.0,
-                                      ),
-                                    )),
+                              // leading: (position != null &&
+                              //         listPupils[position].observation! > 0)
+                              //     ? Radio(
+                              //         // value: SingingCharacter.select_topic,
+                              //         groupValue: _character,
+                              //         onChanged: (SingingCharacter value) {
+                              //           setState(() {
+                              //             _character = value;
+                              //             updateFilteredTopics(
+                              //                 selectedClass.topics);
+                              //           });
+                              //         },
+                              //       )
+                              //     : Container(
+                              //         width: 45,
+                              //         child: Icon(
+                              //           Icons.radio_button_unchecked,
+                              //           size: 21.0,
+                              //         ),
+                                    // )
+                                    ),
                           SizedBox(
                             height: MediaQuery.of(context).size.height * 0.02,
                           ),
-                          selectedClass != null &&
-                                  _character == SingingCharacter.select_topic
-                              ? MultiSelect(
-                                  selectedClass: selectedClass,
-                                  updateTopics: updateFilteredTopics)
-                              : SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.3),
+                          // selectedClass != null &&
+                          //         _character == SingingCharacter.select_topic
+                          //     ? MultiSelect(
+                          //         selectedClass: selectedClass,
+                          //         updateTopics: updateFilteredTopics)
+                          //     : SizedBox(
+                          //         height:
+                          //             MediaQuery.of(context).size.height * 0.3),
                         ],
                       ),
                     ),
@@ -1221,7 +1233,7 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                             ),
                             !kIsWeb
                                 ? position != null &&
-                                        listPupils[position].observation > 0
+                                        listPupils[position].observation! > 0
                                     ? Container(
                                         height:
                                             MediaQuery.of(context).size.height *
@@ -1237,8 +1249,8 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                                             ],
                                           ),
                                         ),
-                                        child: FlatButton(
-                                            textColor: Colors.white,
+                                        child: ElevatedButton(
+                                            // textColor: Colors.white,
                                             child: new Text(
                                               "PDF Report erstellen",
                                               style: TextStyle(
@@ -1249,7 +1261,7 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                                               savePDFNew(
                                                   listPupils,
                                                   listReports,
-                                                  selectedClass.className,
+                                                  selectedClass.className!,
                                                   position);
                                             }),
                                       )
@@ -1260,13 +1272,13 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                                         height:
                                             MediaQuery.of(context).size.height *
                                                 0.06,
-                                        child: const FlatButton(
+                                        child: const ElevatedButton(
                                           onPressed: null,
                                           child: Text("PDF Report erstellen",
                                               style: TextStyle(fontSize: 15)),
                                         ))
                                 : position != null &&
-                                        listPupils[position].observation > 0
+                                        listPupils[position].observation! > 0
                                     ? Container(
                                         height:
                                             MediaQuery.of(context).size.height *
@@ -1282,8 +1294,8 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                                             ],
                                           ),
                                         ),
-                                        child: FlatButton(
-                                            textColor: Colors.white,
+                                        child: ElevatedButton(
+                                            // textColor: Colors.white,
                                             child: new Text(
                                               "PDF Report erstellen",
                                               style: TextStyle(
@@ -1294,7 +1306,7 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                                               savePDFNew(
                                                   listPupils,
                                                   listReports,
-                                                  selectedClass.className,
+                                                  selectedClass.className!,
                                                   position);
                                             }),
                                       )
@@ -1305,7 +1317,7 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                                         height:
                                             MediaQuery.of(context).size.height *
                                                 0.06,
-                                        child: const RaisedButton(
+                                        child: const ElevatedButton(
                                           onPressed: null,
                                           child: Text("PDF Report erstellen",
                                               style: TextStyle(fontSize: 15)),
@@ -1314,10 +1326,10 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                               height: MediaQuery.of(context).size.height * 0.01,
                             ),
                             position != null &&
-                                    ((listPupils[position].observation > 0) ||
-                                        (filteredTopics.isEmpty &&
+                                    ((listPupils[position].observation! > 0) ||
+                                        (filteredTopics!.isEmpty &&
                                             listReports.isNotEmpty &&
-                                            listReports.first.observation > 0))
+                                            listReports.first.observation! > 0))
                                 ? Container(
                                     width: MediaQuery.of(context).size.width *
                                         0.25,
@@ -1331,8 +1343,8 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                                         ],
                                       ),
                                     ),
-                                    child: FlatButton(
-                                        textColor: Colors.white,
+                                    child: ElevatedButton(
+                                        // textColor: Colors.white,
                                         child: new Text(
                                           "Drucken",
                                           style: TextStyle(
@@ -1343,7 +1355,7 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                                           _printDocument(
                                               listPupils,
                                               listReports,
-                                              selectedClass.className,
+                                              selectedClass.className!,
                                               position);
                                         }),
                                   )
@@ -1352,7 +1364,7 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
                                         0.25,
                                     height: MediaQuery.of(context).size.height *
                                         0.06,
-                                    child: const RaisedButton(
+                                    child: const ElevatedButton(
                                       onPressed: null,
                                       child: Text("Drucken",
                                           style: TextStyle(fontSize: 15)),
@@ -1370,120 +1382,120 @@ class _PupilsReportContentState extends State<PupilsReportContent> {
     });
   }
 }
-
+//!!!!!!!!!!!!!!!!!!!
 // yaer
 
-class SchoolYear extends StatefulWidget {
-  final String currentYear;
-  SchoolYear({Key key, @required this.currentYear}) : super(key: key);
+// class SchoolYear extends StatefulWidget {
+//   final String currentYear;
+//   SchoolYear({Key key, @required this.currentYear}) : super(key: key);
 
-  @override
-  _SchoolYearState createState() => _SchoolYearState(currentYear);
-}
+//   @override
+//   _SchoolYearState createState() => _SchoolYearState(currentYear);
+// }
 
-class _SchoolYearState extends State<SchoolYear> {
-  String currentYear;
-  _SchoolYearState(this.currentYear);
-  Widget build(BuildContext context) {
-    return Theme(
-      data: ThemeData(
-        highlightColor: Colors.grey[900],
-        primaryColor: Color(0xFFFB415B),
-        fontFamily: 'Cera-Medium',
-      ),
-      child: Container(
-        padding: EdgeInsets.only(left: 40),
-        child: Text(
-          'Schuljahr $currentYear',
-          style: TextStyle(color: Color(0xFF87333951), fontSize: 19.3),
-        ),
-      ),
-    );
-  }
-}
+// class _SchoolYearState extends State<SchoolYear> {
+//   String currentYear;
+//   _SchoolYearState(this.currentYear);
+//   Widget build(BuildContext context) {
+//     return Theme(
+//       data: ThemeData(
+//         highlightColor: Colors.grey[900],
+//         primaryColor: Color(0xFFFB415B),
+//         fontFamily: 'Cera-Medium',
+//       ),
+//       child: Container(
+//         padding: EdgeInsets.only(left: 40),
+//         child: Text(
+//           'Schuljahr $currentYear',
+//           style: TextStyle(color: Color(0xFF87333951), fontSize: 19.3),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
-class Search extends StatefulWidget {
-  final Class selectedClass;
-  Search({Key key, @required this.selectedClass}) : super(key: key);
+// class Search extends StatefulWidget {
+//   final Class selectedClass;
+//   Search({Key key, @required this.selectedClass}) : super(key: key);
 
-  @override
-  _SearchState createState() => _SearchState(selectedClass);
-}
+//   @override
+//   _SearchState createState() => _SearchState(selectedClass);
+// }
 
-class _SearchState extends State<Search> {
-  Class selectedClass;
-  final textController = TextEditingController();
-  _SearchState(this.selectedClass);
+// class _SearchState extends State<Search> {
+//   Class selectedClass;
+//   final textController = TextEditingController();
+//   _SearchState(this.selectedClass);
 
-  void initState() {
-    super.initState();
-    textController.addListener(_filterStudents);
-  }
+//   void initState() {
+//     super.initState();
+//     textController.addListener(_filterStudents);
+//   }
 
-  _filterStudents() {
-    context.bloc<ReportBloc>()..add(FilterReport(textController.text));
-  }
+//   _filterStudents() {
+//     context.bloc<ReportBloc>()..add(FilterReport(textController.text));
+//   }
 
-  @override
-  didUpdateWidget(Search oldWidget) {
-    setState(() {
-      selectedClass = widget.selectedClass;
-      if (oldWidget.selectedClass?.id != widget.selectedClass?.id) {
-        textController.text = '';
-        FocusScope.of(context).unfocus();
-      }
-    });
-  }
+//   @override
+//   didUpdateWidget(Search oldWidget) {
+//     setState(() {
+//       selectedClass = widget.selectedClass;
+//       if (oldWidget.selectedClass?.id != widget.selectedClass?.id) {
+//         textController.text = '';
+//         FocusScope.of(context).unfocus();
+//       }
+//     });
+//   }
 
-  @override
-  void dispose() {
-    textController.dispose();
-    super.dispose();
-  }
+//   @override
+//   void dispose() {
+//     textController.dispose();
+//     super.dispose();
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
-      child: Container(
-        width: MediaQuery.of(context).size.width * 0.24,
-        height: MediaQuery.of(context).size.height * 0.05,
-        child: TextField(
-          controller: textController,
-          decoration: InputDecoration(
-              contentPadding: EdgeInsets.symmetric(vertical: 10),
-              filled: true,
-              fillColor: Color(0xFFf7f7ff),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(40),
-                ),
-                borderSide: BorderSide.none,
-              ),
-              hintText: 'Suche ...',
-              labelStyle: TextStyle(
-                color: Color(0xFFa5a5a5),
-                fontSize: 18,
-              ),
-              prefixIcon: Icon(
-                Icons.search,
-                color: Color(0xFFff7800),
-              )),
-        ),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+//       child: Container(
+//         width: MediaQuery.of(context).size.width * 0.24,
+//         height: MediaQuery.of(context).size.height * 0.05,
+//         child: TextField(
+//           controller: textController,
+//           decoration: InputDecoration(
+//               contentPadding: EdgeInsets.symmetric(vertical: 10),
+//               filled: true,
+//               fillColor: Color(0xFFf7f7ff),
+//               border: OutlineInputBorder(
+//                 borderRadius: BorderRadius.all(
+//                   Radius.circular(40),
+//                 ),
+//                 borderSide: BorderSide.none,
+//               ),
+//               hintText: 'Suche ...',
+//               labelStyle: TextStyle(
+//                 color: Color(0xFFa5a5a5),
+//                 fontSize: 18,
+//               ),
+//               prefixIcon: Icon(
+//                 Icons.search,
+//                 color: Color(0xFFff7800),
+//               )),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
-/* ***********************/
-enum SingingCharacter { full_report, select_topic }
-String getObservationCountText(int count) {
-  if (count == 1) return count.toString() + ' Notiz';
+// /* ***********************/
+// enum SingingCharacter { full_report, select_topic }
+// String getObservationCountText(int count) {
+//   if (count == 1) return count.toString() + ' Notiz';
 
-  return count.toString() + ' Notizen';
-}
+//   return count.toString() + ' Notizen';
+// }
 
-PdfColor getTopicColor(String topicColor) {
-  if (topicColor != '') return PdfColor.fromInt(int.parse('$topicColor'));
-  return PdfColors.black;
-}
+// PdfColor getTopicColor(String topicColor) {
+//   if (topicColor != '') return PdfColor.fromInt(int.parse('$topicColor'));
+//   return PdfColors.black;
+// }

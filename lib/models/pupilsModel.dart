@@ -1,17 +1,17 @@
 class PupilsModel {
-  String birthdayDate;
-  int rating;
-  int observation;
-  String sId;
-  String firstName;
-  String lastName;
-  String classId;
-  String className;
-  String emergencyNumber;
-  String schoolYear;
-  String teacherId;
-  List<Topics> topics;
-  String picture;
+  String? birthdayDate;
+  int? rating;
+  int? observation;
+  String? sId;
+  String? firstName;
+  String? lastName;
+  String? classId;
+  String? className;
+  String? emergencyNumber;
+  String? schoolYear;
+  String? teacherId;
+  late List<Topics> topics;
+  String? picture;
 
   PupilsModel(
       {this.birthdayDate,
@@ -25,7 +25,7 @@ class PupilsModel {
       this.emergencyNumber,
       this.schoolYear,
       this.teacherId,
-      this.topics,
+       required this.topics,
       this.picture});
 
   PupilsModel.fromJson(Map<String, dynamic> json) {
@@ -42,7 +42,7 @@ class PupilsModel {
     teacherId = json['teacherId'];
     picture = json['picture'];
     if (json['topics'] != null) {
-      topics = new List<Topics>();
+      topics =  [];
       json['topics'].forEach((v) {
         topics.add(new Topics.fromJson(v));
       });
@@ -72,10 +72,10 @@ class PupilsModel {
 }
 
 class Topics {
-  int rating;
-  int observation;
-  String sId;
-  String name;
+  int? rating;
+  int? observation;
+  String? sId;
+  String? name;
 
   Topics({this.rating, this.observation, this.sId, this.name});
 

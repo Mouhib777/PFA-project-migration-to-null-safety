@@ -68,16 +68,16 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     try {
       var connectivityResult = await (Connectivity().checkConnectivity());
       if (connectivityResult != ConnectivityResult.none) {
-        Token token = await _tokenDao.getToken();
+        Token? token = await _tokenDao.getToken();
         final classes =
-            await _classRepository.loadOfflineClasses(token: token.accessToken);
+            await _classRepository.loadOfflineClasses(token: token!.accessToken);
         if (classes.length > 0) {
           await _classDao.insertMany(classes);
           await Future.delayed(const Duration(milliseconds: 300));
           if (kIsWeb) {
-            final PaidYears newYear = await _selectedYearDao.getYear();
-            newYear.updatedAt = new DateTime.now().millisecondsSinceEpoch;
-            await _yearDao.update(newYear);
+            final PaidYears? newYear = await _selectedYearDao.getYear();
+            newYear!.updatedAt = new DateTime.now().millisecondsSinceEpoch;
+            await _yearDao.update(newYear!);
             await _selectedYearDao.update(newYear);
           }
           yield* _reloadClasses(sortBySelectedClass: true);
@@ -96,8 +96,8 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
 
   Stream<DashboardState> _mapUpdateClassToState(UpdateClass event) async* {
     try {
-      final Class oldClass = event.oldClass;
-      final Class newClass = event.newClass;
+      final Class oldClass = event.oldClass!;
+      final Class newClass = event.newClass!;
       oldClass.hasActiveObservation = false;
       oldClass.selectedTopicId = null;
       oldClass.selectedControlId = null;
@@ -113,10 +113,10 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
 
   Stream<DashboardState> _mapLoadYearsToState() async* {
     try {
-      Token token = await _tokenDao.getToken();
+      Token? token = await _tokenDao.getToken();
 
       final List<PaidYears> years =
-          await _payementRepository.getYears(token: token.accessToken);
+          await _payementRepository.getYears(token: token!.accessToken);
 
       var connectivityResult = await (Connectivity().checkConnectivity());
       if (connectivityResult != ConnectivityResult.none) {
@@ -172,10 +172,10 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
       bool sortBySelectedClass = false}) async* {
     try {
       final List<PaidYears> years = await _yearDao.getYears();
-      final PaidYears selectedYear = await _selectedYearDao.getYear();
+      final PaidYears? selectedYear = await _selectedYearDao.getYear();
 
       List<Class> classes = await _classDao.getClasses(
-          selectedYear.name != null ? selectedYear.name : _yearDefault);
+          selectedYear!.name != null ? selectedYear.name! : _yearDefault);
 
       if (classes.isEmpty) {
         yield DashboardHasNoConfig(years);
@@ -184,7 +184,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
           await _selectedClassDao.update(classes.first);
         }
         if (sortBySelectedClass) {
-          final Class selectedClass = await _selectedClassDao.getClass();
+          final Class? selectedClass = await _selectedClassDao.getClass();
           if (selectedClass != null) {
             classes = rearrange(classes, selectedClass);
           } else {
@@ -201,10 +201,10 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   Stream<DashboardState> _mapLoadControlsToState(LoadControls event) async* {
     try {
       // yield DashboardLoadControlsInProgress();
-      final String classId = event.classId;
-      final String topicId = event.topicId;
-      Class cls = await _classDao.getClass(classId);
-      cls.selectedTopicId = topicId;
+      final String classId = event.classId!;
+      final String topicId = event.topicId!;
+      Class? cls = await _classDao.getClass(classId);
+      cls!.selectedTopicId = topicId;
       cls.selectedControlId = null;
       cls.hasActiveObservation = false;
       cls.observation = null;
@@ -222,8 +222,8 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
       Class cls = event.cls;
       var connectivityResult = await (Connectivity().checkConnectivity());
       if (connectivityResult != ConnectivityResult.none) {
-        Token token = await _tokenDao.getToken();
-        await _classRepository.updateTopics(token: token.accessToken, cls: cls);
+        Token? token = await _tokenDao.getToken();
+        await _classRepository.updateTopics(token: token!.accessToken, cls: cls);
       } else {
         cls.synchronize = true;
         cls.topicsIsUpdated = true;
@@ -244,9 +244,9 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     try {
       var connectivityResult = await (Connectivity().checkConnectivity());
       if (connectivityResult != ConnectivityResult.none) {
-        Token token = await _tokenDao.getToken();
+        Token? token = await _tokenDao.getToken();
         List<Student> students = await _classRepository.getStudents(
-            token: token.accessToken, classId: cls.id);
+            token: token!.accessToken, classId: cls.id.toString());
         await _selectedClassDao.update(cls);
         cls.updatedAt = new DateTime.now().millisecondsSinceEpoch;
         cls.students = students;
@@ -261,29 +261,32 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   Stream<DashboardState> _mapLoadObservationToState(
       LoadObservation event) async* {
     try {
-      String classId = event.classId;
-      String topicId = event.topicId;
-      String controlId = event.controlId;
-      final bool selected = event.selected;
-      Class cls = await _classDao.getClass(classId);
+      String classId = event.classId!;
+      String topicId = event.topicId!;
+      String controlId = event.controlId!;
+      final bool selected = event.selected!;
+      Class? cls = await _classDao.getClass(classId);
       if (selected) {
-        Observation observation = cls.observations.firstWhere(
-            (e) =>
-                e.classId == classId &&
-                (e.topicId == topicId || e.topicName == topicId) &&
-                (e.controlId == controlId || e.controlName == controlId) &&
-                e.completed == false &&
-                e.isDeleted == false &&
-                e.type == 'STRUCTURED',
-            orElse: () => null);
-        cls.selectedControlId = controlId;
-        cls.hasActiveObservation = observation != null;
-        cls.observation = observation;
-      } else {
-        cls.selectedControlId = null;
-        cls.hasActiveObservation = false;
-        cls.observation = null;
-      }
+  Observation observation = cls!.observations.firstWhere(
+    (e) =>
+        e.classId == classId &&
+        (e.topicId == topicId || e.topicName == topicId) &&
+        (e.controlId == controlId || e.controlName == controlId) &&
+        e.completed == false &&
+        e.isDeleted == false &&
+        e.type == 'STRUCTURED',
+    orElse: () => null as Observation,
+  );
+  cls.selectedControlId = controlId;
+  cls.hasActiveObservation = observation != null;
+  cls.observation = observation;
+} else {
+  cls!.selectedControlId = null;
+  cls.hasActiveObservation = false;
+  cls.observation = null;
+}
+
+
 
       cls.selectedTopicId = topicId;
       cls.updatedAt = new DateTime.now().millisecondsSinceEpoch;
@@ -298,21 +301,21 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   Stream<DashboardState> _mapCreateStructuredObservationToState(
       CreateStructureObservation event) async* {
     try {
-      String classId = event.classId;
-      String topicId = event.topicId;
-      String controlId = event.controlId;
-      final String name = event.name;
-      Class cls = await _classDao.getClass(classId);
+      String classId = event.classId!;
+      String topicId = event.topicId!;
+      String controlId = event.controlId!;
+      final String name = event.name!;
+      Class? cls = await _classDao.getClass(classId);
       Topic topic =
-          cls.topics.firstWhere((e) => e.id == topicId || e.name == topicId);
+          cls!.topics.firstWhere((e) => e.id == topicId || e.name == topicId);
       Control ctrl = topic.controls
-          .firstWhere((e) => e.id == controlId || e.controlName == controlId);
+          !.firstWhere((e) => e.id == controlId || e.controlName == controlId);
       Observation observation;
       var connectivityResult = await (Connectivity().checkConnectivity());
       if (connectivityResult != ConnectivityResult.none) {
-        Token token = await _tokenDao.getToken();
+        Token? token = await _tokenDao.getToken();
         observation = await _classRepository.createStructuredObservation(
-          token: token.accessToken,
+          token: token!.accessToken,
           classId: classId,
           topicId: topicId,
           controlId: controlId,
@@ -355,13 +358,13 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   Stream<DashboardState> _mapEditObservationToState(
       EditObservationName event) async* {
     try {
-      final Class cls = event.cls;
-      final Observation observation = event.observation;
+      final Class cls = event.cls!;
+      final Observation observation = event.observation!;
       var connectivityResult = await (Connectivity().checkConnectivity());
       if (connectivityResult != ConnectivityResult.none) {
-        final Token token = await _tokenDao.getToken();
+        final Token? token = await _tokenDao.getToken();
         await _classRepository.editObservationName(
-            token: token.accessToken,
+            token: token!.accessToken,
             observationId: observation.id,
             name: observation.title);
       } else {
@@ -392,13 +395,13 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   Stream<DashboardState> _mapCompleteObservationToState(
       CompleteObservation event) async* {
     try {
-      final Class cls = event.cls;
+      final Class cls = event.cls!;
       var connectivityResult = await (Connectivity().checkConnectivity());
       if (connectivityResult != ConnectivityResult.none) {
-        final Token token = await _tokenDao.getToken();
+        final Token? token = await _tokenDao.getToken();
         await _classRepository.completeObservation(
-          token: token.accessToken,
-          observationId: cls.observation.id,
+          token: token!.accessToken,
+          observationId: cls.observation!.id,
         );
         final int idx = cls.observations.indexWhere((e) =>
             e.classId == cls.id &&
@@ -429,7 +432,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
 
       Topic topic = cls.topics.firstWhere(
           (e) => e.id == cls.selectedTopicId || e.name == cls.selectedTopicId);
-      Control ctrl = topic.controls.firstWhere((e) =>
+      Control ctrl = topic.controls!.firstWhere((e) =>
           e.id == cls.selectedControlId ||
           e.controlName == cls.selectedControlId);
       ctrl.hasActiveObservation = false;
@@ -446,16 +449,16 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   Stream<DashboardState> _mapDeleteObservationToState(
       DeleteObservation event) async* {
     try {
-      final Class cls = event.cls;
+      final Class cls = event.cls!;
       var connectivityResult = await (Connectivity().checkConnectivity());
       if (connectivityResult != ConnectivityResult.none) {
-        final Token token = await _tokenDao.getToken();
+        final Token? token = await _tokenDao.getToken();
         await _classRepository.deleteObservation(
-          token: token.accessToken,
-          observationId: cls.observation.id,
+          token: token!.accessToken,
+          observationId: cls.observation!.id,
         );
         final int idx =
-            cls.observations.indexWhere((e) => e.id == cls.observation.id);
+            cls.observations.indexWhere((e) => e.id == cls.observation!.id);
         if (idx > -1) {
           cls.observations.removeAt(idx);
         }
@@ -484,7 +487,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
 
       Topic topic = cls.topics.firstWhere(
           (e) => e.id == cls.selectedTopicId || e.name == cls.selectedTopicId);
-      Control control = topic.controls.firstWhere((e) =>
+      Control control = topic.controls!.firstWhere((e) =>
           e.id == cls.selectedControlId ||
           e.controlName == cls.selectedControlId);
       control.hasActiveObservation = false;
@@ -502,19 +505,19 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
 
   Stream<DashboardState> _mapUpdateRatingToState(UpdateRating event) async* {
     try {
-      final String classId = event.classId;
-      final String observationId = event.observationId;
-      final String studentId = event.studentId;
-      final int rating = event.rating;
-      Class cls = await _classDao.getClass(classId);
+      final String classId = event.classId.toString();
+      final String observationId = event.observationId.toString();
+      final String studentId = event.studentId.toString();
+      final int rating = event.rating!.toInt();
+      Class? cls = await _classDao.getClass(classId);
       final ObservationRating observationRt =
-          cls.observation.ratings.firstWhere((r) => r.studentId == studentId);
+          cls!.observation!.ratings!.firstWhere((r) => r.studentId == studentId);
 
       var connectivityResult = await (Connectivity().checkConnectivity());
       if (connectivityResult != ConnectivityResult.none) {
-        final Token token = await _tokenDao.getToken();
+        final Token? token = await _tokenDao.getToken();
         await _classRepository.updateRating(
-            token: token.accessToken,
+            token: token!.accessToken,
             observationId: observationId,
             studentId: studentId,
             rating: rating);
@@ -522,7 +525,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
         observationRt.rating = rating;
       } else {
         cls.synchronize = true;
-        cls.observation.synchronize = true;
+        cls.observation!.synchronize = true;
         final Student student =
             cls.students.firstWhere((r) => r.id == studentId);
         if (observationRt.rating == 0 && rating > 0) {
@@ -542,7 +545,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
           e.isDeleted == false &&
           e.type == 'STRUCTURED');
       if (idx > -1) {
-        cls.observations[idx] = cls.observation;
+        cls.observations[idx] = cls.observation!;
       }
       cls.updatedAt = new DateTime.now().millisecondsSinceEpoch;
       await _classDao.update(cls);
@@ -555,17 +558,17 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   Stream<DashboardState> _mapUpdateFavoriteToState(
       UpdateFavorite event) async* {
     try {
-      final String classId = event.classId;
-      final String observationId = event.observationId;
-      final String studentId = event.studentId;
-      final bool isFavorite = event.isFavorite;
+      final String classId = event.classId!;
+      final String observationId = event.observationId!;
+      final String studentId = event.studentId!;
+      final bool isFavorite = event.isFavorite!;
 
-      Class cls = await _classDao.getClass(classId);
+      Class? cls = await _classDao.getClass(classId);
       ObservationRating rating =
-          cls.observation.ratings.firstWhere((r) => r.studentId == studentId);
+          cls!.observation!.ratings!.firstWhere((r) => r.studentId == studentId);
       rating.isFavorite = isFavorite;
-      cls.observation.ratings.sort((a, b) {
-        if (b.isFavorite) {
+      cls.observation!.ratings!.sort((a, b) {
+        if (b.isFavorite!) {
           return 1;
         }
         return -1;
@@ -573,15 +576,15 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
 
       var connectivityResult = await (Connectivity().checkConnectivity());
       if (connectivityResult != ConnectivityResult.none) {
-        final Token token = await _tokenDao.getToken();
+        final Token? token = await _tokenDao.getToken();
         await _classRepository.updateFavorite(
-            token: token.accessToken,
+            token: token!.accessToken,
             observationId: observationId,
             studentId: studentId,
             isFavorite: isFavorite);
       } else {
         cls.synchronize = true;
-        cls.observation.synchronize = true;
+        cls.observation!.synchronize = true;
       }
 
       final int idx = cls.observations.indexWhere((e) =>
@@ -594,7 +597,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
           e.isDeleted == false &&
           e.type == 'STRUCTURED');
       if (idx > -1) {
-        cls.observations[idx] = cls.observation;
+        cls.observations[idx] = cls.observation!;
       }
       cls.updatedAt = new DateTime.now().millisecondsSinceEpoch;
       await _classDao.update(cls);
@@ -607,27 +610,27 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   Stream<DashboardState> _mapFilterStudentsToState(
       FilterStudents event) async* {
     try {
-      Class cls = event.cls;
-      final String text = event.text.toLowerCase();
+      Class cls = event.cls!;
+      final String text = event.text!.toLowerCase();
       if (text.isEmpty) {
         yield* _reloadClasses();
       } else {
-        final List<PaidYears> years = await _yearDao.getYears();
-        final PaidYears selectedYear = await _selectedYearDao.getYear();
+        final List<PaidYears>? years = await _yearDao.getYears();
+        final PaidYears? selectedYear = await _selectedYearDao.getYear();
         final List<Class> classes = await _classDao.getClasses(
-            selectedYear.name != null ? selectedYear.name : _yearDefault);
+            selectedYear!.name! != null ? selectedYear.name! : _yearDefault);
         if (cls.hasActiveObservation) {
-          cls.observation.ratings = classes[0].observation.ratings.where((r) {
-            return r.name.toLowerCase().contains(text);
+          cls.observation!.ratings = classes[0].observation!.ratings!.where((r) {
+            return r.name!.toLowerCase().contains(text);
           }).toList();
           classes[0].observation = cls.observation;
         } else {
           cls.students = classes[0].students.where((s) {
-            return s.name.toLowerCase().contains(text);
+            return s.name!.toLowerCase().contains(text);
           }).toList();
           classes[0].students = cls.students;
         }
-        yield DashboardLoadClassSuccess(years: years, classes: classes);
+        yield DashboardLoadClassSuccess(years: years!, classes: classes);
       }
     } catch (_) {
       yield DashboardFailure();
@@ -650,9 +653,9 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
         yield SynchronizeStart();
         var connectivityResult = await (Connectivity().checkConnectivity());
         if (connectivityResult != ConnectivityResult.none) {
-          Token token = await _tokenDao.getToken();
+          Token? token = await _tokenDao.getToken();
           await _classRepository.synchronizeClasses(
-              classes: classes, token: token.accessToken);
+              classes: classes, token: token!.accessToken);
           await Future.delayed(const Duration(milliseconds: 300));
           final newClasses = await this
               ._classRepository
@@ -666,9 +669,13 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
       }
       _synchronizeSingleton.finishSynchronize();
     } catch (_) {
-      if (_.message != 'ANOTHER_SYNC_IS_IN_PROGRESS') {
-        yield SynchronizeError();
-      }
+      //! ////////////////////////////////// message?
+      //! //////////////////////////////////
+      //! //////////////////////////////////
+      //! //////////////////////////////////
+      // if (_.message != 'ANOTHER_SYNC_IS_IN_PROGRESS') {
+      //   yield SynchronizeError();
+      // }
       _synchronizeSingleton.finishSynchronize();
     }
   }

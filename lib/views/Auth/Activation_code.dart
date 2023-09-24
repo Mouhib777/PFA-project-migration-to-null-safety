@@ -8,7 +8,7 @@ import 'package:docu_diary/config/url.dart';
 
 class ActivationCode extends StatefulWidget {
   const ActivationCode({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -22,21 +22,22 @@ class ActivationCodeState extends State<ActivationCode> {
 
   final _formKey = GlobalKey<FormState>();
 
-  String _email, _code;
+  String? _email, _code;
   bool popupShow = false;
   void _submit() async {
-    if (_formKey.currentState.validate()) {
-      _formKey.currentState.save();
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
       final prefs = await SharedPreferences.getInstance();
       final emailofConnectUser = prefs.getString('email') ?? '';
       Map<String, dynamic> data = {
-        'email': _email.trim(),
-        'validationCode': _code.trim(),
+        'email': _email!.trim(),
+        'validationCode': _code!.trim(),
         'emailOfUser': emailofConnectUser
       };
       try {
         final response = await http.post(
-          '$_baseUrl/payement/verfication',
+          Uri.parse(
+          '$_baseUrl/payement/verfication'),
           headers: <String, String>{
             'Content-Type': 'application/json',
           },
@@ -53,7 +54,7 @@ class ActivationCodeState extends State<ActivationCode> {
                   content: const Text(
                       'Vielen Dank, Ihr Nutzerkonto ist nun erfolgreich freigeschaltet'),
                   actions: <Widget>[
-                    FlatButton(
+                    ElevatedButton(
                       child: Text('Ok'),
                       onPressed: () {
                         Navigator.of(context).pushNamed('/');
@@ -72,7 +73,7 @@ class ActivationCodeState extends State<ActivationCode> {
                   content: const Text(
                       'Der von Ihnen eingegebene Aktivierungscode war leider nicht korrekt. Versuchen Sie es noch einmal und kontaktieren Sie uns gerne, wenn das Problem weiter besteht.'),
                   actions: <Widget>[
-                    FlatButton(
+                    ElevatedButton(
                       child: Text('Ok'),
                       onPressed: () {
                         Navigator.of(context).pop();
@@ -373,7 +374,7 @@ class ActivationCodeState extends State<ActivationCode> {
                                                                                           contentPadding: EdgeInsets.fromLTRB(15.0, 10.0, 20.0, 10.0),
                                                                                           hintText: 'E-Mail des Bestellers',
                                                                                         )),
-                                                                                        validator: (input) => !input.contains('@') ? 'Bitte geben Sie eine gültige E-Mail an' : null,
+                                                                                        validator: (input) => !input!.contains('@') ? 'Bitte geben Sie eine gültige E-Mail an' : null,
                                                                                         onSaved: (input) => _email = input,
                                                                                         //obscureText: true,
                                                                                       ),
@@ -413,7 +414,7 @@ class ActivationCodeState extends State<ActivationCode> {
                                                                                           contentPadding: EdgeInsets.fromLTRB(15.0, 10.0, 20.0, 10.0),
                                                                                           hintText: 'Aktivierungscode',
                                                                                         )),
-                                                                                        validator: (input) => input.length < 3 ? 'Name muss mindestens 3 Zeichen lang sein' : null,
+                                                                                        validator: (input) => input!.length < 3 ? 'Name muss mindestens 3 Zeichen lang sein' : null,
                                                                                         onSaved: (input) => _code = input,
                                                                                       ),
                                                                                     ),
@@ -446,7 +447,7 @@ class ActivationCodeState extends State<ActivationCode> {
                                                                             // color: Colors.blue,
 
                                                                             child: InkWell(
-                                                                                child: FlatButton(
+                                                                                child: ElevatedButton(
                                                                                     onPressed: () {
                                                                                       Navigator.of(context).pop();
                                                                                       showDialog(
@@ -492,7 +493,7 @@ class ActivationCodeState extends State<ActivationCode> {
                                                                         Container(
                                                                           // color: Colors.blue,
 
-                                                                          child: FlatButton(
+                                                                          child: ElevatedButton(
                                                                               onPressed: () async {
                                                                                 _submit();
                                                                               },
@@ -578,7 +579,7 @@ class ActivationCodeState extends State<ActivationCode> {
                                 // color: Colors.blue,
 
                                 child: InkWell(
-                                  child: FlatButton(
+                                  child: ElevatedButton(
                                       onPressed: () async {
                                         Navigator.of(context).pushNamed('/');
                                       },

@@ -39,10 +39,10 @@ class RegisterForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<RegisterBloc, RegisterState>(
         listener: (context, state) {
-          if (state.status.isSubmissionSuccess) {
-            Scaffold.of(context).hideCurrentSnackBar();
-            context.bloc<TokenBloc>()..add(TokenAdded(state.userData.token));
-            context.bloc<UserBloc>()..add(UserAdded(state.userData.user));
+          if (state.status.isInProgressOrSuccess) {
+            // Scaffold.of(context).hideCurrentSnackBar();
+            // context.bloc<TokenBloc>()..add(TokenAdded(state.userData.token));
+            // context.bloc<UserBloc>()..add(UserAdded(state.userData.user));
             showDialog(
                 context: context,
                 barrierDismissible: false,
@@ -54,23 +54,25 @@ class RegisterForm extends StatelessWidget {
                   );
                 });
           }
-          if (state.status.isSubmissionFailure) {
-            Scaffold.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                    backgroundColor: Colors.red,
-                    content: Text(
-                        'Diese E-Mail wird bereits von einem Nutzer verwendet')),
-              );
+          if (state.status.isFailure) {
+            //! voir lib/utils/snackbar
+            // Scaffold.of(context)
+            //   ..hideCurrentSnackBar()
+            //   ..showSnackBar(
+            //     SnackBar(
+            //         backgroundColor: Colors.red,
+            //         content: Text(
+            //             'Diese E-Mail wird bereits von einem Nutzer verwendet')),
+            //   );
           }
 
-          if (state.status.isSubmissionInProgress) {
-            Scaffold.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(content: Text('Submitting...')),
-              );
+          if (state.status.isInProgress) {
+            //! voir lib/utils/snackbar
+            // Scaffold.of(context)
+            //   ..hideCurrentSnackBar()
+            //   ..showSnackBar(
+            //     SnackBar(content: Text('Submitting...')),
+            //   );
           }
         },
         child: Form(
@@ -191,23 +193,24 @@ class NameInput extends StatelessWidget {
                 ),
                 child: Center(
                   child: TextFormField(
-                    onEditingComplete: state.status.isValidated
-                        ? () =>
-                            context.bloc<RegisterBloc>().add(FormSubmitted())
-                        : null,
+                    onEditingComplete:(){},
+                    //  state.status.isValidated
+                    //     ? () =>
+                    //         context.bloc<RegisterBloc>().add(FormSubmitted())
+                    //     : null,
                     decoration: (InputDecoration(
                       border: InputBorder.none,
                       contentPadding:
                           EdgeInsets.fromLTRB(15.0, 10.0, 20.0, 10.0),
                       hintText: 'Name',
-                      errorText: state.name.invalid
+                      errorText: state.name.isNotValid
                           ? 'Name muss mindestens 3 Zeichen lang sein'
                           : null,
                     )),
                     onChanged: (value) {
-                      context
-                          .bloc<RegisterBloc>()
-                          .add(NameChanged(name: value));
+                      // context
+                      //     .bloc<RegisterBloc>()
+                      //     .add(NameChanged(name: value));
                     },
                   ),
                 ),
@@ -252,23 +255,26 @@ class EmailInput extends StatelessWidget {
                 ),
                 child: Center(
                   child: TextFormField(
-                      onEditingComplete: state.status.isValidated
-                          ? () =>
-                              context.bloc<RegisterBloc>().add(FormSubmitted())
-                          : null,
+                      onEditingComplete:(){
+
+                      },
+                      //  state.status.isValidated
+                      //     ? () =>
+                      //         context.bloc<RegisterBloc>().add(FormSubmitted())
+                      //     : null,
                       decoration: (InputDecoration(
                         border: InputBorder.none,
                         contentPadding:
                             EdgeInsets.fromLTRB(15.0, 10.0, 20.0, 10.0),
                         hintText: 'Email',
-                        errorText: state.email.invalid
+                        errorText: state.email.isNotValid
                             ? 'Bitte geben Sie eine gültige E-Mail an'
                             : null,
                       )),
                       onChanged: (value) {
-                        context
-                            .bloc<RegisterBloc>()
-                            .add(EmailChanged(email: value));
+                        // context
+                        //     .bloc<RegisterBloc>()
+                        //     .add(EmailChanged(email: value));
                       },
                       onSaved: (input) => {}),
                 ),
@@ -313,24 +319,27 @@ class PasswordInput extends StatelessWidget {
                 ),
                 child: Center(
                   child: TextFormField(
-                      onEditingComplete: state.status.isValidated
-                          ? () =>
-                              context.bloc<RegisterBloc>().add(FormSubmitted())
-                          : null,
+                      onEditingComplete:(){
+
+                      },
+                      //  state.status.isValidated
+                      //     ? () =>
+                      //         context.bloc<RegisterBloc>().add(FormSubmitted())
+                      //     : null,
                       decoration: (InputDecoration(
                         border: InputBorder.none,
                         contentPadding:
                             EdgeInsets.fromLTRB(15.0, 10.0, 20.0, 10.0),
                         hintText: 'Passwort',
-                        errorText: state.password.invalid
+                        errorText: state.password.isNotValid
                             ? 'Passwort muss mindestens 6 Zeichen lang sein'
                             : null,
                       )),
                       obscureText: true,
                       onChanged: (value) {
-                        context
-                            .bloc<RegisterBloc>()
-                            .add(PasswordChanged(password: value));
+                        // context
+                            // .bloc<RegisterBloc>()
+                            // .add(PasswordChanged(password: value));
                       },
                       onSaved: (input) => {}),
                 ),
@@ -377,10 +386,13 @@ class ConfirmPasswordInput extends StatelessWidget {
                 ),
                 child: Center(
                   child: TextFormField(
-                      onEditingComplete: state.status.isValidated
-                          ? () =>
-                              context.bloc<RegisterBloc>().add(FormSubmitted())
-                          : null,
+                      onEditingComplete: (){
+
+                      },
+                      // state.status.isValidated
+                      //     ? () =>
+                      //         context.bloc<RegisterBloc>().add(FormSubmitted())
+                      //     : null,
                       decoration: (InputDecoration(
                         border: InputBorder.none,
                         contentPadding:
@@ -388,14 +400,14 @@ class ConfirmPasswordInput extends StatelessWidget {
                         hintText: 'Bestätigung Ihres Passworts',
                         errorText: (state.confirmPassword.value !=
                                     state.password.value) ||
-                                state.confirmPassword.invalid
+                                state.confirmPassword.isNotValid
                             ? 'Confirm Password invalid'
                             : null,
                       )),
                       obscureText: true,
                       onChanged: (value) {
-                        context.bloc<RegisterBloc>().add(
-                            ConfirmPasswordChanged(confirmPassword: value));
+                        // context.bloc<RegisterBloc>().add(
+                        //     ConfirmPasswordChanged(confirmPassword: value));
                       },
                       onSaved: (input) => {}),
                 ),
@@ -424,13 +436,14 @@ class SubmitButton extends StatelessWidget {
                     children: <Widget>[
                       Container(
                         child: InkWell(
-                          child: FlatButton(
-                              onPressed: state.status.isValidated
-                                  ? () => context
-                                      .bloc<RegisterBloc>()
-                                      .add(FormSubmitted())
-                                  : null,
-                              padding: EdgeInsets.all(10.0),
+                          child: ElevatedButton(
+                              onPressed:(){},
+                              //  state.status.isValidated
+                              //     ? () => context
+                              //         .bloc<RegisterBloc>()
+                              //         .add(FormSubmitted())
+                              //     : null,
+                              // padding: EdgeInsets.all(10.0),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[

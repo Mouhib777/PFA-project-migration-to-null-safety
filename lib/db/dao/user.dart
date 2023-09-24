@@ -22,7 +22,7 @@ class UserDao {
     );
   }
 
-  Future<User> getUser() async {
+  Future<User?> getUser() async {
     // Finder object can also sort data.
     final finder = Finder(sortOrders: [
       SortOrder('name'),

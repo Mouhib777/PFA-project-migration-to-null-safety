@@ -12,7 +12,7 @@ import 'package:docu_diary/views/pupilsReport/pupilsReport.dart';
 import 'package:flutter/material.dart';
 
 class RouteGenerator {
-  static Route<dynamic> generateRoute(RouteSettings settings) {
+  static Route<dynamic>? generateRoute(RouteSettings settings) {
     final args = settings.arguments;
 
     switch (settings.name) {

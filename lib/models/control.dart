@@ -1,7 +1,7 @@
 class Control {
-  bool hasActiveObservation = false;
-  String id;
-  String controlName;
+  bool? hasActiveObservation = false;
+  String? id;
+  String? controlName;
 
   Control({this.hasActiveObservation = false, this.id, this.controlName});
 

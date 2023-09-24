@@ -50,19 +50,25 @@ class Observations extends StatelessWidget {
 class ObservationsContent extends StatefulWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey;
   ObservationsContent(this._scaffoldKey);
+  
   @override
-  _ObservationsContentState createState() =>
-      _ObservationsContentState(_scaffoldKey);
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    throw UnimplementedError();
+  }
+
+  // _ObservationsContentState createState() =>
+      // _ObservationsContentState(_scaffoldKey);
 }
 
 class _ObservationsContentState extends State<ObservationsContent> {
-  final GlobalKey<ScaffoldState> _scaffoldKey;
+  // final GlobalKey<ScaffoldState> _scaffoldKey;
 
-  _ObservationsContentState(this._scaffoldKey);
+  // _ObservationsContentState(this._scaffoldKey);
 
-  List<Observations> listofObservations;
+  List<Observations>? listofObservations;
   bool _hasConnection = true;
-  StreamSubscription _connectionChangeStream;
+  StreamSubscription? _connectionChangeStream;
 
   void initState() {
     super.initState();
@@ -70,54 +76,54 @@ class _ObservationsContentState extends State<ObservationsContent> {
     ConnectionStatusSingleton connectionStatus =
         ConnectionStatusSingleton.getInstance();
     new Future.delayed(Duration.zero, () {
-      context.bloc<ObservationsBloc>()..add(LoadObservations());
+      // context.bloc<ObservationsBloc>()..add(LoadObservations());
       _hasConnection = connectionStatus.hasConnection;
       if (!connectionStatus.hasConnection) {
-        _showSnackbarConnectionStatus(false);
+        // _showSnackbarConnectionStatus(false);
       }
       _connectionChangeStream =
           connectionStatus.connectionChange.listen(connectionChanged);
     });
   }
-
+//! voir lib/utils/snackbar
   void connectionChanged(dynamic hasConnection) {
-    _showSnackbarConnectionStatus(hasConnection);
+    // _showSnackbarConnectionStatus(hasConnection);
     setState(() {
       _hasConnection = hasConnection;
     });
   }
 
-  void _showSnackbarConnectionStatus(bool connected) {
-    _hideSnackbar();
-    SnackBarUtils.showSnackbarNoteHistoryConnectionStatus(
-        _scaffoldKey, connected, _hideSnackbar);
-  }
+  // void _showSnackbarConnectionStatus(bool connected) {
+  //   _hideSnackbar();
+  //   SnackBarUtils.showSnackbarNoteHistoryConnectionStatus(
+  //       _scaffoldKey, connected, _hideSnackbar);
+  // }
 
-  void _hideSnackbar() {
-    SnackBarUtils.hideSnackbar(_scaffoldKey);
-  }
+  // void _hideSnackbar() {
+  //   SnackBarUtils.hideSnackbar(_scaffoldKey);
+  // }
 
   @override
   void dispose() {
-    _connectionChangeStream.cancel();
+    _connectionChangeStream!.cancel();
 
     super.dispose();
-    _hideSnackbar();
+    // _hideSnackbar();
   }
 
   int selectedIndex = -1;
   bool pressAttention = false;
   bool pressButton = false;
   bool isSelected = true;
-  String salectedStudent;
+  String? salectedStudent;
   bool enabled = false;
   String iconRate = 'assets/images/pain.png';
   String classID = '';
-  String observationName;
-  String observationId;
-  String defaultSelectValue;
+  String? observationName;
+  String? observationId;
+  String? defaultSelectValue;
 
-  var items = List<PupilsModel>();
+  var items = [];
 
   final ScrollController _scrollController = ScrollController();
   final duplicateItems = List<String>.generate(10, (i) => "Item $i");
@@ -156,9 +162,9 @@ class _ObservationsContentState extends State<ObservationsContent> {
           child: Container(child: LoadingIndicator()),
         );
       } else if (state is ObservationsLoadSuccess) {
-        final List<Class> classes = state.classes;
+        final List<Class> classes = state.classes!;
         final Class selectedClass = classes.first;
-        final List<Observation> listObservations = state.listObservations;
+        final List<Observation> listObservations = state.listObservations!;
         final selectedYear = state.selectedYear;
         return Container(
           width: MediaQuery.of(context).size.width * 0.9,
@@ -173,7 +179,7 @@ class _ObservationsContentState extends State<ObservationsContent> {
                     Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          SchoolYear(currentYear: selectedYear),
+                          SchoolYear(currentYear: selectedYear!),
                           Container(
                             child: DropdownButton<Class>(
                               value: selectedClass,
@@ -181,15 +187,15 @@ class _ObservationsContentState extends State<ObservationsContent> {
                               icon: Icon(Icons.keyboard_arrow_down),
                               iconSize: 50.0,
                               iconEnabledColor: Color(0xFFff7f00),
-                              onChanged: (Class newValue) {
-                                context.bloc<ObservationsBloc>()
-                                  ..add(UpdateClass(newValue));
+                              onChanged: (Class? newValue) {
+                                // context.bloc<ObservationsBloc>()
+                                  // ..add(UpdateClass(newValue));
                               },
                               items: classes
                                   .map<DropdownMenuItem<Class>>((Class value) {
                                 return DropdownMenuItem<Class>(
                                   value: value,
-                                  child: Text(value.className,
+                                  child: Text(value.className!,
                                       style: TextStyle(
                                           fontSize: 34.7,
                                           color: Color(0xFF333951))),
@@ -215,9 +221,9 @@ class _ObservationsContentState extends State<ObservationsContent> {
                       Container(
                           height: MediaQuery.of(context).size.height * 0.77,
                           child: Scrollbar(
-                            isAlwaysShown: state.listObservations.length > 6
-                                ? true
-                                : false,
+                            // isAlwaysShown: state.listObservations!.length > 6
+                            //     ? true
+                            //     : false,
                             controller: _scrollController,
                             child: SingleChildScrollView(
                               controller: _scrollController,
@@ -226,7 +232,7 @@ class _ObservationsContentState extends State<ObservationsContent> {
                                 child: Container(
                                     child: ObservationList(
                                         listofObservations: listObservations,
-                                        classId: state.classes.first.id)),
+                                        classId: state.classes!.first.id!)),
                               ),
                             ),
                           ))
@@ -244,18 +250,20 @@ class _ObservationsContentState extends State<ObservationsContent> {
 }
 
 class ObservationList extends StatefulWidget {
-  final List<Observation> listofObservations;
-  final String classId;
+  final List<Observation>? listofObservations;
+  final String? classId;
   ObservationList(
-      {Key key, @required this.listofObservations, @required this.classId})
+      {Key? key, @required this.listofObservations, @required this.classId})
       : super(key: key);
   @override
   _ObservationListState createState() =>
-      _ObservationListState(listofObservations, classId);
+      _ObservationListState(listofObservations!, classId!);
 }
 
 class _ObservationListState extends State<ObservationList> {
   var currentPage = 0;
+  
+  _ObservationListState(List<Observation> list, String s);
   void nextPage() {
     setState(() {
       currentPage += 1;
@@ -281,10 +289,10 @@ class _ObservationListState extends State<ObservationList> {
     return number.truncate().toInt();
   }
 
-  List<Observation> listofObservations;
-  List<Observation> list;
-  final String classId;
-  _ObservationListState(this.listofObservations, this.classId);
+  List<Observation>? listofObservations;
+  List<Observation>? list;
+  late final String? classId;
+  // _ObservationListState(this.listofObservations, this.classId);
   static final _baseUrl = BaseUrl.urlAPi;
   String iconRate = 'assets/images/pain.png';
 
@@ -316,16 +324,16 @@ class _ObservationListState extends State<ObservationList> {
   }
 
   _deleteObervation(BuildContext context, String observationId) {
-    context.bloc<ObservationsBloc>()
-      ..add(DeleteSpontaneousObservation(observationId));
+    // context.bloc<ObservationsBloc>()
+      // ..add(DeleteSpontaneousObservation(observationId));
     Navigator.of(context, rootNavigator: true).pop();
   }
 
   _deleteStructuredObervation(
       BuildContext context, String observationId, String studentId) {
-    context.bloc<ObservationsBloc>()
-      ..add(DeleteStructuredObservation(
-          observationId: observationId, studentId: studentId));
+    // context.bloc<ObservationsBloc>()
+      // ..add(DeleteStructuredObservation(
+          // observationId: observationId, studentId: studentId));
     Navigator.of(context, rootNavigator: true).pop();
   }
 
@@ -386,7 +394,7 @@ class _ObservationListState extends State<ObservationList> {
                     width: width * 0.3,
                     child: Row(
                       children: [
-                        FlatButton(
+                        ElevatedButton(
                           child: Text(
                             'Stornieren',
                             style: TextStyle(
@@ -397,7 +405,7 @@ class _ObservationListState extends State<ObservationList> {
                           },
                         ),
                         Spacer(),
-                        FlatButton(
+                        ElevatedButton(
                           child: Text(
                             'Löschen',
                             style: TextStyle(
@@ -407,10 +415,10 @@ class _ObservationListState extends State<ObservationList> {
                             ob.type != 'STRUCTURED'
                                 ? _deleteObervation(
                                     context,
-                                    ob.sId,
+                                    ob.sId!,
                                   )
                                 : _deleteStructuredObervation(
-                                    context, ob.sId, ob.student.sId);
+                                    context, ob.sId!, ob.student!.sId!);
                           },
                         ),
                       ],
@@ -454,12 +462,12 @@ class _ObservationListState extends State<ObservationList> {
             obId: obs.sId,
             studentId: obs.studentId,
             classId: obs.classId,
-            studentName: obs.student.firstName,
+            studentName: obs.student!.firstName,
             topicId: obs.topicId,
             controlId: obs.controlId,
             rating: obs.rating,
-            studentSurName: obs.student.lastName,
-            picture: obs.student.picture,
+            studentSurName: obs.student!.lastName,
+            picture: obs.student!.picture,
             date: obs.dateofupdate == '' || obs.dateofupdate == null
                 ? obs.date
                 : obs.dateofupdate);
@@ -499,9 +507,9 @@ class _ObservationListState extends State<ObservationList> {
                           Container(
                             width: MediaQuery.of(context).size.width * 0.22,
                             child: Text(
-                              ob.dateofupdate == '' || ob.dateofupdate == null
-                                  ? ob.date
-                                  : ob.dateofupdate,
+                              ob.dateofupdate! == '' || ob.dateofupdate! == null
+                                  ? ob.date!
+                                  : ob.dateofupdate!,
                               style: TextStyle(
                                   height: 1,
                                   color: Color(0xFF333951),
@@ -516,7 +524,7 @@ class _ObservationListState extends State<ObservationList> {
                             width: MediaQuery.of(context).size.width * 0.26,
                             height: MediaQuery.of(context).size.height * 0.060,
                             child: AutoSizeText(
-                              ob.topicName + ' : ' + ob.controlName,
+                              ob.topicName! + ' : ' + ob.controlName!,
                               //  maxLines: 2,
                               style: TextStyle(
                                   height: 2,
@@ -545,10 +553,10 @@ class _ObservationListState extends State<ObservationList> {
                                       final PersistentBottomSheetController
                                           bottomSheetController =
                                           _showSpontaneousObservation(
-                                              context, ob, classId);
+                                              context, ob, classId!);
                                       await bottomSheetController.closed;
-                                      context.bloc<ObservationsBloc>()
-                                        ..add(LoadObservations());
+                                      // context.bloc<ObservationsBloc>()
+                                        // ..add(LoadObservations());
                                     })),
                             SizedBox(
                                 height:
@@ -589,7 +597,7 @@ class _ObservationListState extends State<ObservationList> {
                         // color: Colors.red,
                         height: MediaQuery.of(context).size.height * 0.1,
                         child: Text(
-                          ob.title,
+                          ob.title!,
                           overflow: TextOverflow.ellipsis,
                           maxLines: 4,
                           softWrap: true,
@@ -620,11 +628,11 @@ class _ObservationListState extends State<ObservationList> {
                         child: ClipRRect(
                             borderRadius: BorderRadius.circular(10.0),
                             child: ob.student != null &&
-                                    ob.student.picture != null &&
-                                    ob.student.picture != ""
+                                    ob.student!.picture != null &&
+                                    ob.student!.picture != ""
                                 ? Image.network(
                                     '$_baseUrl' +
-                                        'public/${ob.student.picture}',
+                                        'public/${ob.student!.picture}',
                                     fit: BoxFit.cover,
                                   )
                                 : Image.asset(
@@ -639,9 +647,9 @@ class _ObservationListState extends State<ObservationList> {
                       children: <Widget>[
                         ob.student != null
                             ? Text(
-                                ob.student.firstName +
+                                ob.student!.firstName! +
                                     ' ' +
-                                    ob.student.lastName,
+                                    ob.student!.lastName!,
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 12.0,
@@ -708,9 +716,9 @@ class _ObservationListState extends State<ObservationList> {
             padding: const EdgeInsets.fromLTRB(600, 0, 0, 0),
             child: Row(
               children: [
-                (listofObservations.length == null || currentPage != 0)
-                    ? FlatButton(
-                        textColor: Color(0xFF6200EE),
+                (listofObservations!.length == null || currentPage != 0)
+                    ? ElevatedButton(
+                        // textColor: Color(0xFF6200EE),
                         onPressed: () {
                           if (currentPage - 1 >= 0) {
                             setState(() {
@@ -722,19 +730,22 @@ class _ObservationListState extends State<ObservationList> {
                             style: TextStyle(
                                 color: Color(0xFFff7800), fontSize: 20)),
                       )
-                    : FlatButton(
+                    : ElevatedButton(
+                      onPressed: () {
+                        
+                      },
                         child: Text(
                           " ",
                         ),
                       ),
-                getPagination(listofObservations.length) <= 5
+                getPagination(listofObservations!.length) <= 5
                     ? Container(
                         child: Row(
                           children: [
                             for (var i = 0;
-                                i < getPagination(listofObservations.length);
+                                i < getPagination(listofObservations!.length);
                                 i += 1)
-                              getPagination(listofObservations.length) == 1
+                              getPagination(listofObservations!.length) == 1
                                   ? Container()
                                   : InkWell(
                                       child: (currentPage == i)
@@ -792,7 +803,7 @@ class _ObservationListState extends State<ObservationList> {
                             (currentPage == 0 ||
                                     currentPage ==
                                         getPagination(
-                                                listofObservations.length) -
+                                                listofObservations!.length) -
                                             1)
                                 ? Container()
                                 : InkWell(
@@ -804,7 +815,7 @@ class _ObservationListState extends State<ObservationList> {
                                     ),
                                   ),
                             (currentPage <
-                                    getPagination(listofObservations.length) -
+                                    getPagination(listofObservations!.length) -
                                         2)
                                 ? Text(
                                     " ... ",
@@ -816,11 +827,11 @@ class _ObservationListState extends State<ObservationList> {
                             InkWell(
                               child: Text(
                                 " " +
-                                    getPagination(listofObservations.length)
+                                    getPagination(listofObservations!.length)
                                         .toString(),
                                 style: (currentPage ==
                                         getPagination(
-                                                listofObservations.length) -
+                                                listofObservations!.length) -
                                             1)
                                     ? TextStyle(
                                         fontSize: 20, color: Color(0xFFff7800))
@@ -831,7 +842,7 @@ class _ObservationListState extends State<ObservationList> {
                               onTap: () {
                                 setState(() {
                                   currentPage =
-                                      getPagination(listofObservations.length);
+                                      getPagination(listofObservations!.length);
                                 });
                               },
                             ),
@@ -839,12 +850,12 @@ class _ObservationListState extends State<ObservationList> {
                         ),
                       ),
                 (currentPage + 1 <=
-                        getPagination(listofObservations.length) - 1)
-                    ? FlatButton(
-                        textColor: Color(0xFF6200EE),
+                        getPagination(listofObservations!.length) - 1)
+                    ? ElevatedButton(
+                        // textColor: Color(0xFF6200EE),
                         onPressed: () {
                           if (currentPage + 1 <
-                              getPagination(listofObservations.length)) {
+                              getPagination(listofObservations!.length)) {
                             setState(() {
                               currentPage += 1;
                             });
@@ -854,7 +865,10 @@ class _ObservationListState extends State<ObservationList> {
                             style: TextStyle(
                                 color: Color(0xFFff7800), fontSize: 20)),
                       )
-                    : FlatButton(
+                    : ElevatedButton(
+                      onPressed: () {
+                        
+                      },
                         child: Text(
                           "",
                         ),
@@ -865,7 +879,7 @@ class _ObservationListState extends State<ObservationList> {
           Center(
             child: Wrap(
               children: listofObservations
-                  .skip(
+                  !.skip(
                       currentPage == 0 ? currentPage * 20 : (currentPage * 20))
                   .take(20)
                   .map((e) => classItem(context, e))
@@ -879,11 +893,11 @@ class _ObservationListState extends State<ObservationList> {
 }
 
 class SchoolYear extends StatefulWidget {
-  final String currentYear;
-  SchoolYear({Key key, @required this.currentYear}) : super(key: key);
+  final String? currentYear;
+  SchoolYear({Key? key, @required this.currentYear}) : super(key: key);
 
   @override
-  _SchoolYearState createState() => _SchoolYearState(currentYear);
+  _SchoolYearState createState() => _SchoolYearState(currentYear!);
 }
 
 class _SchoolYearState extends State<SchoolYear> {
@@ -908,18 +922,24 @@ class _SchoolYearState extends State<SchoolYear> {
 }
 
 class Search extends StatefulWidget {
-  final Class selectedClass;
-  Search({Key key, @required this.selectedClass}) : super(key: key);
-
+  final Class? selectedClass;
+  Search({Key? key, @required this.selectedClass}) : super(key: key);
+  
   @override
-  _SearchState createState() => _SearchState(selectedClass);
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    throw UnimplementedError();
+  }
+
+
+  // _SearchState createState() => _SearchState(selectedClass);
 }
 
 class _SearchState extends State<Search> {
-  Class selectedClass;
+  Class? selectedClass;
   final textController = TextEditingController();
-  _SearchState(this.selectedClass);
-  Timer _debounce;
+  // _SearchState(this.selectedClass);
+  Timer? _debounce;
 
   void initState() {
     super.initState();
@@ -927,14 +947,14 @@ class _SearchState extends State<Search> {
   }
 
   _filterStudents() {
-    EasyDebounce.debounce(
-        'my-debouncer', // <-- An ID for this particular debouncer
-        Duration(milliseconds: 800), // <-- The debounce duration
-        () => context.bloc<ObservationsBloc>()
-          ..add(FilterObservation(textController.text)) // <-- The target method
-        );
+    // EasyDebounce.debounce(
+    //     // 'my-debouncer', // <-- An ID for this particular debouncer
+    //     // Duration(milliseconds: 800) // <-- The debounce duration
+    //     // () => context.bloc<ObservationsBloc>()
+    //     //   ..add(FilterObservation(textController.text)) // <-- The target method
+    //     );
 
-    if (_debounce?.isActive ?? false) _debounce.cancel();
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
       // do something with _searchQuery.text
     });

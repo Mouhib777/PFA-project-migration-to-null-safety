@@ -3,16 +3,16 @@ part of 'forgetPassword_bloc.dart';
 class ForgetPasswordState extends Equatable {
   final Email email;
 
-  final FormzStatus status;
+  final FormzSubmissionStatus status;
 
   const ForgetPasswordState({
     this.email = const Email.pure(),
-    this.status = FormzStatus.pure,
+    this.status = FormzSubmissionStatus.initial,
   });
 
   ForgetPasswordState copyWith({
-    Email email,
-    FormzStatus status,
+    Email? email,
+    FormzSubmissionStatus? status,
   }) {
     return ForgetPasswordState(
       email: email ?? this.email,

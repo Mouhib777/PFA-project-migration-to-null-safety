@@ -5,13 +5,13 @@ MyTopic myTopicFromJson(String str) => MyTopic.fromJson(json.decode(str));
 String myTopicToJson(MyTopic data) => json.encode(data.toJson());
 
 class MyTopic {
-  String sId;
-  bool selected;
-  String classId;
-  String name;
-  String order;
-  String color;
-  String controlname;
+  String? sId;
+  bool? selected;
+  String? classId;
+  String? name;
+  String? order;
+  String? color;
+  String? controlname;
 
   MyTopic(
       this.sId, this.selected, this.name, this.order, this.color, this.classId);

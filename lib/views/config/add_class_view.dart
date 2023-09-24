@@ -28,7 +28,7 @@ class AddClassWidget extends StatelessWidget {
 }
 
 class AddClassWidgetContent extends StatefulWidget {
-  final Function moveToPage;
+  final Function? moveToPage;
   final GlobalKey<ScaffoldState> _scaffoldKey;
   AddClassWidgetContent(this.moveToPage, this._scaffoldKey);
   @override
@@ -37,11 +37,15 @@ class AddClassWidgetContent extends StatefulWidget {
 }
 
 class _AddClassWidgetContentState extends State<AddClassWidgetContent> {
-  final Function moveToPage;
-  final GlobalKey<ScaffoldState> _scaffoldKey;
-  _AddClassWidgetContentState(this.moveToPage, this._scaffoldKey);
+  // final Function? moveToPage;
+  // final GlobalKey<ScaffoldState>? _scaffoldKey;
+  //  _AddClassWidgetContentState(this.moveToPage, this._scaffoldKey);
 
-  StreamSubscription _connectionChangeStream;
+  StreamSubscription? _connectionChangeStream;
+  
+  _AddClassWidgetContentState(Function? moveToPage, GlobalKey<ScaffoldState> scaffoldKey);
+  
+  Function get moveToPage => (){};
 
   @override
   void initState() {
@@ -51,48 +55,48 @@ class _AddClassWidgetContentState extends State<AddClassWidgetContent> {
     new Future.delayed(Duration.zero, () {
       _connectionChangeStream =
           connectionStatus.connectionChange.listen(connectionChanged);
-      context.bloc<ConfigBloc>()..add(LoadClasses());
+      // context.bloc<ConfigBloc>()..add(LoadClasses());
     });
   }
 
   void connectionChanged(dynamic hasConnection) {
-    context.bloc<ConfigBloc>()..add(UpdateConnectionStatus(hasConnection));
+    // context.bloc<ConfigBloc>()..add(UpdateConnectionStatus(hasConnection));
     if (hasConnection) {
-      synchronize();
+      // synchronize();
     }
   }
 
   @override
   void dispose() {
-    _connectionChangeStream.cancel();
+    _connectionChangeStream!.cancel();
     super.dispose();
   }
+//! voir lib/utils/snackbar
+  // void _showSnackbarConfigFailure() {
+  //   _hideSnackbar();
+  // }
 
-  void _showSnackbarConfigFailure() {
-    _hideSnackbar();
-  }
+  // void synchronize() => context.bloc<ConfigBloc>()..add(Synchronize());
 
-  void synchronize() => context.bloc<ConfigBloc>()..add(Synchronize());
+  // void _showSnackbarConnectionStatus(bool connected) {
+  //   _hideSnackbar();
+  //   SnackBarUtils.showSnackbarConnectionStatus(
+  //       _scaffoldKey, connected, _hideSnackbar);
+  // }
 
-  void _showSnackbarConnectionStatus(bool connected) {
-    _hideSnackbar();
-    SnackBarUtils.showSnackbarConnectionStatus(
-        _scaffoldKey, connected, _hideSnackbar);
-  }
+  // void _showSnackbarSynchronizeStart() {
+  //   _hideSnackbar();
+  //   SnackBarUtils.showSnackbarSynchronizeStart(_scaffoldKey);
+  // }
 
-  void _showSnackbarSynchronizeStart() {
-    _hideSnackbar();
-    SnackBarUtils.showSnackbarSynchronizeStart(_scaffoldKey);
-  }
+  // void _showSnackbarSynchronizeRetry() {
+  //   _hideSnackbar();
+  //   SnackBarUtils.showSnackbarSynchronizeRetry(_scaffoldKey, synchronize);
+  // }
 
-  void _showSnackbarSynchronizeRetry() {
-    _hideSnackbar();
-    SnackBarUtils.showSnackbarSynchronizeRetry(_scaffoldKey, synchronize);
-  }
-
-  void _hideSnackbar() {
-    SnackBarUtils.hideSnackbar(_scaffoldKey);
-  }
+  // void _hideSnackbar() {
+  //   SnackBarUtils.hideSnackbar(_scaffoldKey);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -108,16 +112,16 @@ class _AddClassWidgetContentState extends State<AddClassWidgetContent> {
           current is SynchronizeEnd;
     }, listener: (context, state) {
       if (state is ConfigFailure) {
-        _showSnackbarConfigFailure();
+        // _showSnackbarConfigFailure();
       } else if (state is SynchronizeStart) {
-        _showSnackbarSynchronizeStart();
+        // _showSnackbarSynchronizeStart();
       } else if (state is SynchronizeError) {
-        _showSnackbarSynchronizeRetry();
+        // _showSnackbarSynchronizeRetry();
       } else if (state is SynchronizeEnd) {
-        _hideSnackbar();
+        // _hideSnackbar();
       } else if (state is ConnectionStatus) {
         final connected = state.isConnected;
-        _showSnackbarConnectionStatus(connected);
+        // _showSnackbarConnectionStatus(connected);
       }
     }, buildWhen: (previous, current) {
       return current is ConfigLoadInProgress ||
@@ -206,7 +210,7 @@ class _AddClassFormFieldState extends State<AddClassFormField> {
     if (_textClassController.text.isEmpty) {
       return;
     }
-    context.bloc<ConfigBloc>()..add(AddClass(_textClassController.text));
+    // context.bloc<ConfigBloc>()..add(AddClass(_textClassController.text));
     _textClassController.text = '';
   }
 
@@ -268,7 +272,7 @@ class _AddClassFormFieldState extends State<AddClassFormField> {
 
 class ClassList extends StatefulWidget {
   final List<Class> classes;
-  ClassList({Key key, @required this.classes}) : super(key: key);
+  ClassList({Key? key, required this.classes}) : super(key: key);
   @override
   _ClassListState createState() => _ClassListState(classes);
 }
@@ -286,16 +290,16 @@ class _ClassListState extends State<ClassList> {
 
   showAlertDialog(BuildContext context, Class cls) {
     // set up the buttons
-    Widget cancelButton = FlatButton(
+    Widget cancelButton = ElevatedButton(
       child: Text("Abbrechen"),
       onPressed: () {
         Navigator.of(context).pop();
       },
     );
-    Widget continueButton = FlatButton(
+    Widget continueButton = ElevatedButton(
       child: Text("Fortfahren"),
       onPressed: () {
-        context.bloc<ConfigBloc>()..add(DeleteClass(cls));
+        // context.bloc<ConfigBloc>()..add(DeleteClass(cls));
         Navigator.of(context).pop();
       },
     );
@@ -325,13 +329,13 @@ class _ClassListState extends State<ClassList> {
       Navigator.of(context).pop();
       return;
     }
-    final Class fetchClass =
-        classes.firstWhere((e) => e.className == className, orElse: () => null);
+    final Class? fetchClass =
+        classes.firstWhere((e) => e.className == className, orElse: () => Class());
     if (fetchClass != null) {
       Navigator.of(context).pop();
       return;
     }
-    context.bloc<ConfigBloc>()..add(UpdateClassName(cls, className));
+    // context.bloc<ConfigBloc>()..add(UpdateClassName(cls, className));
     Navigator.of(context).pop();
   }
 
@@ -342,7 +346,7 @@ class _ClassListState extends State<ClassList> {
         final classController = TextEditingController(text: cls.className);
         return AlertDialog(
           actions: [
-            FlatButton(
+            ElevatedButton(
                 onPressed: () async {
                   _updateClassName(context, cls, classController.text);
                 },
@@ -495,7 +499,7 @@ class _ClassListState extends State<ClassList> {
                 child: Expanded(
                     child: Center(
                   child: Text(
-                    cls.className,
+                    cls.className!,
                   ),
                 )),
               ),
@@ -570,8 +574,8 @@ class Actions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      FlatButton(
-          highlightColor: Colors.white,
+      ElevatedButton(
+          // highlightColor: Colors.white,
           onPressed: () {
             _skip(context);
           },
@@ -595,8 +599,8 @@ class Actions extends StatelessWidget {
               ),
             ],
           )),
-      FlatButton(
-          highlightColor: Colors.white,
+      ElevatedButton(
+          // highlightColor: Colors.white,
           onPressed: () {
             _skip(context);
           },
@@ -611,8 +615,8 @@ class Actions extends StatelessWidget {
               ),
             ],
           )),
-      FlatButton(
-          highlightColor: Colors.white,
+      ElevatedButton(
+          // highlightColor: Colors.white,
           onPressed: () {
             moveToPage(2);
           },

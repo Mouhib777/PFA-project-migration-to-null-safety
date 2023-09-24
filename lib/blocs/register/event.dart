@@ -11,39 +11,39 @@ abstract class RegisterEvent extends Equatable {
 }
 
 class NameChanged extends RegisterEvent {
-  final String name;
+  final String? name;
 
   const NameChanged({@required this.name});
 
   @override
-  List<Object> get props => [name];
+  List<Object> get props => [name!];
 }
 
 class EmailChanged extends RegisterEvent {
-  final String email;
+  final String? email;
 
   const EmailChanged({@required this.email});
 
   @override
-  List<Object> get props => [email];
+  List<Object> get props => [email!];
 }
 
 class PasswordChanged extends RegisterEvent {
-  final String password;
+  final String? password;
 
   const PasswordChanged({@required this.password});
 
   @override
-  List<Object> get props => [password];
+  List<Object> get props => [password!];
 }
 
 class ConfirmPasswordChanged extends RegisterEvent {
-  final String confirmPassword;
+  final String? confirmPassword;
 
   const ConfirmPasswordChanged({@required this.confirmPassword});
 
   @override
-  List<Object> get props => [confirmPassword];
+  List<Object> get props => [confirmPassword!];
 }
 
 class FormSubmitted extends RegisterEvent {}

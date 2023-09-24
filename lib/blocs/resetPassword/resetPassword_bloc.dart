@@ -16,33 +16,35 @@ class ResetPasswordBloc extends Bloc<ResetPasswordEvent, ResetPasswordState> {
     ResetPasswordEvent event,
   ) async* {
     if (event is CodeChanged) {
-      final code = ConfirmCode.dirty(event.code);
+      final code = ConfirmCode.dirty(event.code!); // tnajm fi 3oudh ! ta3meltoString() 
       yield state.copyWith(
         code: code,
-        status: Formz.validate([code, state.password, state.confirmPassword]),
+        //!
+        // status: Formz.validate([code, state.password, state.confirmPassword]),
       );
     } else if (event is PasswordChanged) {
-      final password = Password.dirty(event.password);
+      final password = Password.dirty(event.password!);// tnajm fi 3oudh ! ta3meltoString() 
       yield state.copyWith(
         password: password,
-        status: Formz.validate([state.code, password, state.confirmPassword]),
+        //!
+        // status: Formz.validate([state.code, password, state.confirmPassword]),
       );
     } else if (event is ConfirmPasswordChanged) {
-      final confirmPassword = ConfirmPassword.dirty(event.confirmPassword);
+      final confirmPassword = ConfirmPassword.dirty(event.confirmPassword!);// tnajm fi 3oudh ! ta3meltoString() 
 
       yield state.copyWith(
         confirmPassword: confirmPassword,
-        status: Formz.validate([state.code, state.password, confirmPassword]),
+        // status: Formz.validate([state.code, state.password, confirmPassword]),
       );
     } else if (event is FormSubmitted) {
-      if (state.status.isValidated) {
-        yield state.copyWith(status: FormzStatus.submissionInProgress);
+      if (state.status.isSuccess) {
+        yield state.copyWith(status: FormzSubmissionStatus.inProgress);
         try {
           await this._repository.resetPassword(
               code: state.code.value, password: state.password.value);
-          yield state.copyWith(status: FormzStatus.submissionSuccess);
+          yield state.copyWith(status: FormzSubmissionStatus.success);
         } catch (error) {
-          yield state.copyWith(status: FormzStatus.submissionFailure);
+          yield state.copyWith(status: FormzSubmissionStatus.failure);
         }
       }
     }

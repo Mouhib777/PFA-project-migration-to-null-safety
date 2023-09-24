@@ -28,14 +28,14 @@ class ReportUpdatePictureError extends ReportState {}
 class ReportDeletePictureError extends ReportState {}
 
 class ReportLoadSuccess extends ReportState {
-  final String selectedYear;
-  final List<Class> classes;
-  final List<PupilsModel> listPeoples;
-  final List<PuplisReport> listReports;
+  final String? selectedYear;
+  final List<Class>? classes;
+  final List<PupilsModel>? listPeoples;
+  final List<PuplisReport>? listReports;
 
-  final bool visibility;
-  final int position;
-  final List<String> filteredTopics;
+  final bool? visibility;
+  final int? position;
+  final List<String>? filteredTopics;
 
   const ReportLoadSuccess(
       {this.selectedYear,
@@ -64,14 +64,14 @@ class ReportLoadSuccess extends ReportState {
 }
 
 class ReportStudentLoadSuccess extends ReportState {
-  final List<PuplisReport> listPeoples;
+  final List<PuplisReport>? listPeoples;
 
   const ReportStudentLoadSuccess({
     this.listPeoples,
   });
 
   @override
-  List<Object> get props => [listPeoples];
+  List<Object> get props => [listPeoples!];
 
   @override
   String toString() => 'ClassLoadSuccess { Class: $listPeoples }';

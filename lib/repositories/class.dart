@@ -8,13 +8,13 @@ import 'package:meta/meta.dart';
 class ClassRepository {
   static final _baseUrl = BaseUrl.urlAPi;
 
-  Future<List<Class>> loadOfflineClasses({@required String token}) async {
-    final url = '$_baseUrl/class/offline';
+  Future<List<Class>> loadOfflineClasses({@required String? token}) async {
+    final url = Uri.parse('$_baseUrl/class/offline');
     final response = await http.get(
       url,
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Authorization': "bearer " + token,
+        'Authorization': "bearer " + token!,
       },
     );
     if (response.statusCode != 200) {
@@ -27,17 +27,17 @@ class ClassRepository {
   }
 
   Future<List<Control>> getControls(
-      {@required String token,
-      @required String topicId,
-      @required String classId}) async {
+      {@required String? token,
+      @required String? topicId,
+      @required String? classId}) async {
     final url = classId != null
-        ? '$_baseUrl/teacher/getControlsByTopicsId/?topicId=$topicId&classId=$classId'
-        : '$_baseUrl/teacher/getControlsByTopicsId/?topicId=$topicId';
+        ? Uri.parse('$_baseUrl/teacher/getControlsByTopicsId/?topicId=$topicId&classId=$classId')
+        : Uri.parse('$_baseUrl/teacher/getControlsByTopicsId/?topicId=$topicId');
     final response = await http.get(
       url,
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Authorization': "bearer " + token,
+        'Authorization': "Bearer " + token!,
       },
     );
 
@@ -52,8 +52,8 @@ class ClassRepository {
   }
 
   Future<bool> updateTopics(
-      {@required String token, @required Class cls}) async {
-    List<Map<String, dynamic>> topics = cls.topics.map((e) {
+      {@required String? token, @required Class? cls}) async {
+    List<Map<String, dynamic>> topics = cls!.topics.map((e) {
       final Map<String, dynamic> data = new Map<String, dynamic>();
       data['topicId'] = e.id;
       data['selected'] = e.selected;
@@ -67,10 +67,10 @@ class ClassRepository {
       'classId': cls.id,
     };
 
-    final response = await http.post('$_baseUrl/class/addTopicsToClass',
+    final response = await http.post(Uri.parse('$_baseUrl/class/addTopicsToClass'),
         headers: <String, String>{
           'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': "bearer " + token
+          'Authorization': "Bearer " + token!
         },
         body: data);
     if (response.statusCode != 200) {
@@ -80,13 +80,13 @@ class ClassRepository {
   }
 
   Future<List<Student>> getStudents(
-      {@required String token, @required String classId}) async {
-    final url = '$_baseUrl/student/getStudentByClassId/?classId=$classId';
+      {@required String? token, @required String? classId}) async {
+    final url = Uri.parse('$_baseUrl/student/getStudentByClassId/?classId=$classId');
     final response = await http.get(
       url,
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Authorization': "bearer " + token,
+        'Authorization': "Bearer " + token!,
       },
     );
 
@@ -99,18 +99,18 @@ class ClassRepository {
     return json.map((e) => Student.fromJson(e)).toList();
   }
 
-  Future<Observation> getObservation(
-      {@required String token,
-      @required String classId,
-      @required String topicId,
-      @required String controlId}) async {
+  Future<Observation?> getObservation(
+      {@required String? token,
+      @required String? classId,
+      @required String? topicId,
+      @required String? controlId}) async {
     final url =
-        '$_baseUrl/observation/structured?classId=$classId&topicId=$topicId&controlId=$controlId';
+     Uri.parse('$_baseUrl/observation/structured?classId=$classId&topicId=$topicId&controlId=$controlId');
     final response = await http.get(
       url,
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Authorization': "Bearer " + token,
+        'Authorization': "Bearer " + token!,
       },
     );
     if (response.statusCode < 200 || response.statusCode >= 300) {
@@ -122,11 +122,11 @@ class ClassRepository {
   }
 
   Future<Observation> createStructuredObservation(
-      {@required String token,
-      @required String classId,
-      @required String topicId,
-      @required String controlId,
-      @required String name}) async {
+      {@required String? token,
+      @required String? classId,
+      @required String? topicId,
+      @required String? controlId,
+      @required String? name}) async {
     Map<String, dynamic> data = {
       "title": name,
       "classId": classId,
@@ -141,29 +141,30 @@ class ClassRepository {
       data: body,
       options: Options(
         headers: <String, String>{
-          'Authorization': "Bearer " + token,
+          'Authorization': "Bearer " + token!,
         },
         contentType: "application/json",
       ),
     );
 
-    if (response.statusCode < 200 || response.statusCode >= 300) {
+    if (response.statusCode! < 200 || response.statusCode! >= 300) {
       throw new Exception('error create structured observation');
     }
     return Observation.fromJson(response.data);
   }
 
   Future<Observation> editObservationName(
-      {@required String token,
-      @required String observationId,
-      @required String name}) async {
+      {@required String? token,
+      @required String? observationId,
+      @required String? name}) async {
     Map<String, dynamic> data = {'title': name, 'observationId': observationId};
 
     final response = await http.put(
-      '$_baseUrl/observation/$observationId/name',
+      Uri.parse(
+      '$_baseUrl/observation/$observationId/name'),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Authorization': "Bearer " + token,
+        'Authorization': "Bearer " + token!,
       },
       body: jsonEncode(data),
     );
@@ -177,12 +178,12 @@ class ClassRepository {
   }
 
   Future<bool> completeObservation(
-      {@required String token, @required String observationId}) async {
+      {@required String? token, @required String? observationId}) async {
     final response = await http.put(
-      '$_baseUrl/observation/$observationId/complete',
+     Uri.parse('$_baseUrl/observation/$observationId/complete'),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Authorization': "Bearer " + token,
+        'Authorization': "Bearer " + token!,
       },
     );
     if (response.statusCode < 200 || response.statusCode >= 300) {
@@ -193,12 +194,12 @@ class ClassRepository {
   }
 
   Future<bool> deleteObservation(
-      {@required String token, @required String observationId}) async {
+      {@required String? token, @required String? observationId}) async {
     final response = await http.delete(
-      '$_baseUrl/observation/$observationId',
+      Uri.parse('$_baseUrl/observation/$observationId'),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Authorization': "Bearer " + token,
+        'Authorization': "Bearer " + token!,
       },
     );
     if (response.statusCode < 200 || response.statusCode >= 300) {
@@ -209,18 +210,19 @@ class ClassRepository {
   }
 
   Future<bool> updateRating(
-      {@required String token,
-      @required String observationId,
-      @required String studentId,
-      @required int rating}) async {
+      {@required String? token,
+      @required String? observationId,
+      @required String? studentId,
+      @required int? rating}) async {
     Map<String, dynamic> data = {
       'rating': rating,
     };
     final response = await http.put(
-      '$_baseUrl/observation/$observationId/students/$studentId/rating',
+      Uri.parse(
+      '$_baseUrl/observation/$observationId/students/$studentId/rating'),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Authorization': "Bearer " + token,
+        'Authorization': "Bearer " + token!,
       },
       body: jsonEncode(data),
     );
@@ -232,13 +234,13 @@ class ClassRepository {
     return true;
   }
 
-  Future loadClassesList({@required String token}) async {
-    final url = '$_baseUrl/class';
+  Future loadClassesList({@required String? token}) async {
+    final url = Uri.parse('$_baseUrl/class');
     final response = await http.get(
       url,
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Authorization': "bearer " + token,
+        'Authorization': "bearer " + token!,
       },
     );
 
@@ -252,14 +254,14 @@ class ClassRepository {
   }
 
   Future<Class> addClass(
-      {@required String className,
-      @required String token,
-      @required String schoolYear}) async {
+      {@required String? className,
+      @required String? token,
+      @required String? schoolYear}) async {
     Map<String, dynamic> data = {'className': className, 'year': schoolYear};
-    final http.Response response = await http.post('$_baseUrl/class',
+    final http.Response response = await http.post(Uri.parse('$_baseUrl/class'),
         headers: <String, String>{
           'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': "Bearer " + token
+          'Authorization': "Bearer " + token!
         },
         body: data);
     if (response.statusCode != 200) {
@@ -271,18 +273,19 @@ class ClassRepository {
   }
 
   Future<bool> updateFavorite(
-      {@required String token,
-      @required String observationId,
-      @required String studentId,
-      @required bool isFavorite}) async {
+      {@required String? token,
+      @required String? observationId,
+      @required String? studentId,
+      @required bool? isFavorite}) async {
     Map<String, dynamic> data = {
       'is_favorite': isFavorite,
     };
     final response = await http.put(
-      '$_baseUrl/observation/$observationId/students/$studentId/favorites',
+      Uri.parse(
+      '$_baseUrl/observation/$observationId/students/$studentId/favorites'),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Authorization': "Bearer " + token,
+        'Authorization': "Bearer " + token!,
       },
       body: jsonEncode(data),
     );
@@ -295,11 +298,11 @@ class ClassRepository {
   }
 
   Future<String> deleteClass(
-      {@required String classId, @required String token}) async {
+      {@required String? classId, @required String? token}) async {
     final http.Response response =
-        await http.delete('$_baseUrl/class/$classId', headers: <String, String>{
+        await http.delete(Uri.parse('$_baseUrl/class/$classId'), headers: <String, String>{
       'Content-Type': 'application/x-www-form-urlencoded',
-      'Authorization': "Bearer " + token
+      'Authorization': "Bearer " + token!
     });
     if (response.statusCode != 200) {
       throw new Exception('error delete class');
@@ -308,11 +311,11 @@ class ClassRepository {
   }
 
   Future<Topic> addTopic(
-      {@required String token,
-      @required String topicName,
-      @required String schoolYear,
-      String topicOrder,
-      String topicColor}) async {
+      {@required String? token,
+      @required String? topicName,
+      @required String? schoolYear,
+      String? topicOrder,
+      String? topicColor}) async {
     Map<String, dynamic> data = {'name': topicName, 'year': schoolYear};
     if (topicOrder != null && topicOrder.isNotEmpty) {
       data['order'] = topicOrder;
@@ -320,10 +323,10 @@ class ClassRepository {
     if (topicColor != null && topicColor.isNotEmpty) {
       data['color'] = topicColor;
     }
-    final http.Response response = await http.post('$_baseUrl/class/topic',
+    final http.Response response = await http.post(Uri.parse('$_baseUrl/class/topic'),
         headers: <String, String>{
           'Content-Type': 'application/json',
-          'Authorization': "Bearer " + token
+          'Authorization': "Bearer " + token!
         },
         body: jsonEncode(data));
 
@@ -335,16 +338,16 @@ class ClassRepository {
   }
 
   Future<bool> deleteTopic(
-      {@required String token,
-      @required String name,
-      @required String schoolYear}) async {
+      {@required String? token,
+      @required String? name,
+      @required String? schoolYear}) async {
     Map<String, dynamic> data = {'name': name, 'year': schoolYear};
 
     final http.Response response =
-        await http.put('$_baseUrl/teacher/delete-topic',
+        await http.put(Uri.parse('$_baseUrl/teacher/delete-topic'),
             headers: <String, String>{
               'Content-Type': 'application/x-www-form-urlencoded',
-              'Authorization': "bearer " + token
+              'Authorization': "bearer " + token!
             },
             body: data);
 
@@ -355,10 +358,10 @@ class ClassRepository {
   }
 
   Future<bool> updateTopicName(
-      {@required String token,
-      @required String oldName,
-      @required String newName,
-      @required String schoolYear}) async {
+      {@required String? token,
+      @required String? oldName,
+      @required String? newName,
+      @required String? schoolYear}) async {
     Map<String, dynamic> data = {
       'oldName': oldName,
       'newName': newName,
@@ -366,10 +369,10 @@ class ClassRepository {
     };
 
     final http.Response response =
-        await http.put('$_baseUrl/teacher/updatecontrole',
+        await http.put(Uri.parse('$_baseUrl/teacher/updatecontrole'),
             headers: <String, String>{
               'Content-Type': 'application/x-www-form-urlencoded',
-              'Authorization': "bearer " + token
+              'Authorization': "Bearer " + token!
             },
             body: data);
 
@@ -380,16 +383,16 @@ class ClassRepository {
   }
 
   Future<bool> updateTopicColor(
-      {@required String token,
-      @required String topicId,
-      @required String topicColor}) async {
+      {@required String? token,
+      @required String? topicId,
+      @required String? topicColor}) async {
     Map<String, dynamic> data = {'color': topicColor};
 
     final http.Response response =
-        await http.put('$_baseUrl/class/topics/$topicId/color',
+        await http.put(Uri.parse('$_baseUrl/class/topics/$topicId/color'),
             headers: <String, String>{
               'Content-Type': 'application/x-www-form-urlencoded',
-              'Authorization': "Bearer " + token
+              'Authorization': "Bearer " + token!
             },
             body: data);
 
@@ -400,10 +403,10 @@ class ClassRepository {
   }
 
   Future<bool> sortTopics(
-      {@required String token,
-      @required List<Topic> topics,
-      @required String schoolYear}) async {
-    var jsonTopics = List<dynamic>.from(topics.asMap().entries.map((e) {
+      {@required String? token,
+      @required List<Topic>? topics,
+      @required String? schoolYear}) async {
+    var jsonTopics = List<dynamic>.from(topics!.asMap().entries.map((e) {
       int idx = e.key + 1;
       Topic val = e.value;
       Map<String, dynamic> obj = {
@@ -419,10 +422,10 @@ class ClassRepository {
       'year': schoolYear
     };
     final http.Response response =
-        await http.put('$_baseUrl/teacher/updateAllTopic',
+        await http.put(Uri.parse('$_baseUrl/teacher/updateAllTopic'),
             headers: <String, String>{
               'Content-Type': 'application/x-www-form-urlencoded',
-              'Authorization': "bearer " + token
+              'Authorization': "bearer " + token!
             },
             body: data);
 
@@ -433,8 +436,8 @@ class ClassRepository {
   }
 
   Future<bool> updateControls(
-      {@required String token, @required Topic topic}) async {
-    var jsonTopics = List<dynamic>.from(topic.controls.map((e) {
+      {@required String? token, @required Topic? topic}) async {
+    var jsonTopics = List<dynamic>.from(topic!.controls!.map((e) {
       Map<String, dynamic> obj = {
         'controlname': e.controlName,
       };
@@ -447,10 +450,10 @@ class ClassRepository {
     };
 
     final http.Response response =
-        await http.put('$_baseUrl/teacher/addControls',
+        await http.put(Uri.parse('$_baseUrl/teacher/addControls'),
             headers: <String, String>{
               'Content-Type': 'application/x-www-form-urlencoded',
-              'Authorization': "bearer " + token
+              'Authorization': "Bearer " + token!
             },
             body: data);
 
@@ -461,16 +464,16 @@ class ClassRepository {
   }
 
   Future<bool> updateClassName(
-      {@required String token,
-      @required String classId,
-      @required String className}) async {
+      {@required String? token,
+      @required String? classId,
+      @required String? className}) async {
     Map<String, dynamic> data = {'className': className};
 
     final http.Response response =
-        await http.put('$_baseUrl/class/$classId/name',
+        await http.put(Uri.parse('$_baseUrl/class/$classId/name'),
             headers: <String, String>{
               'Content-Type': 'application/x-www-form-urlencoded',
-              'Authorization': "bearer " + token
+              'Authorization': "Bearer " + token!
             },
             body: data);
 
@@ -481,8 +484,8 @@ class ClassRepository {
   }
 
   Future<bool> synchronizeClasses(
-      {@required String token, @required List<Class> classes}) async {
-    var jsonClasses = List<dynamic>.from(classes.map((e) {
+      {@required String? token, @required List<Class>? classes}) async {
+    var jsonClasses = List<dynamic>.from(classes!.map((e) {
       Map<String, dynamic> obj = {
         'name': e.className,
         'isDeleted': e.isDeleted,
@@ -494,7 +497,7 @@ class ClassRepository {
             'selected': t.selected,
             'order': t.order,
             'color': t.color,
-            'controls': List<dynamic>.from(t.controls.map((c) {
+            'controls': List<dynamic>.from(t.controls!.map((c) {
               Map<String, dynamic> obj = {
                 'controlname': c.controlName,
                 'hasActiveObservation': c.hasActiveObservation,
@@ -526,7 +529,7 @@ class ClassRepository {
 
           if (o.type == 'STRUCTURED') {
             obj['ratings'] = List<dynamic>.from(
-                o.ratings.where((r) => r.rating > 0).map((rt) {
+                o.ratings!.where((r) => r.rating! > 0).map((rt) {
               Map<String, dynamic> obj = {
                 'studentId': rt.studentId,
                 'rating': rt.rating,
@@ -535,7 +538,7 @@ class ClassRepository {
               return obj;
             }));
           } else {
-            obj['ratings'] = List<dynamic>.from(o.ratings.map((rt) {
+            obj['ratings'] = List<dynamic>.from(o.ratings!.map((rt) {
               Map<String, dynamic> obj = {
                 'studentId': rt.studentId,
                 'rating': rt.rating,
@@ -559,10 +562,10 @@ class ClassRepository {
       'classes': jsonEncode(jsonClasses),
     };
 
-    final http.Response response = await http.post('$_baseUrl/class/sync',
+    final http.Response response = await http.post(Uri.parse('$_baseUrl/class/sync'),
         headers: <String, String>{
           'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': "Bearer " + token
+          'Authorization': "Bearer " + token!
         },
         body: data);
 

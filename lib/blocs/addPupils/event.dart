@@ -20,32 +20,32 @@ class LoadStudents extends StudentsEvent {
 }
 
 class AddStudent extends StudentsEvent {
-  final String firstName;
-  final String lastName;
-  final String birthdayDate;
-  final String emergencyNumber;
+  final String? firstName;
+  final String? lastName;
+  final String? birthdayDate;
+  final String? emergencyNumber;
 
   const AddStudent(
       {this.firstName, this.lastName, this.birthdayDate, this.emergencyNumber});
 
   @override
   List<Object> get props =>
-      [firstName, lastName, birthdayDate, emergencyNumber];
+      [firstName!, lastName!, birthdayDate!, emergencyNumber!];
 
   @override
   String toString() => 'AddStudent { student: $firstName }';
 }
 
 class EditStudent extends StudentsEvent {
-  final String id;
-  final String firstName;
-  final String lastName;
-  final String birthdayDate;
+  final String? id;
+  final String? firstName;
+  final String? lastName;
+  final String? birthdayDate;
   const EditStudent(
       {this.id, this.firstName, this.lastName, this.birthdayDate});
 
   @override
-  List<Object> get props => [id, firstName, lastName, birthdayDate];
+  List<Object> get props => [id!, firstName!, lastName!, birthdayDate!];
 
   @override
   String toString() => 'EditStudent { student: $firstName }';
@@ -76,13 +76,13 @@ class GetPicture extends StudentsEvent {
 }
 
 class UploadPicture extends StudentsEvent {
-  final String studentId;
-  final String galleryFile;
+  final String? studentId;
+  final String? galleryFile;
 
   const UploadPicture({this.studentId, this.galleryFile});
 
   @override
-  List<Object> get props => [studentId, galleryFile];
+  List<Object> get props => [studentId!, galleryFile!];
 
   @override
   String toString() => 'UploadPicture { class:  }';

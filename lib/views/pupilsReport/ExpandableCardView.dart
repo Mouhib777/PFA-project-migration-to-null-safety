@@ -8,14 +8,14 @@ Color getTopicColor(String topicColor) {
 }
 
 class ExpandableCardView extends StatelessWidget {
-  final String title;
-  final int reportNumber;
-  final String sid;
-  final List topicList;
-  final int counter;
+  final String? title;
+  final int? reportNumber;
+  final String? sid;
+  final List? topicList;
+  final int? counter;
 
   const ExpandableCardView({
-    Key key,
+    Key? key,
     this.title,
     this.topicList,
     this.reportNumber,
@@ -28,25 +28,25 @@ class ExpandableCardView extends StatelessWidget {
     return new ListView.builder(
       itemBuilder: (BuildContext context, int index) {
         return new ExpandableListView(
-          title: topicList[index].name,
-          topicList: topicList,
+          title: topicList![index].name,
+          topicList: topicList!,
           counter: index,
         );
       },
-      itemCount: topicList.length,
+      itemCount: topicList!.length,
     );
   }
 }
 
 class ExpandableListView extends StatefulWidget {
-  final String title;
-  final int reportNumber;
-  final String sid;
-  final List topicList;
-  final int counter;
+  final String? title;
+  final int? reportNumber;
+  final String? sid;
+  final List? topicList;
+  final int? counter;
 
   const ExpandableListView({
-    Key key,
+    Key? key,
     this.title,
     this.topicList,
     this.reportNumber,
@@ -91,14 +91,14 @@ class _ExpandableListViewState extends State<ExpandableListView> {
             padding: new EdgeInsets.symmetric(horizontal: 15.0),
             child: Theme(
               data: Theme.of(context).copyWith(
-                  accentColor: Colors.black,
+                  // accentColor: Colors.black,
                   dividerColor: Colors.transparent,
                   unselectedWidgetColor: Colors.black.withOpacity(0.8)),
               child: Container(
                 decoration: BoxDecoration(
                   border: Border(
                     top: BorderSide(
-                      color: Colors.grey[200],
+                      color: Colors.grey[200]!,
                     ),
                     bottom: BorderSide(
                       color: Colors.transparent,
@@ -108,16 +108,16 @@ class _ExpandableListViewState extends State<ExpandableListView> {
                 child: ExpansionTile(
                   initiallyExpanded: true,
                   title: Text(
-                    widget.title +
+                    widget.title! +
                         ' ( ' +
-                        widget.topicList[widget.counter].observation
+                        widget.topicList![widget.counter!].observation
                             .toString() +
                         ' )',
                     style: new TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 20.0,
                       color: getTopicColor(
-                          widget.topicList[widget.counter].topicColor),
+                          widget.topicList![widget.counter!].topicColor),
                     ),
                   ),
                   children: <Widget>[
@@ -127,7 +127,7 @@ class _ExpandableListViewState extends State<ExpandableListView> {
                       child: ListView.builder(
                           physics: const NeverScrollableScrollPhysics(),
                           itemCount:
-                              widget.topicList[widget.counter].controls.length,
+                              widget.topicList![widget.counter!].controls.length,
                           shrinkWrap: true,
                           itemBuilder: (BuildContext context, int index) {
                             return Container(
@@ -140,7 +140,7 @@ class _ExpandableListViewState extends State<ExpandableListView> {
                                 decoration: BoxDecoration(
                                   border: Border(
                                     top: BorderSide(
-                                      color: Colors.grey[200],
+                                      color: Colors.grey[200]!,
                                     ),
                                     bottom: BorderSide(
                                       color: Colors.transparent,
@@ -150,13 +150,13 @@ class _ExpandableListViewState extends State<ExpandableListView> {
                                 child: ExpansionTile(
                                     initiallyExpanded: false,
                                     title: Text(
-                                      widget.topicList[widget.counter]
+                                      widget.topicList![widget.counter!]
                                           .controls[index].name,
                                       style: new TextStyle(
                                         fontWeight: FontWeight.w500,
                                         fontSize: 18.0,
                                         color: getTopicColor(widget
-                                            .topicList[widget.counter]
+                                            .topicList![widget.counter!]
                                             .topicColor),
                                       ),
                                     ),
@@ -165,7 +165,7 @@ class _ExpandableListViewState extends State<ExpandableListView> {
                                           physics:
                                               const NeverScrollableScrollPhysics(),
                                           itemCount: widget
-                                              .topicList[widget.counter]
+                                              .topicList![widget.counter!]
                                               .controls[index]
                                               .observations
                                               .length,
@@ -178,8 +178,8 @@ class _ExpandableListViewState extends State<ExpandableListView> {
                                                   top: 30.0, bottom: 30.0),
                                               child:
                                                   widget
-                                                              .topicList[widget
-                                                                  .counter]
+                                                              .topicList![widget
+                                                                  .counter!]
                                                               .controls[index]
                                                               .observations[i]
                                                               .type ==
@@ -194,9 +194,9 @@ class _ExpandableListViewState extends State<ExpandableListView> {
                                                                       right:
                                                                           15.0),
                                                                   child: _getRating(widget
-                                                                      .topicList[
+                                                                      .topicList![
                                                                           widget
-                                                                              .counter]
+                                                                              .counter!]
                                                                       .controls[
                                                                           index]
                                                                       .observations[
@@ -213,8 +213,8 @@ class _ExpandableListViewState extends State<ExpandableListView> {
                                                                     child:
                                                                         new Text(
                                                                       widget
-                                                                          .topicList[widget
-                                                                              .counter]
+                                                                          .topicList![widget
+                                                                              .counter!]
                                                                           .controls[
                                                                               index]
                                                                           .observations[
@@ -233,8 +233,8 @@ class _ExpandableListViewState extends State<ExpandableListView> {
                                                               ],
                                                             ),
                                                             subtitle: widget
-                                                                        .topicList[widget
-                                                                            .counter]
+                                                                        .topicList![widget
+                                                                            .counter!]
                                                                         .controls[
                                                                             index]
                                                                         .observations[
@@ -248,8 +248,8 @@ class _ExpandableListViewState extends State<ExpandableListView> {
                                                                     child:
                                                                         new Text(
                                                                       widget
-                                                                          .topicList[widget
-                                                                              .counter]
+                                                                          .topicList![widget
+                                                                              .counter!]
                                                                           .controls[
                                                                               index]
                                                                           .observations[
@@ -271,8 +271,8 @@ class _ExpandableListViewState extends State<ExpandableListView> {
                                                                     child:
                                                                         new Text(
                                                                       widget
-                                                                          .topicList[widget
-                                                                              .counter]
+                                                                          .topicList![widget
+                                                                              .counter!]
                                                                           .controls[
                                                                               index]
                                                                           .observations[
@@ -297,8 +297,8 @@ class _ExpandableListViewState extends State<ExpandableListView> {
                                                           child: Row(
                                                             children: [
                                                               widget
-                                                                          .topicList[widget
-                                                                              .counter]
+                                                                          .topicList![widget
+                                                                              .counter!]
                                                                           .controls[
                                                                               index]
                                                                           .observations[
@@ -306,9 +306,9 @@ class _ExpandableListViewState extends State<ExpandableListView> {
                                                                           .rating ==
                                                                       1
                                                                   ? _getRating(widget
-                                                                      .topicList[
+                                                                      .topicList![
                                                                           widget
-                                                                              .counter]
+                                                                              .counter!]
                                                                       .controls[
                                                                           index]
                                                                       .observations[
@@ -323,8 +323,8 @@ class _ExpandableListViewState extends State<ExpandableListView> {
                                                                 width: 5,
                                                               ),
                                                               widget
-                                                                          .topicList[widget
-                                                                              .counter]
+                                                                          .topicList![widget
+                                                                              .counter!]
                                                                           .controls[
                                                                               index]
                                                                           .observations[
@@ -332,9 +332,9 @@ class _ExpandableListViewState extends State<ExpandableListView> {
                                                                           .rating ==
                                                                       2
                                                                   ? _getRating(widget
-                                                                      .topicList[
+                                                                      .topicList![
                                                                           widget
-                                                                              .counter]
+                                                                              .counter!]
                                                                       .controls[
                                                                           index]
                                                                       .observations[
@@ -349,8 +349,8 @@ class _ExpandableListViewState extends State<ExpandableListView> {
                                                                 width: 5,
                                                               ),
                                                               widget
-                                                                          .topicList[widget
-                                                                              .counter]
+                                                                          .topicList![widget
+                                                                              .counter!]
                                                                           .controls[
                                                                               index]
                                                                           .observations[
@@ -358,9 +358,9 @@ class _ExpandableListViewState extends State<ExpandableListView> {
                                                                           .rating ==
                                                                       3
                                                                   ? _getRating(widget
-                                                                      .topicList[
+                                                                      .topicList![
                                                                           widget
-                                                                              .counter]
+                                                                              .counter!]
                                                                       .controls[
                                                                           index]
                                                                       .observations[
@@ -375,8 +375,8 @@ class _ExpandableListViewState extends State<ExpandableListView> {
                                                                 width: 5,
                                                               ),
                                                               widget
-                                                                          .topicList[widget
-                                                                              .counter]
+                                                                          .topicList![widget
+                                                                              .counter!]
                                                                           .controls[
                                                                               index]
                                                                           .observations[
@@ -384,9 +384,9 @@ class _ExpandableListViewState extends State<ExpandableListView> {
                                                                           .rating ==
                                                                       4
                                                                   ? _getRating(widget
-                                                                      .topicList[
+                                                                      .topicList![
                                                                           widget
-                                                                              .counter]
+                                                                              .counter!]
                                                                       .controls[
                                                                           index]
                                                                       .observations[
@@ -414,7 +414,7 @@ class _ExpandableListViewState extends State<ExpandableListView> {
                                                                       child:
                                                                           Text(
                                                                         widget
-                                                                            .topicList[widget.counter]
+                                                                            .topicList![widget.counter!]
                                                                             .controls[index]
                                                                             .observations[i]
                                                                             .title,
@@ -439,7 +439,7 @@ class _ExpandableListViewState extends State<ExpandableListView> {
                                                                       child:
                                                                           Text(
                                                                         widget
-                                                                            .topicList[widget.counter]
+                                                                            .topicList![widget.counter!]
                                                                             .controls[index]
                                                                             .observations[i]
                                                                             .date,
@@ -462,12 +462,12 @@ class _ExpandableListViewState extends State<ExpandableListView> {
                                                                         Flexible(
                                                                           child:
                                                                               Text(
-                                                                            widget.topicList[widget.counter].controls[index].observations[i].topicName +
+                                                                            widget.topicList![widget.counter!].controls[index].observations[i].topicName +
                                                                                 ' - ' +
-                                                                                widget.topicList[widget.counter].controls[index].observations[i].controlName,
+                                                                                widget.topicList![widget.counter!].controls[index].observations[i].controlName,
                                                                             style: TextStyle(
                                                                                 fontSize: 17.0,
-                                                                                color: getTopicColor(widget.topicList[widget.counter].topicColor),
+                                                                                color: getTopicColor(widget.topicList![widget.counter!].topicColor),
                                                                                 fontWeight: FontWeight.bold),
                                                                           ),
                                                                         ),
@@ -500,7 +500,7 @@ class ExpandableContainer extends StatelessWidget {
   final bool expanded;
   final double collapsedHeight;
   final double expandedHeight;
-  final Widget child;
+  final Widget? child;
 
   ExpandableContainer({
     @required this.child,
@@ -520,7 +520,7 @@ class ExpandableContainer extends StatelessWidget {
       child: new Container(
         child: child,
         decoration: new BoxDecoration(
-            border: new Border.all(width: 0.6, color: Colors.grey[200])),
+            border: new Border.all(width: 0.6, color: Colors.grey[200]!)),
       ),
     );
   }

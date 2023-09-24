@@ -10,7 +10,7 @@ part 'event.dart';
 part 'state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  LoginBloc() : super(const LoginState());
+  LoginBloc() : super( LoginState());
   final _repository = UserRepository();
   @override
   Stream<LoginState> mapEventToState(
@@ -20,26 +20,26 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       final email = Email.dirty(event.email.trim());
       yield state.copyWith(
         email: email,
-        status: Formz.validate([email, state.password]),
+        status: FormzSubmissionStatus.initial,
       );
     } else if (event is PasswordChanged) {
       final password = Password.dirty(event.password);
       yield state.copyWith(
         password: password,
-        status: Formz.validate([state.email, password]),
+        status: FormzSubmissionStatus.initial
       );
     } else if (event is FormSubmitted) {
-      if (state.status.isValidated) {
-        yield state.copyWith(status: FormzStatus.submissionInProgress);
+      if (state.status.isInProgress) {
+        yield state.copyWith(status: FormzSubmissionStatus.inProgress);
         try {
           final UserData data = await this
               ._repository
               .login(email: state.email.value, password: state.password.value);
 
           yield state.copyWith(
-              status: FormzStatus.submissionSuccess, userData: data);
+              status: FormzSubmissionStatus.success, userData: data);
         } catch (error) {
-          yield state.copyWith(status: FormzStatus.submissionFailure);
+          yield state.copyWith(status: FormzSubmissionStatus.failure);
         }
       }
     }

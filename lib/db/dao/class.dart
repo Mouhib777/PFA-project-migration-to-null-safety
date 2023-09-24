@@ -58,7 +58,7 @@ class ClassDao {
     }).toList();
   }
 
-  Future<Class> getClass(String classId) async {
+  Future<Class?> getClass(String classId) async {
     final finder = Finder(filter: Filter.equals('id', classId));
 
     final record = await _classStore.findFirst(
@@ -88,7 +88,7 @@ class ClassDao {
     );
   }
 
-  Future<Class> findFirst(String schoolYear) async {
+  Future<Class?> findFirst(String schoolYear) async {
     // Finder object can also sort data.
     final finder = Finder(
         sortOrders: [
@@ -107,7 +107,7 @@ class ClassDao {
     return null;
   }
 
-  Future<Class> getClassByName({String schoolYear, String className}) async {
+  Future<Class?> getClassByName({String? schoolYear, String? className}) async {
     final finder = Finder(
         filter: Filter.equals('className', className) &
             Filter.equals('schoolYear', schoolYear) &
@@ -123,7 +123,7 @@ class ClassDao {
     return null;
   }
 
-  Future<Class> findOnlineClass(String schoolYear) async {
+  Future<Class?> findOnlineClass(String schoolYear) async {
     final finder = Finder(
         filter: Filter.equals('synchronize', false) &
             Filter.equals('schoolYear', schoolYear));

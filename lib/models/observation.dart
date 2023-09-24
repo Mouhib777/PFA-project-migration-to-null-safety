@@ -1,16 +1,16 @@
 class Observation {
-  String id;
-  String title;
-  String classId;
-  String topicId;
-  String controlId;
-  String topicName;
-  String controlName;
-  List<ObservationRating> ratings;
-  String type;
-  bool completed;
-  bool synchronize;
-  bool isDeleted;
+  String? id;
+  String? title;
+  String? classId;
+  String? topicId;
+  String? controlId;
+  String? topicName;
+  String? controlName;
+  List<ObservationRating>? ratings;
+  String? type;
+  bool? completed;
+  bool? synchronize;
+  bool? isDeleted;
   Observation(
       {this.id,
       this.title,
@@ -54,7 +54,7 @@ class Observation {
     data['controlId'] = this.controlId;
     data['topicName'] = this.topicName;
     data['controlName'] = this.controlName;
-    data['ratings'] = List<dynamic>.from(this.ratings.map((e) => e.toJson()));
+    data['ratings'] = List<dynamic>.from(this.ratings!.map((e) => e.toJson()));
     data['type'] = this.type;
     data['completed'] = this.completed;
     data['synchronize'] = this.synchronize;
@@ -64,14 +64,14 @@ class Observation {
 }
 
 class ObservationRating {
-  String id;
-  String studentId;
-  String name;
-  String firstName;
-  String lastName;
-  int rating;
-  bool isFavorite;
-  String picture;
+  String? id;
+  String? studentId;
+  String? name;
+  String? firstName;
+  String? lastName;
+  int? rating;
+  bool? isFavorite;
+  String? picture;
 
   ObservationRating(
       {this.id,
@@ -87,7 +87,7 @@ class ObservationRating {
     studentId = json['studentId'];
     firstName = json['firstName'];
     lastName = json['lastName'];
-    name = firstName + " " + lastName;
+    name = firstName! + " " + lastName!;
     rating = json['rating'];
     picture = json['picture'];
     isFavorite = json['is_favorite'] ?? json['isFavorite'];

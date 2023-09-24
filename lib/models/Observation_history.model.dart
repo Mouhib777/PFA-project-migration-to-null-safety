@@ -6,22 +6,22 @@ Observation observationFromJson(String str) =>
 String observationToJson(Observation data) => json.encode(data.toJson());
 
 class Observation {
-  String sId;
-  String title;
-  String classId;
-  String topicId;
-  String controlId;
-  String type;
-  String studentId;
-  String topicName;
-  String controlName;
-  Student student;
-  int rating;
-  String date;
-  String topicColor;
-  String createdAt;
-  String dateofupdate;
-  String dateofcreate;
+  String? sId;
+  String? title;
+  String? classId;
+  String? topicId;
+  String? controlId;
+  String? type;
+  String? studentId;
+  String? topicName;
+  String? controlName;
+  Student? student;
+  int? rating;
+  String? date;
+  String? topicColor;
+  String? createdAt;
+  String? dateofupdate;
+  String? dateofcreate;
 
   Observation(
       {this.sId,
@@ -73,7 +73,7 @@ class Observation {
     data['topicName'] = this.topicName;
     data['controlName'] = this.controlName;
     if (this.student != null) {
-      data['student'] = this.student.toJson();
+      data['student'] = this.student!.toJson();
     }
     data['rating'] = this.rating;
     data['date'] = this.date;
@@ -87,13 +87,13 @@ class Observation {
 }
 
 class Student {
-  String sId;
-  String firstName;
-  String lastName;
-  String className;
-  String emergencyNumber;
-  String schoolYear;
-  String picture;
+  String? sId;
+  String? firstName;
+  String? lastName;
+  String? className;
+  String? emergencyNumber;
+  String? schoolYear;
+  String? picture;
 
   Student(
       {this.sId,

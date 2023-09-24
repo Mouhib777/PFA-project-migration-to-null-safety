@@ -36,21 +36,21 @@ class LoginView extends StatelessWidget {
 class LoginForm extends StatelessWidget {
   final difference;
 
-  const LoginForm({Key key, this.difference}) : super(key: key);
+  const LoginForm({Key? key, this.difference}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return BlocListener<LoginBloc, LoginState>(
         listenWhen: (previousState, state) {
-          return state.status.isValidated;
+          return state.status.isInProgressOrSuccess;
         },
         listener: (context, state) async {
-          if (state.status.isSubmissionSuccess) {
-            Scaffold.of(context).hideCurrentSnackBar();
-            context.bloc<TokenBloc>()..add(TokenAdded(state.userData.token));
-            context.bloc<UserBloc>()..add(UserAdded(state.userData.user));
-            final token = state.userData.token;
+          if (state.status.isSuccess) {
+            // Scaffold.of(context).hideCurrentSnackBar();
+            // context.bloc<TokenBloc>()..add(TokenAdded(state.userData.token));
+            // context.bloc<UserBloc>()..add(UserAdded(state.userData.user));
+            final token = state.userData!.token;
             final date2 = DateTime.now();
-            int difference = DateTime.parse(state.userData.user.expirationDate)
+            int difference = DateTime.parse(state.userData!.user!.expirationDate!)
                 .difference(date2)
                 .inHours;
             difference = (difference / 24).floor();
@@ -72,7 +72,7 @@ class LoginForm extends StatelessWidget {
               if (difference > 7) {
                 await Future.delayed(const Duration(seconds: 1));
                 Navigator.of(context)
-                    .pushNamed('/dashboard', arguments: state.userData.token);
+                    .pushNamed('/dashboard', arguments: state.userData!.token);
               } else {
                 showDialog(
                     barrierDismissible: false,
@@ -86,20 +86,22 @@ class LoginForm extends StatelessWidget {
                     });
               }
             }
-          } else if (state.status.isSubmissionFailure) {
-            Scaffold.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                    backgroundColor: Colors.red,
-                    content: Text('Ungültige E-Mail oder Passwort')),
-              );
-          } else if (state.status.isSubmissionInProgress) {
-            Scaffold.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(content: Text('Submitting...')),
-              );
+          } else if (state.status.isFailure) {
+                        //! voir lib/utils/snackbar
+
+            // Scaffold.of(context)
+              // ..hideCurrentSnackBar()
+              // ..showSnackBar(
+              //   SnackBar(
+              //       backgroundColor: Colors.red,
+              //       content: Text('Ungültige E-Mail oder Passwort')),
+              // );
+          } else if (state.status.isInProgress) {
+            // Scaffold.of(context)
+            //   ..hideCurrentSnackBar()
+            //   ..showSnackBar(
+            //     SnackBar(content: Text('Submitting...')),
+            //   );
           }
         },
         child: Form(
@@ -198,9 +200,12 @@ class EmailInput extends StatelessWidget {
                 ),
                 child: Center(
                   child: TextFormField(
-                    onEditingComplete: state.status.isValidated
-                        ? () => context.bloc<LoginBloc>().add(FormSubmitted())
-                        : null,
+                    onEditingComplete:(){
+
+                    },
+                    //  state.status.isInProgress 
+                        // ? () => context.bloc<LoginBloc>().add(FormSubmitted())
+                        // : null,
                     initialValue: state.email.value,
                     decoration: InputDecoration(
                       border: InputBorder.none,
@@ -209,13 +214,13 @@ class EmailInput extends StatelessWidget {
                       labelText: 'E-Mail',
                       labelStyle:
                           TextStyle(color: Color(0xFFaeaeae), fontSize: 15.3),
-                      errorText: state.email.invalid
+                      errorText: state.email.isNotValid
                           ? 'Bitte geben Sie eine gültige E-Mail an'
                           : null,
                     ),
                     keyboardType: TextInputType.emailAddress,
                     onChanged: (value) {
-                      context.bloc<LoginBloc>().add(EmailChanged(email: value));
+                      // context.bloc<LoginBloc>().add(EmailChanged(email: value));
                     },
                   ),
                 ),
@@ -252,9 +257,12 @@ class PasswordInput extends StatelessWidget {
                 ),
                 child: Center(
                     child: TextFormField(
-                  onEditingComplete: state.status.isValidated
-                      ? () => context.bloc<LoginBloc>().add(FormSubmitted())
-                      : null,
+                  onEditingComplete: (){
+
+                  },
+                  // state.status.isSuccess
+                  //     ? () => context.bloc<LoginBloc>().add(FormSubmitted())
+                  //     : null,
                   initialValue: state.password.value,
                   decoration: InputDecoration(
                     suffix: GestureDetector(
@@ -273,13 +281,13 @@ class PasswordInput extends StatelessWidget {
                     labelStyle:
                         TextStyle(color: Color(0xFFaeaeae), fontSize: 15.3),
                     errorText:
-                        state.password.invalid ? 'Falsches Passwort' : null,
+                        state.password.isNotValid ? 'Falsches Passwort' : null,
                   ),
                   obscureText: true,
                   onChanged: (value) {
-                    context
-                        .bloc<LoginBloc>()
-                        .add(PasswordChanged(password: value));
+                    // context
+                        // .bloc<LoginBloc>()
+                        // .add(PasswordChanged(password: value));
                   },
                 )),
               ),
@@ -304,13 +312,14 @@ class SubmitButton extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
                       Container(
-                        child: FlatButton(
-                            onPressed: state.status.isValidated
-                                ? () => context
-                                    .bloc<LoginBloc>()
-                                    .add(FormSubmitted())
-                                : null,
-                            padding: EdgeInsets.all(10.0),
+                        child: ElevatedButton(
+                            onPressed:(){},
+                            //  state.status.isValidated
+                            //     ? () => context
+                            //         .bloc<LoginBloc>()
+                            //         .add(FormSubmitted())
+                            //     : null,
+                            // padding: EdgeInsets.all(10.0),
                             child: Row /*or Column*/ (
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[

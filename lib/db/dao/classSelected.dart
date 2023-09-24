@@ -22,7 +22,7 @@ class SelectedClassDao {
     );
   }
 
-  Future<Class> getClass() async {
+  Future<Class?> getClass() async {
     // Finder object can also sort data.
 
     final record = await _classtore.findFirst(

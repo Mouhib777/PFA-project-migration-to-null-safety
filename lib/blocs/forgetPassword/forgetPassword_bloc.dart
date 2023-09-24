@@ -20,19 +20,19 @@ class ForgetPasswordBloc
       final email = Email.dirty(event.email);
       yield state.copyWith(
         email: email,
-        status: Formz.validate([email]),
+        // status: Formz.validate([email]),
       );
     } else if (event is FormSubmitted) {
-      if (state.status.isValidated) {
-        yield state.copyWith(status: FormzStatus.submissionInProgress);
+      if (state.status.isSuccess) {
+        yield state.copyWith(status: FormzSubmissionStatus.inProgress);
 
         try {
           await this._repository.forgetPassword(
                 email: state.email.value,
               );
-          yield state.copyWith(status: FormzStatus.submissionSuccess);
+          yield state.copyWith(status: FormzSubmissionStatus.success);
         } catch (error) {
-          yield state.copyWith(status: FormzStatus.submissionFailure);
+          yield state.copyWith(status: FormzSubmissionStatus.failure);
         }
       }
     }

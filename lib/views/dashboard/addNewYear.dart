@@ -29,15 +29,15 @@ class AddNewYearState extends State<AddNewYear> {
 
   final _formKey = GlobalKey<FormState>();
 
-  String _email, _code;
+  String? _email, _code;
   bool popupShow = false;
   final _payementRepository = PayementRepository();
   SelectedYearsDao _selectedyearDao = SelectedYearsDao();
 
   void _loadNewYear() async {
-    Token token = await _tokenDao.getToken();
+    Token? token = await _tokenDao.getToken();
 
-    final years = await _payementRepository.getYears(token: token.accessToken);
+    final years = await _payementRepository.getYears(token: token!.accessToken);
 
     await _selectedyearDao.insert(years.first);
 
@@ -68,20 +68,21 @@ class AddNewYearState extends State<AddNewYear> {
   }
 
   void _submit() async {
-    Token token = await _tokenDao.getToken();
+    Token? token = await _tokenDao.getToken();
 
-    if (_formKey.currentState.validate()) {
-      _formKey.currentState.save();
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
       Map<String, dynamic> data = {
-        'email': _email.trim(),
-        'validationCode': _code.trim()
+        'email': _email!.trim(),
+        'validationCode': _code!.trim()
       };
       try {
         final response = await http.post(
-          '$_baseUrl/payement/buy/newyear',
+          Uri.parse(
+          '$_baseUrl/payement/buy/newyear'),
           headers: <String, String>{
             'Content-Type': 'application/json',
-            'Authorization': "Bearer " + token.accessToken,
+            'Authorization': "Bearer " + token!.accessToken!,
           },
           body: jsonEncode(data),
         );
@@ -96,7 +97,7 @@ class AddNewYearState extends State<AddNewYear> {
                   content: const Text(
                       'Vielen Dank, Ihr Nutzerkonto ist nun erfolgreich freigeschaltet'),
                   actions: <Widget>[
-                    FlatButton(
+                    ElevatedButton(
                       child: Text('Ok'),
                       onPressed: () async {
                         _loadNewYear();
@@ -115,7 +116,7 @@ class AddNewYearState extends State<AddNewYear> {
                   content: const Text(
                       'Der von Ihnen eingegebene Aktivierungscode war leider nicht korrekt. Versuchen Sie es noch einmal und kontaktieren Sie uns gerne, wenn das Problem weiter besteht.'),
                   actions: <Widget>[
-                    FlatButton(
+                    ElevatedButton(
                       child: Text('Ok'),
                       onPressed: () {
                         Navigator.of(context).pop();
@@ -138,13 +139,14 @@ class AddNewYearState extends State<AddNewYear> {
   _fetchData() async {
     try {
       // final prefs = await SharedPreferences.getInstance();
-      Token token = await _tokenDao.getToken();
+      Token? token = await _tokenDao.getToken();
 
       final response = await http.get(
-        '$_baseUrl/payement/getNewYears',
+        Uri.parse(
+        '$_baseUrl/payement/getNewYears'),
         headers: <String, String>{
           'Content-Type': 'application/json',
-          'Authorization': "Bearer " + token.accessToken,
+          'Authorization': "Bearer " + token!.accessToken!,
         },
       );
       if (response.statusCode != 200) {
@@ -326,10 +328,10 @@ class AddNewYearState extends State<AddNewYear> {
                                                               //  popupShow =
                                                               //      false;
                                                             });
-                                                            context.bloc<
-                                                                TokenBloc>()
-                                                              ..add(
-                                                                  UserLogout());
+                                                            // context.bloc<
+                                                            //     TokenBloc>()
+                                                            //   ..add(
+                                                            //       UserLogout());
                                                           },
                                                           child: Icon(
                                                               Icons.close,
@@ -438,7 +440,7 @@ class AddNewYearState extends State<AddNewYear> {
                                                                                       contentPadding: EdgeInsets.fromLTRB(15.0, 10.0, 20.0, 10.0),
                                                                                       hintText: 'E-Mail des Bestellers',
                                                                                     )),
-                                                                                    validator: (input) => !input.contains('@') ? 'Bitte geben Sie eine gültige E-Mail an' : null,
+                                                                                    validator: (input) => !input!.contains('@') ? 'Bitte geben Sie eine gültige E-Mail an' : null,
                                                                                     onSaved: (input) => _email = input,
                                                                                     //obscureText: true,
                                                                                   ),
@@ -480,7 +482,7 @@ class AddNewYearState extends State<AddNewYear> {
                                                                                       contentPadding: EdgeInsets.fromLTRB(15.0, 10.0, 20.0, 10.0),
                                                                                       hintText: 'Aktivierungscode',
                                                                                     )),
-                                                                                    validator: (input) => input.length < 3 ? 'Name muss mindestens 3 Zeichen lang sein' : null,
+                                                                                    validator: (input) => input!.length < 3 ? 'Name muss mindestens 3 Zeichen lang sein' : null,
                                                                                     onSaved: (input) => _code = input,
                                                                                   ),
                                                                                 ),
@@ -513,7 +515,7 @@ class AddNewYearState extends State<AddNewYear> {
                                                                         // color: Colors.blue,
 
                                                                         child: InkWell(
-                                                                            child: FlatButton(
+                                                                            child: ElevatedButton(
                                                                                 onPressed: () {
                                                                                   Navigator.of(context).pop();
                                                                                   showDialog(
@@ -560,7 +562,7 @@ class AddNewYearState extends State<AddNewYear> {
                                                                     Container(
                                                                       // color: Colors.blue,
 
-                                                                      child: FlatButton(
+                                                                      child: ElevatedButton(
                                                                           onPressed: () async {
                                                                             _submit();
                                                                           },

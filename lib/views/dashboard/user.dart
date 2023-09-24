@@ -1,8 +1,8 @@
 class User {
-  String id;
-  String name;
-  String lastname;
-  String picture;
+  String? id;
+  String? name;
+  String? lastname;
+  String? picture;
 
   User({this.id, this.name, this.lastname, this.picture});
 

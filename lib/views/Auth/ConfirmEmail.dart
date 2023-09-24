@@ -16,15 +16,15 @@ class _ConfirmEmailViewState extends State<ConfirmEmailView> {
   static final _baseUrl = BaseUrl.urlAPi;
 
   final _formKey = GlobalKey<FormState>();
-  String _codeConfirmation;
+  String? _codeConfirmation;
 
   void _submit() async {
     final prefs = await SharedPreferences.getInstance();
 
     final confirmationCode = prefs.getString('confirmationCode') ?? 0;
 
-    if (_formKey.currentState.validate()) {
-      _formKey.currentState.save();
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
 
       if (_codeConfirmation == confirmationCode) {
         final prefs = await SharedPreferences.getInstance();
@@ -39,7 +39,8 @@ class _ConfirmEmailViewState extends State<ConfirmEmailView> {
 
         try {
           await http.post(
-            '$_baseUrl/auth/validate-compte',
+            Uri.parse(
+            '$_baseUrl/auth/validate-compte'),
             headers: <String, String>{
               'Content-Type': 'application/json',
             },
@@ -56,7 +57,7 @@ class _ConfirmEmailViewState extends State<ConfirmEmailView> {
                 title: Text('Error'),
                 content: const Text('code confirmation Error'),
                 actions: <Widget>[
-                  FlatButton(
+                  ElevatedButton(
                     child: Text('Ok'),
                     onPressed: () {
                       Navigator.of(context).pop();
@@ -80,7 +81,8 @@ class _ConfirmEmailViewState extends State<ConfirmEmailView> {
 
     try {
       await http.post(
-        '$_baseUrl/auth/send-confirmation',
+        Uri.parse(
+        '$_baseUrl/auth/send-confirmation'),
         headers: <String, String>{
           'Content-Type': 'application/json',
         },
@@ -232,9 +234,9 @@ class _ConfirmEmailViewState extends State<ConfirmEmailView> {
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: <Widget>[
                                         Container(
-                                          child: FlatButton(
+                                          child: ElevatedButton(
                                             onPressed: _sendCode,
-                                            padding: EdgeInsets.all(10.0),
+                                            // padding: EdgeInsets.all(10.0),
                                             child: Text(
                                               "Code nochmal senden",
                                               style: TextStyle(
@@ -269,9 +271,9 @@ class _ConfirmEmailViewState extends State<ConfirmEmailView> {
                                     child: SizedBox(),
                                   ),
                                   Container(
-                                    child: FlatButton(
+                                    child: ElevatedButton(
 //                                          onPressed: _submit,
-                                      padding: EdgeInsets.all(10.0),
+                                      // padding: EdgeInsets.all(10.0),
                                       child: Text(
                                         "Weiter",
                                         style: TextStyle(

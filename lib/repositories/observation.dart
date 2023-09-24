@@ -8,16 +8,16 @@ class ObservationRepository {
   static final _baseUrl = BaseUrl.urlAPi;
 
   Future<bool> sendObservation(
-      {@required String token, @required Map data}) async {
+      {@required String? token, @required Map? data}) async {
     final response = await Dio().post(
       '$_baseUrl/observation/spontaneous',
       data: data,
       options: Options(
-        headers: <String, String>{'Authorization': "Bearer " + token},
+        headers: <String, String>{'Authorization': "Bearer " + token!},
         contentType: "application/json",
       ),
     );
-    if (response.statusCode < 200 || response.statusCode >= 300) {
+    if (response.statusCode! < 200 || response.statusCode! >= 300) {
       throw new Exception('error in send observation');
     }
 
@@ -25,12 +25,12 @@ class ObservationRepository {
   }
 
   Future<List> loadObservation(
-      {@required String token, @required String selectYear}) async {
-    final response = await http.get(
-      '$_baseUrl/class/?year=$selectYear',
+      {@required String? token, @required String? selectYear}) async {
+    final response = await http.get(Uri.parse(
+      '$_baseUrl/class/?year=$selectYear'),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Authorization': "bearer " + token,
+        'Authorization': "Bearer " + token!,
       },
     );
 
@@ -43,13 +43,13 @@ class ObservationRepository {
   }
 
   Future<List> fetchPeople(
-      {@required String token, @required String id}) async {
+      {@required String? token, @required String? id}) async {
     try {
       final response = await http.get(
-        '$_baseUrl/student/getStudentByClassId/?classId=$id',
+        Uri.parse('$_baseUrl/student/getStudentByClassId/?classId=$id'),
         headers: <String, String>{
           'Content-Type': 'application/json',
-          'Authorization': "bearer " + token,
+          'Authorization': "Bearer " + token!,
         },
       );
 
@@ -65,13 +65,13 @@ class ObservationRepository {
   }
 
   Future<List> getStudentsObservations(
-      {@required String token, @required String id}) async {
+      {@required String? token, @required String? id}) async {
     try {
       final response = await http.get(
-        '$_baseUrl/observation/history/?classId=$id',
+    Uri.parse('$_baseUrl/observation/history/?classId=$id'),
         headers: <String, String>{
           'Content-Type': 'application/json',
-          'Authorization': "Bearer " + token,
+          'Authorization': "Bearer " + token!,
         },
       );
 
@@ -87,15 +87,15 @@ class ObservationRepository {
   }
 
   Future<bool> deleteSpontaneousObservation(
-      {@required String token, @required String observationId}) async {
+      {@required String? token, @required String? observationId}) async {
     Map<String, dynamic> data = {
       'observationId': observationId,
     };
 
-    final response = await http.put('$_baseUrl/observation/delete',
+    final response = await http.put(Uri.parse('$_baseUrl/observation/delete'),
         headers: <String, String>{
           'Content-Type': 'application/json',
-          'Authorization': "Bearer " + token,
+          'Authorization': "Bearer " + token!,
         },
         body: jsonEncode(data));
 
@@ -107,14 +107,14 @@ class ObservationRepository {
   }
 
   Future<bool> deleteStructuredObservation(
-      {@required String token,
-      @required String observationId,
-      @required String studentId}) async {
-    final response = await http.delete(
-      '$_baseUrl/observation/$observationId/students/$studentId/rating',
+      {@required String? token,
+      @required String? observationId,
+      @required String? studentId}) async {
+    final response = await http.delete(Uri.parse(
+      '$_baseUrl/observation/$observationId/students/$studentId/rating'),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Authorization': "Bearer " + token,
+        'Authorization': "Bearer " + token!,
       },
     );
     if (response.statusCode < 200 || response.statusCode >= 300) {
@@ -125,13 +125,13 @@ class ObservationRepository {
   }
 
   Future<List> getTopicsByClass(
-      {@required String token, @required String classId}) async {
+      {@required String? token, @required String? classId}) async {
     try {
       final response = await http.get(
-        '$_baseUrl/class/getClassTopics?classId=$classId',
+        Uri.parse('$_baseUrl/class/getClassTopics?classId=$classId'),
         headers: <String, String>{
           'Content-Type': 'application/json',
-          'Authorization': "bearer " + token
+          'Authorization': "Bearer " + token!
         },
       );
 
@@ -147,18 +147,18 @@ class ObservationRepository {
   }
 
   Future<bool> sendeditObservation(
-      {@required String token,
-      @required String id,
-      @required Map observation}) async {
+      {@required String? token,
+      @required String? id,
+      @required Map? observation}) async {
     final response = await Dio().put(
       '$_baseUrl/observation/$id/spontaneous',
       data: observation,
       options: Options(
-        headers: <String, String>{'Authorization': "Bearer " + token},
+        headers: <String, String>{'Authorization': "Bearer " + token!},
         contentType: "application/json",
       ),
     );
-    if (response.statusCode < 200 || response.statusCode >= 300) {
+    if (response.statusCode! < 200 || response.statusCode! >= 300) {
       throw new Exception('error');
     }
 
@@ -166,15 +166,15 @@ class ObservationRepository {
   }
 
   Future<List> getPuplisReport({
-    @required String token,
-    @required String studentId,
+    @required String? token,
+    @required String? studentId,
   }) async {
     try {
       final response = await http.get(
-        '$_baseUrl/student/$studentId/report',
+        Uri.parse('$_baseUrl/student/$studentId/report'),
         headers: <String, String>{
           'Content-Type': 'application/json',
-          'Authorization': "Bearer " + token,
+          'Authorization': "Bearer " + token!,
         },
       );
 
@@ -193,21 +193,21 @@ class ObservationRepository {
   }
 
   Future<String> getPuplisReportPdf({
-    @required String token,
-    @required String studentId,
-    @required List observationList,
+    @required String? token,
+    @required String? studentId,
+    @required List? observationList,
   }) async {
     try {
       final response = await Dio().put(
         '$_baseUrl/student/$studentId/report/pdf',
         data: observationList,
         options: Options(
-          headers: <String, String>{'Authorization': "Bearer " + token},
+          headers: <String, String>{'Authorization': "Bearer " + token!},
           contentType: "application/json",
         ),
       );
 
-      if (response.statusCode < 200 || response.statusCode >= 300) {
+      if (response.statusCode! < 200 || response.statusCode! >= 300) {
         throw new Exception('error');
       }
 

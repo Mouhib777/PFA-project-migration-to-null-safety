@@ -21,11 +21,11 @@ class UpdateClass extends ObservationsEvent {
 }
 
 class LoadStudent extends ObservationsEvent {
-  final String id;
+  final String? id;
   const LoadStudent({this.id});
 
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [id!];
 
   @override
   String toString() => 'UpdateClass { oldClass: $id }';
@@ -43,12 +43,12 @@ class DeleteSpontaneousObservation extends ObservationsEvent {
 }
 
 class DeleteStructuredObservation extends ObservationsEvent {
-  final String observationId;
-  final String studentId;
+  final String? observationId;
+  final String? studentId;
   const DeleteStructuredObservation({this.observationId, this.studentId});
 
   @override
-  List<Object> get props => [observationId, studentId];
+  List<Object> get props => [observationId!, studentId!];
 
   @override
   String toString() =>
@@ -68,14 +68,14 @@ class FilterObservation extends ObservationsEvent {
 }
 
 class EditObservation extends ObservationsEvent {
-  final String id;
-  final String title;
-  final String classId;
-  final String topicId;
-  final String controlId;
-  final int rating;
-  final String studentId;
-  final String date;
+  final String? id;
+  final String? title;
+  final String? classId;
+  final String? topicId;
+  final String? controlId;
+  final int? rating;
+  final String? studentId;
+  final String? date;
 
   const EditObservation(
       {this.id,
@@ -89,7 +89,7 @@ class EditObservation extends ObservationsEvent {
 
   @override
   List<Object> get props =>
-      [id, title, classId, topicId, controlId, rating, studentId,date];
+      [id!, title!, classId!, topicId!, controlId!, rating!, studentId!,date!];
 
   @override
   String toString() => 'AddStudent { student: $title }';

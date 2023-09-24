@@ -4,20 +4,20 @@ class ResetPasswordState extends Equatable {
   final ConfirmCode code;
   final Password password;
   final ConfirmPassword confirmPassword;
-  final FormzStatus status;
+  final FormzSubmissionStatus status;
 
   const ResetPasswordState({
     this.code = const ConfirmCode.pure(),
     this.password = const Password.pure(),
     this.confirmPassword = const ConfirmPassword.pure(),
-    this.status = FormzStatus.pure,
+    this.status = FormzSubmissionStatus.initial
   });
 
   ResetPasswordState copyWith({
-    ConfirmCode code,
-    Password password,
-    ConfirmPassword confirmPassword,
-    FormzStatus status,
+    ConfirmCode? code,
+    Password? password,
+    ConfirmPassword? confirmPassword,
+    FormzSubmissionStatus? status,
   }) {
     return ResetPasswordState(
       code: code ?? this.code,

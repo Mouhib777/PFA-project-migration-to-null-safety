@@ -25,27 +25,33 @@ const List<String> pages = [
 ];
 
 class AppDrawer extends StatefulWidget {
-  final String currentPage;
-  final bool hasConnection;
-  final GlobalKey<ScaffoldState> scaffoldKey;
+  final String? currentPage;
+  final bool? hasConnection;
+  final GlobalKey<ScaffoldState>? scaffoldKey;
   AppDrawer(
-      {Key key, this.currentPage, this.scaffoldKey, this.hasConnection = true})
+      {Key? key, this.currentPage, this.scaffoldKey, this.hasConnection = true})
       : super(key: key);
-  @override
-  _AppDrawerState createState() => _AppDrawerState(
-      currentPage: currentPage,
-      hasConnection: hasConnection,
-      scaffoldKey: scaffoldKey);
+      
+        @override
+        State<StatefulWidget> createState() {
+          // TODO: implement createState
+          throw UnimplementedError();
+        }
+
+  // _AppDrawerState createState() => _AppDrawerState(
+  //     currentPage: currentPage!,
+  //     hasConnection: hasConnection!,
+  //     scaffoldKey: scaffoldKey!);
 }
 
 class _AppDrawerState extends State<AppDrawer> {
-  String currentPage;
-  bool hasConnection;
-  GlobalKey<ScaffoldState> scaffoldKey;
-  _AppDrawerState({this.currentPage, this.hasConnection, this.scaffoldKey});
+  String? currentPage;
+  bool? hasConnection;
+  GlobalKey<ScaffoldState>? scaffoldKey;
+  // _AppDrawerState({this.currentPage, this.hasConnection, this.scaffoldKey});
   final _baseUrl = BaseUrl.urlAPi;
-  Uint8List _bytesImage;
-  SharedPreferences prefs;
+  Uint8List? _bytesImage;
+  SharedPreferences? prefs;
   TokenDao _tokenDao = TokenDao();
   void initState() {
     super.initState();
@@ -55,17 +61,18 @@ class _AppDrawerState extends State<AppDrawer> {
 
   getProfilePicture() async {
     prefs = await SharedPreferences.getInstance();
-    final String activeMenu = prefs.getString('activeMenu') ?? '';
+    final String activeMenu = prefs!.getString('activeMenu') ?? '';
     if (activeMenu.isEmpty) {
-      prefs.setString('activeMenu', pages[1]);
+      prefs!.setString('activeMenu', pages[1]);
     }
-    Token token = await _tokenDao.getToken();
+    Token? token = await _tokenDao.getToken();
     try {
       final response = await http.get(
-        '$_baseUrl/teacher/getpicture',
+        Uri.parse(
+        '$_baseUrl/teacher/getpicture'),
         headers: <String, String>{
           'Content-Type': 'application/json',
-          'Authorization': "Bearer " + token.accessToken
+          'Authorization': "Bearer " + token!.accessToken!
         },
       );
       if (response.statusCode == 200) {
@@ -79,54 +86,55 @@ class _AppDrawerState extends State<AppDrawer> {
 
   initializeMenu() async {
     prefs = await SharedPreferences.getInstance();
-    final String activeMenu = prefs.getString('activeMenu') ?? '';
+    final String activeMenu = prefs!.getString('activeMenu') ?? '';
     if (activeMenu.isEmpty) {
-      prefs.setString('activeMenu', pages[1]);
+      prefs!.setString('activeMenu', pages[1]);
     }
   }
+  //! voir lib/utils/snackbar
 
-  void _hideSnackbar() {
-    SnackBarUtils.hideSnackbar(scaffoldKey);
-  }
+  // void _hideSnackbar() {
+  //   SnackBarUtils.hideSnackbar(scaffoldKey);
+  // }
 
-  void _showSnackbarAddPupils() {
-    _hideSnackbar();
-    SnackBarUtils.showSnackbarAddPupilsConnectionStatus(
-        scaffoldKey, hasConnection, _hideSnackbar);
-  }
+  // void _showSnackbarAddPupils() {
+  //   _hideSnackbar();
+  //   SnackBarUtils.showSnackbarAddPupilsConnectionStatus(
+  //       scaffoldKey, hasConnection, _hideSnackbar);
+  // }
 
-  void _showSnackbarNewYear() {
-    _hideSnackbar();
-    SnackBarUtils.showSnackbarNewYearConnectionStatus(
-        scaffoldKey, hasConnection, _hideSnackbar);
-  }
+  // void _showSnackbarNewYear() {
+  //   _hideSnackbar();
+  //   SnackBarUtils.showSnackbarNewYearConnectionStatus(
+  //       scaffoldKey, hasConnection, _hideSnackbar);
+  // }
 
-  void _showSnackbarPupilsReport() {
-    _hideSnackbar();
-    SnackBarUtils.showSnackbarPupilsReportConnectionStatus(
-        scaffoldKey, hasConnection, _hideSnackbar);
-  }
+  // void _showSnackbarPupilsReport() {
+  //   _hideSnackbar();
+  //   SnackBarUtils.showSnackbarPupilsReportConnectionStatus(
+  //       scaffoldKey, hasConnection, _hideSnackbar);
+  // }
 
-  void _showSnackbarNoteHistory() {
-    _hideSnackbar();
-    SnackBarUtils.showSnackbarNoteHistoryConnectionStatus(
-        scaffoldKey, hasConnection, _hideSnackbar);
-  }
+  // void _showSnackbarNoteHistory() {
+  //   _hideSnackbar();
+  //   SnackBarUtils.showSnackbarNoteHistoryConnectionStatus(
+  //       scaffoldKey, hasConnection, _hideSnackbar);
+  // }
 
   _navigateToPage(String page) {
-    if (!hasConnection) {
+    if (!hasConnection!) {
       if (page == pages[2]) {
-        _showSnackbarPupilsReport();
+        // _showSnackbarPupilsReport();
         return;
       }
       if (page == pages[3]) {
-        _showSnackbarNoteHistory();
+        // _showSnackbarNoteHistory();
         return;
       }
     }
-    final String activeMenu = prefs.getString('activeMenu') ?? '';
+    final String activeMenu = prefs!.getString('activeMenu') ?? '';
     if (activeMenu != page) {
-      prefs.setString('activeMenu', page);
+      prefs!.setString('activeMenu', page);
       Navigator.pushReplacementNamed(context, page);
     }
   }
@@ -232,7 +240,7 @@ class _AppDrawerState extends State<AppDrawer> {
                                 borderRadius: BorderRadius.circular(50.0),
                                 child: _bytesImage != null
                                     ? Image.memory(
-                                        _bytesImage,
+                                        _bytesImage!,
                                         width: 50,
                                       )
                                     : Image.asset(
@@ -264,23 +272,23 @@ class _AppDrawerState extends State<AppDrawer> {
                                 ),
                                 onSelected: (int value) {
                                   if (value == 1) {
-                                    if (!hasConnection && !kIsWeb) {
-                                      _showSnackbarAddPupils();
+                                    if (!hasConnection! && !kIsWeb) {
+                                      // _showSnackbarAddPupils();
                                       return;
                                     }
                                     Navigator.pushReplacementNamed(
                                       context,
                                       '/addPupil',
                                       arguments: <String, String>{
-                                        'CurrentPage': currentPage,
+                                        'CurrentPage': currentPage!,
                                       },
                                     );
                                   } else if (value == 2) {
                                     Navigator.pushReplacementNamed(
                                         context, '/addClasses');
                                   } else {
-                                    if (!hasConnection && !kIsWeb) {
-                                      _showSnackbarNewYear();
+                                    if (!hasConnection! && !kIsWeb) {
+                                      // _showSnackbarNewYear();
                                       return;
                                     }
                                     showDialog(
@@ -434,7 +442,7 @@ class _AppDrawerState extends State<AppDrawer> {
                       ),
                     ),
                     onTap: () {
-                      context.bloc<TokenBloc>()..add(UserLogout());
+                      // context.bloc<TokenBloc>()..add(UserLogout());
                       Navigator.pushReplacementNamed(context, '/login');
                     },
                   ),

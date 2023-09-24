@@ -22,7 +22,7 @@ class SelectedYearsDao {
     );
   }
 
-  Future<PaidYears> getYear() async {
+  Future<PaidYears?> getYear() async {
     // Finder object can also sort data.
 
     final record = await _yeartore.findFirst(

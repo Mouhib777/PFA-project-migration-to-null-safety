@@ -28,7 +28,7 @@ class AddControlWidget extends StatelessWidget {
 }
 
 class AddControlWidgetContent extends StatefulWidget {
-  final Function moveToPage;
+  final Function? moveToPage;
   final GlobalKey<ScaffoldState> _scaffoldKey;
   AddControlWidgetContent(this.moveToPage, this._scaffoldKey);
   @override
@@ -37,11 +37,13 @@ class AddControlWidgetContent extends StatefulWidget {
 }
 
 class _AddControlWidgetContentState extends State<AddControlWidgetContent> {
-  final Function moveToPage;
-  final GlobalKey<ScaffoldState> _scaffoldKey;
-  _AddControlWidgetContentState(this.moveToPage, this._scaffoldKey);
+  // final Function? moveToPage;
+  // final GlobalKey<ScaffoldState>? _scaffoldKey;
+  // _AddControlWidgetContentState(this.moveToPage, this._scaffoldKey);
 
-  StreamSubscription _connectionChangeStream;
+  StreamSubscription? _connectionChangeStream;
+  
+  _AddControlWidgetContentState(Function? moveToPage, GlobalKey<ScaffoldState> scaffoldKey);
 
   @override
   void initState() {
@@ -51,48 +53,48 @@ class _AddControlWidgetContentState extends State<AddControlWidgetContent> {
     new Future.delayed(Duration.zero, () {
       _connectionChangeStream =
           connectionStatus.connectionChange.listen(connectionChanged);
-      context.bloc<ConfigBloc>()..add(LoadTopics());
+      // context.bloc<ConfigBloc>()..add(LoadTopics());
     });
   }
 
   void connectionChanged(dynamic hasConnection) {
-    context.bloc<ConfigBloc>()..add(UpdateConnectionStatus(hasConnection));
+    // context.bloc<ConfigBloc>()..add(UpdateConnectionStatus(hasConnection));
     if (hasConnection) {
-      synchronize();
+      // synchronize();
     }
   }
 
   @override
   void dispose() {
-    _connectionChangeStream.cancel();
+    _connectionChangeStream!.cancel();
     super.dispose();
   }
+//! voir lib/utils/snackbar
+  // void _showSnackbarConfigFailure() {
+  //   _hideSnackbar();
+  // }
 
-  void _showSnackbarConfigFailure() {
-    _hideSnackbar();
-  }
+  // void synchronize() => context.bloc<ConfigBloc>()..add(Synchronize());
 
-  void synchronize() => context.bloc<ConfigBloc>()..add(Synchronize());
+  // void _showSnackbarConnectionStatus(bool connected) {
+  //   _hideSnackbar();
+  //   SnackBarUtils.showSnackbarConnectionStatus(
+  //       _scaffoldKey, connected, _hideSnackbar);
+  // }
 
-  void _showSnackbarConnectionStatus(bool connected) {
-    _hideSnackbar();
-    SnackBarUtils.showSnackbarConnectionStatus(
-        _scaffoldKey, connected, _hideSnackbar);
-  }
+  // void _showSnackbarSynchronizeStart() {
+  //   _hideSnackbar();
+  //   SnackBarUtils.showSnackbarSynchronizeStart(_scaffoldKey);
+  // }
 
-  void _showSnackbarSynchronizeStart() {
-    _hideSnackbar();
-    SnackBarUtils.showSnackbarSynchronizeStart(_scaffoldKey);
-  }
+  // void _showSnackbarSynchronizeRetry() {
+  //   _hideSnackbar();
+  //   SnackBarUtils.showSnackbarSynchronizeRetry(_scaffoldKey, synchronize);
+  // }
 
-  void _showSnackbarSynchronizeRetry() {
-    _hideSnackbar();
-    SnackBarUtils.showSnackbarSynchronizeRetry(_scaffoldKey, synchronize);
-  }
-
-  void _hideSnackbar() {
-    SnackBarUtils.hideSnackbar(_scaffoldKey);
-  }
+  // void _hideSnackbar() {
+  //   SnackBarUtils.hideSnackbar(_scaffoldKey);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -108,16 +110,16 @@ class _AddControlWidgetContentState extends State<AddControlWidgetContent> {
           current is SynchronizeEnd;
     }, listener: (context, state) {
       if (state is ConfigFailure) {
-        _showSnackbarConfigFailure();
+        // _showSnackbarConfigFailure();
       } else if (state is SynchronizeStart) {
-        _showSnackbarSynchronizeStart();
+        // _showSnackbarSynchronizeStart();
       } else if (state is SynchronizeError) {
-        _showSnackbarSynchronizeRetry();
+        // _showSnackbarSynchronizeRetry();
       } else if (state is SynchronizeEnd) {
-        _hideSnackbar();
+        // _hideSnackbar();
       } else if (state is ConnectionStatus) {
         final connected = state.isConnected;
-        _showSnackbarConnectionStatus(connected);
+        // _showSnackbarConnectionStatus(connected);
       }
     }, buildWhen: (previous, current) {
       return current is ConfigLoadInProgress ||
@@ -176,7 +178,7 @@ class _AddControlWidgetContentState extends State<AddControlWidgetContent> {
                     ],
                   ),
                 ),
-                Container(height: 100, child: Actions(cls, moveToPage)),
+                Container(height: 100, child: Actions(cls, (){})),
               ])),
         );
       } else {
@@ -188,7 +190,7 @@ class _AddControlWidgetContentState extends State<AddControlWidgetContent> {
 
 class TopicList extends StatefulWidget {
   final Class cls;
-  TopicList({Key key, @required this.cls}) : super(key: key);
+  TopicList({Key? key, required this.cls}) : super(key: key);
   @override
   _ClassListState createState() => _ClassListState(cls);
 }
@@ -208,7 +210,7 @@ class _ClassListState extends State<TopicList> {
 
   Widget controlsList(Topic topic, int topicIdx, Function removeControl) {
     return Wrap(
-        children: topic.controls.map((Control control) {
+        children: topic.controls!.map((Control control) {
       return Container(
           width: 300,
           child: Card(
@@ -222,7 +224,7 @@ class _ClassListState extends State<TopicList> {
                   Expanded(
                       child: Center(
                     child: Text(
-                      control.controlName,
+                      control.controlName!,
                       textAlign: TextAlign.center,
                     ),
                   )),
@@ -252,14 +254,14 @@ class _ClassListState extends State<TopicList> {
   }
 
   _triggerSubmit(BuildContext context, Topic topic) {
-    if (_textController.text.isNotEmpty && topic.controls.length < 10) {
+    if (_textController.text.isNotEmpty && topic.controls!.length < 10) {
       final controlExist = topic.controls
-          .indexWhere((e) => e.controlName == _textController.text);
+          !.indexWhere((e) => e.controlName == _textController.text);
       if (controlExist < 0) {
-        topic.controls.add(new Control(controlName: _textController.text));
+        topic.controls!.add(new Control(controlName: _textController.text));
       }
     }
-    context.bloc<ConfigBloc>()..add(UpdateControls(topic));
+    // context.bloc<ConfigBloc>()..add(UpdateControls(topic));
     _textController.text = '';
     Navigator.of(context).pop();
   }
@@ -271,7 +273,7 @@ class _ClassListState extends State<TopicList> {
         builder: (BuildContext context1) {
           return StatefulBuilder(builder: (context1, setState) {
             removeControl(Topic topic, int topicIdx, Control ctl) {
-              topic.controls.remove(ctl);
+              topic.controls!.remove(ctl);
               setState(() {
                 cls.topics[topicIdx] = topic;
               });
@@ -279,12 +281,12 @@ class _ClassListState extends State<TopicList> {
 
             _triggerAddControl(Topic topic, int topicIdx) {
               if (_textController.text.isNotEmpty &&
-                  topic.controls.length < 10) {
+                  topic.controls!.length < 10) {
                 final controlExist = topic.controls
-                    .indexWhere((e) => e.controlName == _textController.text);
+                    !.indexWhere((e) => e.controlName == _textController.text);
                 if (controlExist < 0) {
                   topic.controls
-                      .add(new Control(controlName: _textController.text));
+                      !.add(new Control(controlName: _textController.text));
                   _textController.text = '';
                   setState(() {
                     cls.topics[topicIdx] = topic;
@@ -297,7 +299,7 @@ class _ClassListState extends State<TopicList> {
 
             return AlertDialog(
               actions: [
-                FlatButton(
+                ElevatedButton(
                     onPressed: () {
                       _triggerSubmit(context, topic);
                     },
@@ -399,7 +401,7 @@ class _ClassListState extends State<TopicList> {
                                             },
                                           ),
                                           title: TextField(
-                                            enabled: topic.controls.length < 10,
+                                            enabled: topic.controls!.length < 10,
                                             autofocus: true,
                                             controller: _textController,
                                             decoration: InputDecoration(
@@ -466,7 +468,7 @@ class _ClassListState extends State<TopicList> {
                           alignment: Alignment.centerLeft,
                           child: Container(
                             child: AutoSizeText(
-                              '${topic.controls.length} Unterkategorie',
+                              '${topic.controls!.length} Unterkategorie',
                               maxLines: 1,
                               style: TextStyle(
                                 fontSize: 16,
@@ -480,7 +482,7 @@ class _ClassListState extends State<TopicList> {
                 flex: 6,
                 child: Container(
                   child: Center(
-                    child: FlatButton(
+                    child: ElevatedButton(
                       child: Text(
                         'Bearbeiten',
                         maxLines: 1,
@@ -534,7 +536,7 @@ class Actions extends StatelessWidget {
       ;
     }
     final Topic topic =
-        cls.topics.firstWhere((e) => e.controls.length < 1, orElse: () => null);
+        cls.topics.firstWhere((e) => e.controls!.length < 1, orElse: () => Topic());
     if (topic == null) {
       return moveToPage(5);
     }
@@ -546,7 +548,7 @@ class Actions extends StatelessWidget {
             content: const Text(
                 'Bitte fügen Sie mindestens eine Unterkategorie pro Fach/Bereich hinzu'),
             actions: <Widget>[
-              FlatButton(
+              ElevatedButton(
                 child: Text('Ok'),
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -562,8 +564,8 @@ class Actions extends StatelessWidget {
       Navigator.pushReplacementNamed(context, '/dashboard');
       return;
     }
-    final Topic topic =
-        cls.topics.firstWhere((e) => e.controls.length < 1, orElse: () => null);
+    final Topic? topic =
+        cls.topics.firstWhere((e) => e.controls!.length < 1, orElse: () => Topic());
     if (topic == null) {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('activeMenu', '/dashboard');
@@ -579,7 +581,7 @@ class Actions extends StatelessWidget {
             content: const Text(
                 'Bitte fügen Sie mindestens eine Unterkategorie pro Fach/Bereich hinzu'),
             actions: <Widget>[
-              FlatButton(
+              ElevatedButton(
                 child: Text('Ok'),
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -593,8 +595,8 @@ class Actions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      FlatButton(
-          highlightColor: Colors.white,
+      ElevatedButton(
+          // highlightColor: Colors.white,
           onPressed: () {
             moveToPage(3);
           },
@@ -618,8 +620,8 @@ class Actions extends StatelessWidget {
               ),
             ],
           )),
-      FlatButton(
-          highlightColor: Colors.white,
+      ElevatedButton(
+          // highlightColor: Colors.white,
           onPressed: () {
             _skip(context);
           },
@@ -634,8 +636,8 @@ class Actions extends StatelessWidget {
               ),
             ],
           )),
-      FlatButton(
-          highlightColor: Colors.white,
+      ElevatedButton(
+          // highlightColor: Colors.white,
           onPressed: () {
             nextPage(context);
           },

@@ -1,31 +1,38 @@
-import 'package:docu_diary/models/models.dart';
+import 'package:docu_diary/models/models.dart'; // Import necessary libraries for Topic, Student, and Observation classes
 
 class Class {
-  String id;
-  String teacherId;
-  String className;
-  String schoolYear;
-  String createdAt;
-  int updatedAt;
-  List<Topic> topics;
-  List<Student> students;
+  late String? id;
+  String? teacherId;
+  String? className;
+  String? schoolYear;
+  late String? createdAt;
+  late int? updatedAt;
+  late List<Topic> topics;
+  late List<Student> students;
   bool hasActiveObservation = false;
-  Observation observation;
-  String selectedTopicId;
-  String selectedControlId;
+  Observation? observation;
+  late String? selectedTopicId;
+  late String? selectedControlId;
   bool synchronize = false;
   bool isDeleted = false;
   bool topicsIsUpdated = false;
-  List<Observation> observations; // history of observations to synchronize
+  late List<Observation> observations;
 
-  Class(
-      {this.teacherId,
-      this.className,
-      this.schoolYear,
-      this.synchronize = false,
-      this.topics = const [],
-      this.students = const [],
-      this.observations = const []});
+  Class({
+    this.teacherId,
+    this.className,
+    this.schoolYear,
+    this.synchronize = false,
+    this.topics = const [],
+    this.students = const [],
+    this.observations = const [],
+     this.createdAt,  // Initialize non-nullable fields in the constructor
+     this.id,
+     this.selectedControlId,
+     this.selectedTopicId,
+     this.updatedAt,
+  });
+
 
   Class.fromJson(Map<String, dynamic> json) {
     teacherId = json['teacherId'];
@@ -50,8 +57,6 @@ class Class {
 
     if (json["observation"] != null) {
       observation = Observation.fromJson(json["observation"]);
-    } else {
-      observation = null;
     }
     hasActiveObservation = json['hasActiveObservation'] ?? false;
     selectedTopicId = json['selectedTopicId'];

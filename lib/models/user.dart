@@ -1,17 +1,17 @@
 import 'package:docu_diary/models/PaidYears.dart';
 
 class User {
-  String id;
-  String name;
-  String email;
-  String picture;
-  String confirmationCode;
-  bool validateCompte;
-  String role;
-  String createdAt;
-  String currentSubscription;
-  String expirationDate;
-  List<PaidYears> paidYears;
+  String? id;
+  String? name;
+  String? email;
+  String? picture;
+  String? confirmationCode;
+  bool? validateCompte;
+  String? role;
+  String? createdAt;
+  String? currentSubscription;
+  String? expirationDate;
+  List<PaidYears>? paidYears;
 
   User(
       {this.id,
@@ -38,9 +38,9 @@ class User {
     currentSubscription = json['currentSubscription'];
     expirationDate = json['expirationDate'];
     if (json['paidYears'] != null) {
-      paidYears = new List<PaidYears>();
+      paidYears = [];
       json['paidYears'].forEach((v) {
-        paidYears.add(new PaidYears.fromJson(v));
+        paidYears!.add(new PaidYears.fromJson(v));
       });
     }
   }
@@ -58,7 +58,7 @@ class User {
     data['currentSubscription'] = this.currentSubscription;
     data['expirationDate'] = this.expirationDate;
     if (this.paidYears != null) {
-      data['paidYears'] = this.paidYears.map((v) => v.toJson()).toList();
+      data['paidYears'] = this.paidYears!.map((v) => v.toJson()).toList();
     }
     return data;
   }

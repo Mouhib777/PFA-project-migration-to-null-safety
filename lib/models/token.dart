@@ -1,8 +1,8 @@
 class Token {
-  String tokenType;
-  String accessToken;
-  String refreshToken;
-  String expiresIn;
+  String? tokenType;
+  String? accessToken;
+  String? refreshToken;
+  String? expiresIn;
 
   Token({this.tokenType, this.accessToken, this.refreshToken, this.expiresIn});
 
